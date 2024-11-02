@@ -3,17 +3,9 @@ import "./index.css";
 
 export default function Layout() {
   return (
-    <div className='max-h-screen flex flex-col font-inter'>
+    <div className='max-h-screen flex flex-col font-inter '>
       {/* Header or Navigation */}
-      {/* <header className="bg-gray-800 text-white py-4">
-      <nav className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold">My App</h1>
-        <ul className="flex space-x-4">
-          <li><Link to="/" className="hover:text-gray-300">Home</Link></li>
-          <li><Link to="/about" className="hover:text-gray-300">About</Link></li>
-          <li><Link to="/contact" className="hover:text-gray-300">Contact</Link></li>
-        </ul>
-      </nav>
+      {/* <header className=" text-white py-4">
     </header> */}
 
       {/* Main Content */}

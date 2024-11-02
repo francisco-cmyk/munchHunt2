@@ -1,9 +1,15 @@
+import { Transform } from "stream";
+
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "node_modules/animxyz/dist/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -13,8 +19,14 @@ module.exports = {
       },
     },
     extend: {
+      animationDelay: {
+        100: "100ms",
+        200: "200ms",
+        300: "300ms",
+        400: "400ms",
+      },
       colors: {
-        customOrange: "#fa851e",
+        customOrange: "#FF8345",
         customRedOrange: "#eb7134",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -88,10 +100,16 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        grow: {
+          "0%": { transform: "scale(1)", opacity: "0.7" },
+          "50%": { transform: "scale(1.1)", opacity: "1" },
+          "100%": { transform: "scale(1)", opacity: "0.7" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        grow: "grow 4s ease-in-out",
       },
     },
   },

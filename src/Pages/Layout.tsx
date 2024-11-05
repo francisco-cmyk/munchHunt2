@@ -1,11 +1,13 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../index.css";
-import { useEffect } from "react";
+import { SyntheticEvent, useEffect } from "react";
 import { useMunchContext } from "../Context/MunchContext";
 
 export default function Layout() {
   const munchContext = useMunchContext();
   let location = useLocation();
+
+  const naviagte = useNavigate();
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -31,15 +33,25 @@ export default function Layout() {
     return () => {};
   }, [munchContext.currentCoordinates]);
 
-  const isLandingPages = location.pathname === "/";
+  function handleHeaderClick(e: SyntheticEvent) {
+    e.preventDefault();
+
+    localStorage.removeItem("location");
+    naviagte("/location");
+  }
+
+  const isLandingPages =
+    location.pathname === "/" || location.pathname === "/location";
 
   return (
     <div className='max-h-screen flex flex-col font-inter relative bg-slate-50'>
       {!isLandingPages ? (
-        <header className=' w-full bg-customOrange p-3 flex justify-start fixed z-20 top-0 left-0'>
-          <p className='font-archivo font-black  tracking-tighter text-[65px] ml-3'>
-            Munch Hunt
-          </p>
+        <header className=' w-full bg-customOrange p-3 flex justify-start fixed z-20 top-0 left-0 cursor-default'>
+          <div onClick={(e) => handleHeaderClick(e)}>
+            <p className='font-archivo font-black  tracking-tighter text-[65px] ml-3'>
+              Munch Hunt
+            </p>
+          </div>
         </header>
       ) : null}
 

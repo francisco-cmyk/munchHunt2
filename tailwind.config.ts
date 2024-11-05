@@ -27,7 +27,7 @@ module.exports = {
       },
       colors: {
         customOrange: "#FF8345",
-        customRedOrange: "#eb7134",
+        customRedOrange: "#F5AE7A",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

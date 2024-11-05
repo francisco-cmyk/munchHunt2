@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./Pages/Landing";
+import Location from "./Pages/Location";
 import Layout from "./Pages/Layout";
 import "@animxyz/core";
 import { MunchProvider } from "./Context/MunchContext";
@@ -13,6 +14,7 @@ export default function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<Landing />} />
+            <Route path='location' element={<Location />} />
             <Route path='select' element={<SelectionPage />} />
             <Route path='restaurants' element={<FoodList />} />
             {/* <Route path="contact" element={<ContactPage />} /> */}

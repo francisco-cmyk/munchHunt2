@@ -2,28 +2,41 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
 
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
+
 type YelpResponse = {
   alias: string;
+  coordinates: Coordinates;
   display_phone: string;
   distance: number;
   id: string;
   image_url: string;
-  name: string;
   is_closed: boolean;
+  location: {
+    display_address: string[];
+  };
+  name: string;
+  price: string;
   rating: number;
-  transaction: string[];
+  transactions: string[];
 };
 
 export type Restaurant = {
   alias: string;
+  coordinates: Coordinates;
+  displayAddress: string;
   displayPhone: string;
   distance: number;
   id: string;
   imageURL: string;
-  name: string;
   isClosed: boolean;
+  name: string;
+  price: string;
   rating: number;
-  transaction: string[];
+  transactions: string[];
 };
 
 type Params = {
@@ -31,7 +44,9 @@ type Params = {
   coordinates: Coordinate;
 };
 
-async function fetchRestaurants(params: Params) {
+async function fetchRestaurants(
+  params: Params
+): Promise<YelpResponse[] | undefined> {
   try {
     const config = {
       headers: { Authorization: `Bearer ${import.meta.env.VITE_YELP_API_KEY}` },
@@ -54,20 +69,23 @@ async function fetchRestaurants(params: Params) {
 
 export default function useGetRestaurants(params: Params) {
   return useQuery<Restaurant[], Error>({
-    queryKey: ["yelpResults"],
+    queryKey: ["yelpResults", params],
     queryFn: async () => {
       const data = await fetchRestaurants({ ...params });
 
-      const result: Restaurant[] =  data.map((datum: YelpResponse) => ({
+      const result: Restaurant[] = (data ?? []).map((datum: YelpResponse) => ({
         alias: datum.alias,
+        coordinates: datum.coordinates,
+        displayAddress: datum.location.display_address.join(),
         displayPhone: datum.display_phone,
         distance: datum.distance,
         id: datum.id,
         imageURL: datum.image_url,
-        name: datum.name,
         isClosed: datum.is_closed,
+        name: datum.name,
+        price: datum.price,
         rating: datum.rating,
-        transaction: datum.transaction,
+        transactions: datum.transactions,
       }));
 
       return result;

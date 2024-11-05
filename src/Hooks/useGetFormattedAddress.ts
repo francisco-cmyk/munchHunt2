@@ -29,7 +29,7 @@ async function fetchAddress(coordinates: Coordinate) {
 
 export default function useGetFormattedAddress(coordinates: Coordinate) {
   return useQuery({
-    queryKey: ["formattedAddress"],
+    queryKey: ["formattedAddress", coordinates],
     queryFn: async () => {
       const data = await fetchAddress(coordinates);
       return data;

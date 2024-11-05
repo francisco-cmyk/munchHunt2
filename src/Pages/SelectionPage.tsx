@@ -2,19 +2,24 @@ import { useEffect, useState } from "react";
 import { foodChoices } from "../foodChoices";
 import getMergeState from "../utils";
 import { Button } from "../Components/Button";
-import { XyzTransitionGroup } from "@animxyz/react";
+import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import { Loader2, } from "lucide-react";
+import { Loader2, UtensilsCrossed } from "lucide-react";
+import Modal from "../Components/Modal";
 
 type State = {
   selectedChoices: string[];
   isLoading: boolean;
+  showSelectionModal: boolean;
+  isHuntChoosing: boolean;
 };
 
 const initialState: State = {
   selectedChoices: [],
   isLoading: false,
+  showSelectionModal: false,
+  isHuntChoosing: false,
 };
 
 export default function SelectionPage(): JSX.Element {
@@ -28,13 +33,26 @@ export default function SelectionPage(): JSX.Element {
 
   useEffect(() => {
     //TODO: make this better
-    if (state.selectedChoices.length === 5 && !state.isLoading) {
+    if (
+      state.selectedChoices.length === 5 &&
+      !state.isLoading &&
+      state.isHuntChoosing
+    ) {
       const huntChosen = randomizeChoices(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
-      navigate("/restaurants");
+      mergeState({ showSelectionModal: true });
     }
-  }, [state.selectedChoices, state.isLoading]);
+  }, [state.selectedChoices, state.isLoading, state.isHuntChoosing]);
+
+  useEffect(() => {
+    if (state.showSelectionModal) {
+      setTimeout(() => {
+        mergeState({ showSelectionModal: false });
+        navigate("/restaurants");
+      }, 3000); //3s
+    }
+  }, [state.showSelectionModal]);
 
   ////
 
@@ -51,7 +69,7 @@ export default function SelectionPage(): JSX.Element {
   }
 
   function randomizeSelection(delay: number): Promise<void> {
-    mergeState({ isLoading: true });
+    mergeState({ isLoading: true, isHuntChoosing: true });
 
     return new Promise<void>((resolve) => {
       setTimeout(() => {
@@ -80,22 +98,57 @@ export default function SelectionPage(): JSX.Element {
 
     if (hasNoSelections) {
       runLoop().then(() => {
-        mergeState({ isLoading: false });
+        setTimeout(() => {
+          mergeState({ isLoading: false });
+        }, 600);
       });
     } else {
       const huntChosen = randomizeChoices(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
-      navigate("/restaurants");
+      mergeState({ showSelectionModal: true });
     }
+  }
+
+  function renderSelection() {
+    return (
+      <Modal>
+        <XyzTransition
+          appear
+          className='bg-customOrange rounded-[15px]
+          ring-[20px] ring-customOrange ring-offset-1 ring-offset-transparent ring-opacity-45
+          '
+          xyz='small-100% origin-center'
+        >
+          <div className='flex flex-col justify-center items-center  h-[200px] min-w-[400px] max-w-[600px] rounded-[30px] p-4'>
+            <p className='font-roboto text-[18px] font-semibold text-white'>
+              The hunt chose:
+            </p>
+            <p className='font-archivo font-bold text-[65px]'>
+              {munchContext.munchHuntChoice}
+            </p>
+            <XyzTransition
+              appear
+              className='mb-1'
+              xyz='fade flip-left perspective-1 delay-10 duration-10'
+            >
+              <div>
+                <UtensilsCrossed size={35} />
+              </div>
+            </XyzTransition>
+          </div>
+        </XyzTransition>
+      </Modal>
+    );
   }
 
   return (
     <div className='w-full flex justify-center items-center'>
+      {state.showSelectionModal && renderSelection()}
       <div className='h-full w-full flex flex-col justify-start items-center p-10 '>
         {state.isLoading ? (
           <div className='flex min-h-[60px] flex-col justify-center items-center'>
-            <Loader2 className='h-[40px] w-[40px] animate-spin text-customOrange duration-1000' />
+            <Loader2 className='h-[60px] w-[60px] animate-spin text-customOrange duration-1000' />
           </div>
         ) : (
           <div className='flex flex-col justify-center items-center'>
@@ -103,8 +156,7 @@ export default function SelectionPage(): JSX.Element {
               Lets get started!
             </p>
             <p className='font-roboto'>
-              Select up to 6 possible cuisines or categories you would want to
-              eat.
+              Select several cuisines or categories you would want to eat.
             </p>
             <p className='font-roboto'>
               If none are selected, <strong>Munch Hunt</strong> will choose one
@@ -114,11 +166,25 @@ export default function SelectionPage(): JSX.Element {
         )}
 
         <div className='w-2/3 mt-5 min-h-[420px] max-h-[450px] overflow-auto py-2'>
-          <Grid
-            choices={foodChoices}
-            selected={state.selectedChoices}
-            onSelect={handleSelect}
-          />
+          {state.isHuntChoosing ? (
+            <div className='grid grid-cols-4 gap-4 p-1 py-3'>
+              {state.selectedChoices.map((choice, index) => (
+                <Button
+                  key={`${index}-${choice}`}
+                  className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
+                  // onClick={() => props.onSelect(item)}
+                >
+                  <p className='font-semibold text-lg'>{choice}</p>
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <Grid
+              choices={foodChoices}
+              selected={state.selectedChoices}
+              onSelect={handleSelect}
+            />
+          )}
         </div>
 
         <div className='mt-20'>
@@ -157,20 +223,18 @@ function Grid(props: GridProps) {
         <XyzTransitionGroup
           appear
           className='grid grid-cols-4 gap-4 p-1 py-3'
-          xyz='fade small out-down out-rotate-right duration-2 appear-stagger '
+          xyz='fade small out-down out-rotate-right duration-3 '
         >
           {props.choices.map((item, index) => (
             <div key={index} className='h-[50px]'>
               <Button
-                className={`
-      h-full w-full
-     flex justify-center border p-3 rounded-xl shadow-sm
-     ${
-       props.selected.includes(item)
-         ? `bg-slate-900 hover:text-white`
-         : `bg-slate-50 text-slate-900 hover:bg-slate-900 hover:text-white`
-     }
-      `}
+                className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm
+              ${
+                props.selected.includes(item)
+                  ? `bg-slate-900 hover:text-white`
+                  : `bg-slate-50 text-slate-900 hover:bg-slate-900 hover:text-white`
+              }
+             `}
                 onClick={() => props.onSelect(item)}
               >
                 <p className='font-semibold text-lg'>{item}</p>

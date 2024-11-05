@@ -165,19 +165,22 @@ export default function SelectionPage(): JSX.Element {
           </div>
         )}
 
-        <div className='w-2/3 mt-5 min-h-[420px] max-h-[450px] overflow-auto py-2'>
+        <div className='w-2/3 mt-5 max-h-96 min-h-96 overflow-auto py-2'>
           {state.isHuntChoosing ? (
-            <div className='grid grid-cols-4 gap-4 p-1 py-3'>
+            <XyzTransitionGroup
+              className='grid grid-cols-4 gap-4 p-1 py-3'
+              xyz='fade small out-down out-rotate-right appear-stagger'
+            >
               {state.selectedChoices.map((choice, index) => (
-                <Button
-                  key={`${index}-${choice}`}
-                  className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
-                  // onClick={() => props.onSelect(item)}
-                >
-                  <p className='font-semibold text-lg'>{choice}</p>
-                </Button>
+                <div key={`${index}-${choice}`}>
+                  <Button
+                    className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
+                  >
+                    <p className='font-semibold text-lg'>{choice}</p>
+                  </Button>
+                </div>
               ))}
-            </div>
+            </XyzTransitionGroup>
           ) : (
             <Grid
               choices={foodChoices}
@@ -187,7 +190,7 @@ export default function SelectionPage(): JSX.Element {
           )}
         </div>
 
-        <div className='mt-20'>
+        <div className='mt-5 2xl:mt-20'>
           <Button
             disabled={state.isLoading}
             className='w-[200px] h-[50px] text-[25px] font-archivo bg-customOrange text-slate-900 shadow-lg hover:text-white'

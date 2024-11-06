@@ -1,11 +1,23 @@
-import { XyzTransition } from "@animxyz/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export default function Landing() {
   const [showFirstPage, setShowFirstPage] = useState(true);
 
   const navigate = useNavigate();
+
+  const container = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const time = 1;
+    gsap.fromTo(
+      container.current,
+      { opacity: 0.5, scale: 0.7, duration: time, ease: "sine.in" },
+      { opacity: 1, scale: 1, duration: time, ease: "sine.in" }
+    );
+  }, [container]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,33 +28,37 @@ export default function Landing() {
   }, []);
 
   return (
-    <XyzTransition appear xyz='small-100%  origin-center ease-out-back'>
-      <div className='h-screen flex flex-col justify-between font-inter bg-customOrange'>
-        <header className='flex flex-col items-center'>
-          <p className='font-archivo font-black text-white  tracking-tighter text-[50px] mt-10'>
-            Munch Hunt
+    <div
+      className={`h-screen flex flex-col justify-center items-center font-inter md:bg-customOrange md:bg-none bg-[url('src/Assets/guyMunching2.gif')] bg-no-repeat bg-cover`}
+    >
+      <div
+        ref={container}
+        className='w-3/4 h-3/5 flex md:flex-row  flex-col  items-center bg-slate-50 bg-opacity-95 p-10 rounded-2xl drop-shadow-lg '
+      >
+        <div className='md:h-2/3 md:w-2/3 h-full w-full flex flex-col justify-between px-4'>
+          <p className='md:text-[35px] text-xl font-semibold font-robot leading-tight text-start'>
+            Struggling to choose a restaurant?
+            <br className='md:hidden' />
+            <br /> Date night? Just hungry?
+            <br />
+            <br className='md:hidden' /> Lets find the right place for you
           </p>
-        </header>
 
-        <div className='h-2/3 w-full flex flex-col items-center justify-center font-archivo text-black'>
-          <div className='w-2/5'>
-            <XyzTransition appear xyz='fade small stagger delay-10'>
-              <p className='text-black text-[36px] font-bold leading-tight'>
-                Struggling to choose a restaurant? Date night? Just hungry?
-              </p>
-            </XyzTransition>
-          </div>
-          <div className='w-2/5 mt-20 flex '>
-            <XyzTransition appear xyz='fade small stagger delay-20 leading-10'>
-              <p className=' text-[25px]'>Lets find the right place</p>
-            </XyzTransition>
-            <XyzTransition appear xyz='fade small stagger delay-25'>
-              <p className='font-bold text-[60px] ml-4 '>for you.</p>
-            </XyzTransition>
+          <div className=' w-full'>
+            <div className='border-y-2 rounded-xl md:border-customOrange border-black ' />
+            <p className='md:text-[70px] text-[40px] font-archivo font-bold md:text-customOrange leading-tight mt-5'>
+              Munch Hunt
+            </p>
           </div>
         </div>
-        <div className='h-2/5'></div>
+
+        <div className='md:w-2/4 md:h-4/5 h-0 opacity-0 md:opacity-100  bg-slate-50'>
+          <img
+            className='rounded-xl h-full w-full'
+            src='src/Assets/guyMunching2.gif'
+          />
+        </div>
       </div>
-    </XyzTransition>
+    </div>
   );
 }

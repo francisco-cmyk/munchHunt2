@@ -1,6 +1,7 @@
 import { Button } from "./Button";
 import { X } from "lucide-react";
 import { SquareX } from "lucide-react";
+import { useEffect } from "react";
 
 type ModalProps = {
   isOpen?: boolean;
@@ -10,6 +11,19 @@ type ModalProps = {
 };
 
 export default function Modal(props: ModalProps): JSX.Element | null {
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        handleClose();
+      }
+    };
+    document.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [props.onClose, handleClose]);
+
   const isOpen = props.isOpen ?? true;
 
   function handleClose() {

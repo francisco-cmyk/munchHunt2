@@ -3,13 +3,14 @@ import useGetRestaurants, { Restaurant } from "../Hooks/useGetRestaurants";
 import { Card, CardContent, CardFooter } from "../Components/Card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useMemo, useState } from "react";
-import { StarHalf, Star, Proportions } from "lucide-react";
+import { useState } from "react";
+import { StarHalf, Star } from "lucide-react";
 import Modal from "../Components/Modal";
 import { keyBy } from "lodash";
 import MapComponent from "../Components/MapComponent";
 import getMergeState from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
+import useGetBusinessInfo from "../Hooks/useGetBusiness";
 
 type State = {
   selectedRestaurantID: string | null;
@@ -38,16 +39,16 @@ export default function FoodList(): JSX.Element {
       coordinates: currentCoordinates,
     });
 
+  //TODO: use photos for coursel in modal
+  const { data: businessInfo } = useGetBusinessInfo({
+    businessID: state.selectedRestaurantID ?? "",
+  });
+
   let isLoading = isLoadingYelp ?? true;
 
   const restaurantsKeyedByID = keyBy(yelpRestaurants, "id");
 
   // Filter
-
-  // useMemo(() => {
-
-  //   return
-  // }, [])
 
   // Handler
 
@@ -64,16 +65,25 @@ export default function FoodList(): JSX.Element {
   function renderModal() {
     if (state.selectedRestaurantID === null) return null;
 
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    let mapWidth, mapHeight;
+    if (windowWidth < 700) {
+      mapWidth = windowWidth - 100;
+      mapHeight = windowHeight / 3;
+    }
+
     const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
     return (
       <Modal
         onClose={() => mergeState({ selectedRestaurantID: null })}
         showClose
       >
-        <div className='w-[850px] h-[450px] bg-slate-50 rounded-xl p-8 flex cursor-default'>
-          <div className='w-2/4 h-full flex  flex-col justify-between'>
-            <div className='flex flex-col items-start h-[90px] justify-between'>
-              <p className='font-archivo text-[30px] text-wrap '>
+        <div className='md:w-[850px] md:h-[450px] h-[600px]  bg-slate-50 rounded-xl p-8 flex md:flex-row flex-col cursor-default'>
+          <div className='md:w-2/4 md:h-full h-2/5 flex flex-col justify-between'>
+            <div className='flex flex-col items-start md:h-[90px] h-[50px] justify-between'>
+              <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
                 {restaurant.name}
               </p>
 
@@ -88,8 +98,8 @@ export default function FoodList(): JSX.Element {
               </p>
             </div>
 
-            <div className='flex flex-col items-end mr-5'>
-              <p className='text-wrap font-semibold'>
+            <div className='flex flex-col items-end mr-5 text-right'>
+              <p className='text-wrap font-semibold '>
                 {restaurant.displayAddress}
               </p>
               <p>{restaurant.displayPhone}</p>
@@ -98,24 +108,28 @@ export default function FoodList(): JSX.Element {
           </div>
 
           <div>
-            <MapComponent coordintes={restaurant.coordinates} />
+            <MapComponent
+              coordintes={restaurant.coordinates}
+              width={mapWidth}
+              height={mapHeight}
+            />
           </div>
         </div>
       </Modal>
     );
   }
 
-  const priceOptions = new Array(5).fill("$");
-
   return (
     <div className="className='w-full h-full flex flex-col justify-center items-center cursor-default">
       {renderModal()}
-      <div className='flex flex-col justify-center items-center p-10'>
-        <p className='font-roboto text-[18px]'>The hunt chose</p>
-        <p className='font-archivo font-bold text-[30px]'>{munchHuntChoice}</p>
+      <div className='flex flex-col justify-center items-center md:p-10'>
+        <p className='font-inter text-slate-700 text-[18px]'>The Hunt Chose</p>
+        <p className='font-archivo font-bold md:text-[30px] text-[35px]'>
+          {munchHuntChoice}
+        </p>
       </div>
 
-      <div className='w-5/6  min-h-[420px] max-h-[650px] overflow-auto rounded-lg'>
+      <div className='md:w-5/6 w-full  min-h-[420px] max-h-[650px] overflow-auto rounded-lg'>
         <Grid
           restaurants={yelpRestaurants}
           isLoading={isLoading}
@@ -137,9 +151,9 @@ function Grid(props: GridProps) {
     const placeHolder = new Array(6).fill("item");
 
     return (
-      <div className="grid grid-cols-3 gap-5 gap-y-52'">
+      <div className='grid md:grid-cols-3 grid-cols-1 gap-5 '>
         {placeHolder.map((_, index) => (
-          <div key={index} className='w-full h-full'>
+          <div key={index} className='w-full h-full text-center md:text-left '>
             <Skeleton
               key={index}
               width={"90%"}
@@ -157,14 +171,13 @@ function Grid(props: GridProps) {
       {props.isLoading ? (
         renderLoadingPanels()
       ) : (
-        <div className='grid grid-cols-3 gap-5 gap-y-5 '>
+        <div className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5 '>
           {props.restaurants.map((restaurant, index) => {
             let availibility = "Available for ";
 
             restaurant.transactions.forEach((trans) => {
               if (trans.includes("_")) {
                 const str = trans.split("_").join(" ");
-                console.log(str);
                 availibility = availibility.concat(`${str} `);
               } else {
                 availibility = availibility.concat(`${trans} `);
@@ -174,7 +187,7 @@ function Grid(props: GridProps) {
             return (
               <div key={`${index}-${restaurant.id}`} className='h-[300px] px-5'>
                 <Card
-                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-lg hover:bg-orange-300 '
+                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-xl hover:border-4 cursor-pointer'
                   onClick={() => props.onSelect(restaurant.id)}
                 >
                   <CardContent className='w-full  overflow-hidden p-0 rounded-lg relative'>
@@ -261,24 +274,21 @@ function renderRating(params: RatingParams): JSX.Element {
     >
       {stars.map((type, index) => {
         return (
-          <div>
+          <div key={index}>
             {type === "stars" ? (
               <Star
-                key={index}
                 size={size}
-                className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
+                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
               />
             ) : (
               <StarHalf
-                key={index}
                 size={size}
-                className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
+                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
               />
             )}
           </div>
         );
       })}
-      {/* </div> */}
     </XyzTransitionGroup>
   );
 }

@@ -34,6 +34,8 @@ export default function Location(): JSX.Element {
     munchContext.currentCoordinates
   );
 
+  const windowHeight = window.innerHeight;
+
   useEffect(() => {
     if (!address) return;
 
@@ -69,30 +71,27 @@ export default function Location(): JSX.Element {
       },
       { translateY: 0, duration: time }
     );
-
-    //code
   }, [titleRef, underBarRef]);
 
-  //handler
-  async function handleSubmit() {
-    const windowHeight = window.innerHeight;
-    const windowWidth = window.innerWidth;
+  function triggerAnimations() {
     const barHeight = underBarRef.current
       ? underBarRef.current.clientHeight
       : 150;
     const barTextWidth = barTextRef.current
       ? barTextRef.current.clientWidth
       : 1000;
-
-    console.log(windowHeight - barTextWidth);
-
     gsap.fromTo(
       underBarRef.current,
       {
         translateY: 0,
         opacity: 1,
       },
-      { translateY: -(windowHeight - barHeight), duration: 1 }
+      {
+        translateY: -(windowHeight - barHeight),
+        opacity: 1,
+        scaleY: 0.9,
+        duration: 1,
+      }
     );
 
     gsap.fromTo(
@@ -115,14 +114,18 @@ export default function Location(): JSX.Element {
       {
         opacity: 1,
         translateX: 0,
-        duration: 1,
       },
       {
-        translateX: barTextWidth - windowHeight + 20,
-        opacity: 0.3,
-        duration: 1,
+        translateX: barTextWidth - windowHeight - 10,
+        scale: 1.3,
+        opacity: 0.2,
       }
     );
+  }
+
+  //handler
+  async function handleSubmit() {
+    triggerAnimations();
 
     const currentCoordiantes = munchContext.currentCoordinates;
     if (!currentCoordiantes.latitude && !currentCoordiantes.longitude) {
@@ -145,13 +148,13 @@ export default function Location(): JSX.Element {
     <div className='bg-slate-50 h-screen flex flex-col justify-end'>
       <div
         ref={containerRef1}
-        className='w-full flex justify-center items-center mt-10'
+        className='w-full flex justify-center items-center md:mt-10 mb-[100px] md:mb-0'
       >
         <div className='w-full flex justify-center items-center'>
-          <div className=' flex flex-col justify-start mr-10'>
+          <div className=' flex flex-col justify-start md:items-center mr-10'>
             <p
               ref={titleRef}
-              className='font-archivo font-black text-black  tracking-tighter text-[280px] text-wrap m-0 p-0 leading-none'
+              className='font-archivo font-black text-black  tracking-tighter lg:text-[280px] text-[100px] text-wrap m-0 p-0 leading-none'
             >
               Munch Hunt
             </p>
@@ -160,8 +163,8 @@ export default function Location(): JSX.Element {
       </div>
 
       <div ref={containerRef2} className='flex justify-center'>
-        <div className='w-2/3 h-28 flex justify-center items-center rounded-lg border-none  '>
-          <div className='w-2/3 flex  '>
+        <div className='md:w-2/3 md:h-28 w-full flex justify-center items-center rounded-lg border-none  '>
+          <div className='md:w-2/3 w-5/6 flex'>
             <div className='relative w-full'>
               <span className='absolute inset-y-0 right-3 flex items-center text-slate-900'>
                 {isLoading ? <LoaderIcon /> : <Search className='h-4 w-4' />}
@@ -189,10 +192,13 @@ export default function Location(): JSX.Element {
 
       <div
         ref={underBarRef}
-        className='w-full h-1/6 bg-customOrange flex justify-center items-center mt-20'
+        className='w-full md:h-1/6 h-[80px] bg-customOrange flex justify-center items-center mt-20'
       >
-        <p ref={barTextRef} className='font-inter font-black text-2xl'>
-          Conquer hunger.
+        <p
+          ref={barTextRef}
+          className='font-inter font-black md:text-[40px] text-[20px]'
+        >
+          Conquer Hunger.
         </p>
       </div>
     </div>
@@ -217,52 +223,3 @@ function removeStateAndCountry(address: string | undefined) {
     return address;
   }
 }
-
-{
-  /* <div className='flex justify-center items-center h-2/5 '>
-              <div className='flex justify-center items-center space-x-7 p-6 rounded-lg'>
-                {cards.map((card, i) => {
-                  return (
-                    <Card
-                      key={`$${i}-${card.footer}`}
-                      className={` bg-slate-50 w-[300px] h-[300px]  flex flex-col justify-between border-none shadow-lg border-2 p-1 opacity-[0.7] ${
-                        i === currentCardIndex ? "animate-grow" : ""
-                      }`}
-                      // style={{ animationDelay: `${i + 1 * 10}s` }}
-                    >
-                      <CardContent className='w-full  overflow-hidden p-0 rounded-lg rounded-b-none'>
-                        <img
-                          className='object-contain  transform translate-y-[-40px]'
-                          alt='food'
-                          src={card.source}
-                        />
-                      </CardContent>
-                      <CardFooter className='px-2 py-1'>
-                        <p className='font-semibold text-slate-800'>
-                          {card.footer}
-                        </p>
-                      </CardFooter>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div> */
-}
-
-// const cards: { footer: string; source: string }[] = [
-//   {
-//     footer: "Korean",
-//     source:
-//       "https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   },
-//   {
-//     footer: "Mexican",
-//     source:
-//       "https://images.unsplash.com/photo-1624300629298-e9de39c13be5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   },
-//   {
-//     footer: "Pizza",
-//     source:
-//       "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//   },
-// ];

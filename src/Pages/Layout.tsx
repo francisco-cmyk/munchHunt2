@@ -2,12 +2,6 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../index.css";
 import { SyntheticEvent, useEffect } from "react";
 import { useMunchContext } from "../Context/MunchContext";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../Components/Tooltip";
 
 export default function Layout() {
   const munchContext = useMunchContext();
@@ -54,7 +48,7 @@ export default function Layout() {
       {!isLandingPages ? (
         <header className=' w-full bg-customOrange p-3 flex justify-between items-center fixed z-20 top-0 left-0 cursor-default'>
           <div onClick={(e) => handleHeaderClick(e)}>
-            <p className='font-archivo font-black  tracking-tighter text-[65px] ml-3'>
+            <p className='font-archivo font-black  tracking-tighter md:text-[65px] text-[30px] ml-3'>
               Munch Hunt
             </p>
           </div>

@@ -7,6 +7,8 @@ import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
 import { Loader2, UtensilsCrossed } from "lucide-react";
 import Modal from "../Components/Modal";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 type State = {
   selectedChoices: string[];
@@ -116,13 +118,13 @@ export default function SelectionPage(): JSX.Element {
         <XyzTransition
           appear
           className='bg-customOrange rounded-[15px]
-          ring-[20px] ring-customOrange ring-offset-1 ring-offset-transparent ring-opacity-45
+          ring-[9px] ring-customOrange ring-offset-1 ring-offset-transparent ring-opacity-45
           '
           xyz='small-100% origin-center'
         >
           <div className='flex flex-col justify-center items-center  h-[200px] min-w-[400px] max-w-[600px] rounded-[30px] p-4'>
             <p className='font-roboto text-[18px] font-semibold text-white'>
-              The hunt chose:
+              The Hunt Chose
             </p>
             <p className='font-archivo font-bold text-[65px]'>
               {munchContext.munchHuntChoice}

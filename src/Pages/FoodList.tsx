@@ -9,13 +9,7 @@ import Modal from "../Components/Modal";
 import { keyBy } from "lodash";
 import MapComponent from "../Components/MapComponent";
 import getMergeState from "../utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { Button } from "../Components/Button";
+import { XyzTransitionGroup } from "@animxyz/react";
 
 type State = {
   selectedRestaurantID: string | null;
@@ -121,22 +115,6 @@ export default function FoodList(): JSX.Element {
         <p className='font-archivo font-bold text-[30px]'>{munchHuntChoice}</p>
       </div>
 
-      {/* <div className='mb-3'>
-        <DropdownMenu>
-          <DropdownMenuTrigger className='w-[150px] p-2 rounded-md border-slate-200 border-2'>
-            {"Price"}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className='flex flex-col z-20 drop-shadow'>
-            {priceOptions.map((price, index) => (
-              // <Button>{price}</Button>
-              <DropdownMenuItem className='w-[160px] h-[40px] flex p-2 bg-slate-50 rounded-sm'>
-                {price.repeat(index === 0 ? index + 1 : index)}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div> */}
-
       <div className='w-5/6  min-h-[420px] max-h-[650px] overflow-auto rounded-lg'>
         <Grid
           restaurants={yelpRestaurants}
@@ -234,7 +212,7 @@ function Grid(props: GridProps) {
                       <p className='mr-2 font-semibold'>
                         {restaurant.price ? restaurant.price : "--"}
                       </p>
-                      <p>{`${convertToMiles(
+                      <p className='text-slate-700'>{`${convertToMiles(
                         restaurant.distance
                       )} miles away`}</p>
                     </div>
@@ -276,22 +254,31 @@ function renderRating(params: RatingParams): JSX.Element {
   const size = params.iconSize ?? 16;
 
   return (
-    <div className={`flex ${params.direction ? `flex-start` : `justify-end`}`}>
+    <XyzTransitionGroup
+      className={`flex ${params.direction ? `flex-start` : `justify-end`}`}
+      appear={!!params.direction}
+      xyz='fade small out-down out-rotate-right appear-stagger'
+    >
       {stars.map((type, index) => {
-        return type === "stars" ? (
-          <Star
-            key={index}
-            size={size}
-            className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
-          />
-        ) : (
-          <StarHalf
-            key={index}
-            size={size}
-            className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
-          />
+        return (
+          <div>
+            {type === "stars" ? (
+              <Star
+                key={index}
+                size={size}
+                className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
+              />
+            ) : (
+              <StarHalf
+                key={index}
+                size={size}
+                className={` mr-1 fill-[#ffcf40] text-[#ffcf40] group-hover:fill-slate-800 group-hover:text-slate-800`}
+              />
+            )}
+          </div>
         );
       })}
-    </div>
+      {/* </div> */}
+    </XyzTransitionGroup>
   );
 }

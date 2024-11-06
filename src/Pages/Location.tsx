@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../Components/Button";
 import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
-import { XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import getMergeState from "../utils";
 import { LoaderIcon, Search } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
 import { useNavigate } from "react-router-dom";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 type State = {
   addresssInput: string;
@@ -24,9 +25,8 @@ export default function Location(): JSX.Element {
   const [state, setState] = useState(initialState);
   const mergeState = getMergeState(setState);
 
-  const navigate = useNavigate();
-
   const munchContext = useMunchContext();
+  const navigate = useNavigate();
 
   const mutation = useGetCoordinatesFromAddress();
 
@@ -43,8 +43,87 @@ export default function Location(): JSX.Element {
     }
   }, [address]);
 
+  const titleRef = useRef<HTMLDivElement>(null);
+  const underBarRef = useRef<HTMLDivElement>(null);
+  const containerRef1 = useRef<HTMLDivElement>(null);
+  const containerRef2 = useRef<HTMLDivElement>(null);
+  const barTextRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const time = 1; //3s
+
+    gsap.fromTo(
+      titleRef.current,
+      {
+        translateY: -300,
+        duration: time,
+      },
+      { translateY: 0, duration: time }
+    );
+
+    gsap.fromTo(
+      underBarRef.current,
+      {
+        translateY: 100,
+        duration: time,
+      },
+      { translateY: 0, duration: time }
+    );
+
+    //code
+  }, [titleRef, underBarRef]);
+
   //handler
   async function handleSubmit() {
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    const barHeight = underBarRef.current
+      ? underBarRef.current.clientHeight
+      : 150;
+    const barTextWidth = barTextRef.current
+      ? barTextRef.current.clientWidth
+      : 1000;
+
+    console.log(windowHeight - barTextWidth);
+
+    gsap.fromTo(
+      underBarRef.current,
+      {
+        translateY: 0,
+        opacity: 1,
+      },
+      { translateY: -(windowHeight - barHeight), duration: 1 }
+    );
+
+    gsap.fromTo(
+      containerRef1.current,
+      {
+        opacity: 1,
+        duration: 1,
+      },
+      { opacity: 0, duration: 1 }
+    );
+
+    gsap.fromTo(
+      containerRef2.current,
+      { opacity: 1, translateX: 0 },
+      { opacity: 0, translateX: -2000 }
+    );
+
+    gsap.fromTo(
+      barTextRef.current,
+      {
+        opacity: 1,
+        translateX: 0,
+        duration: 1,
+      },
+      {
+        translateX: barTextWidth - windowHeight + 20,
+        opacity: 0.3,
+        duration: 1,
+      }
+    );
+
     const currentCoordiantes = munchContext.currentCoordinates;
     if (!currentCoordiantes.latitude && !currentCoordiantes.longitude) {
       const response = await mutation.mutateAsync(state.addresssInput);
@@ -57,74 +136,65 @@ export default function Location(): JSX.Element {
     }
 
     munchContext.setCurrentAddress(state.addresssInput);
-    navigate("/select");
+    setTimeout(() => {
+      navigate("/select");
+    }, 1100);
   }
 
   return (
-    <div className=' bg-customOrange'>
-      <XyzTransition xyz='fade delay-5 '>
-        <div className='h-screen flex flex-col justify-between font-inter '>
-          <div className='w-full flex flex-col items-center justify-center p-5'>
-            <p className='font-roboto font-semibold text-[20px]'>
-              Find good food near you
-            </p>
-            <p className='font-inter font-black text-[20px]'>
-              Conquer hunger. Lets get to hunting.
-            </p>
-          </div>
-
-          <div className='h-2/5 flex justify-center items-center w-full'>
-            <div className='w-2/5 flex justify-center bg-slate-900 rounded-2xl p-2'>
-              <XyzTransition
-                appear
-                xyz=' right-20% left-50%  iterate-infinite duration-25 direction-alternate'
-              >
-                <div
-                  className={`rounded-3xl h-[240px] w-[330px] bg-contain bg-top bg-no-repeat bg-[url('https://i.imgur.com/Z9MSzBn.png')] `}
-                />
-              </XyzTransition>
-            </div>
-          </div>
-
-          <div className='flex justify-center'>
-            <div className='w-2/4 h-28 flex justify-center items-center rounded-lg border-none  '>
-              <div className='w-2/3 flex  '>
-                <div className='relative w-full'>
-                  <span className='absolute inset-y-0 right-3 flex items-center text-slate-900'>
-                    {isLoading ? (
-                      <LoaderIcon />
-                    ) : (
-                      <Search className='h-4 w-4' />
-                    )}
-                  </span>
-                  <Input
-                    className={` border-none bg-slate-50 font-inter shadow-xl`}
-                    type='text'
-                    placeholder='Enter your location'
-                    value={state.addresssInput}
-                    onChange={(e) => {
-                      mergeState({ addresssInput: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <Button
-                  className='ml-2 w-[100px] shadow-lg '
-                  onClick={handleSubmit}
-                >
-                  <Crosshair2Icon style={{ width: "25px", height: "25px" }} />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <header className='flex flex-col items-center'>
-            <p className='font-archivo font-black  tracking-tighter text-[150px]'>
+    <div className='bg-slate-50 h-screen flex flex-col justify-end'>
+      <div
+        ref={containerRef1}
+        className='w-full flex justify-center items-center mt-10'
+      >
+        <div className='w-full flex justify-center items-center'>
+          <div className=' flex flex-col justify-start mr-10'>
+            <p
+              ref={titleRef}
+              className='font-archivo font-black text-black  tracking-tighter text-[280px] text-wrap m-0 p-0 leading-none'
+            >
               Munch Hunt
             </p>
-          </header>
+          </div>
         </div>
-      </XyzTransition>
+      </div>
+
+      <div ref={containerRef2} className='flex justify-center'>
+        <div className='w-2/3 h-28 flex justify-center items-center rounded-lg border-none  '>
+          <div className='w-2/3 flex  '>
+            <div className='relative w-full'>
+              <span className='absolute inset-y-0 right-3 flex items-center text-slate-900'>
+                {isLoading ? <LoaderIcon /> : <Search className='h-4 w-4' />}
+              </span>
+              <Input
+                className={`h-[50px] bg-slate-50 font-inter drop-shadow-lg`}
+                type='text'
+                placeholder='Enter your location'
+                value={state.addresssInput}
+                onChange={(e) => {
+                  mergeState({ addresssInput: e.target.value });
+                }}
+              />
+            </div>
+
+            <Button
+              className='ml-2 w-[100px] shadow-lg drop-shadow-lg h-[50px] hover:bg-customOrange '
+              onClick={handleSubmit}
+            >
+              <Crosshair2Icon style={{ width: "25px", height: "25px" }} />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        ref={underBarRef}
+        className='w-full h-1/6 bg-customOrange flex justify-center items-center mt-20'
+      >
+        <p ref={barTextRef} className='font-inter font-black text-2xl'>
+          Conquer hunger.
+        </p>
+      </div>
     </div>
   );
 }

@@ -58,25 +58,6 @@ export default function Layout() {
               Munch Hunt
             </p>
           </div>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <div
-                  className={`rounded-3xl h-20 w-32 bg-contain bg-top bg-no-repeat bg-[url('https://i.imgur.com/Z9MSzBn.png')] `}
-                />
-              </TooltipTrigger>
-              <TooltipContent className='max-w-[300px]'>
-                <p>For more information go to:</p>
-                <a
-                  href='https://github.com/francisco-cmyk/munchHunt2'
-                  target='_blank'
-                >
-                  Github
-                </a>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </header>
       ) : null}
 

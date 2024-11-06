@@ -71,7 +71,7 @@ module.exports = {
       },
       backgroundImage: {
         "custom-sunset-gradient":
-          "linear-gradient(to bottom, #FFD29E, #FFC684, #FFB969, #FFAD4F, #FFA135, #FF941A, #FF8800)",
+          "linear-gradient(90deg, hsla(228, 12%, 8%, 1) 0%, hsla(359, 73%, 39%, 1) 39%, hsla(9, 69%, 45%, 1) 54%, hsla(32, 97%, 59%, 1) 100%)",
       },
       borderRadius: {
         lg: `var(--radius)`,

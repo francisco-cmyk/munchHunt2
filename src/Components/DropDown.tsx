@@ -2,8 +2,15 @@
 
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
+import {
+  ArrowDown,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Circle,
+} from "lucide-react";
 import { cn } from "../utils";
+import { Button } from "./Button";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -180,52 +187,57 @@ const DropdownMenuShortcut = ({
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
-export type Options = {
+export type Option = {
   label: string;
   value: string;
 };
 
 type DropDownProps = {
   title: string;
-  options: Options[];
+  options: Option[];
+  onChange: (params: { name: string; value: string }) => void;
 };
 
-// export default function DropDown(props: DropDownProps): JSX.Element {
-//   const [selectedOptions, setSelectedOptions] = React.useState<Options[]>([]);
+export default function DropDown(props: DropDownProps): JSX.Element {
+  const [selectedOption, setSelectedOptions] = React.useState<Option | null>(
+    null
+  );
 
-//   function handleOnChange(option: Options) {
-//     setSelectedOptions((prevState) => {
-//       return [...prevState, option];
-//     });
-//   }
+  function handleOnChange(option: Option) {
+    setSelectedOptions(option);
 
-//   return (
-//     <DropdownMenu>
-//       <DropdownMenuTrigger>{props.title}</DropdownMenuTrigger>
-//       <DropdownMenuContent>
-//         {props.options.map((option, index) => (
-//           <DropdownMenuItem
-//             key={`${index}-${option.value}`}
-//             onChange={() => handleOnChange(option)}
-//           >
-//             {option.label}
-//           </DropdownMenuItem>
-//         ))}
-//       </DropdownMenuContent>
-//     </DropdownMenu>
-//   );
-// }
+    props.onChange({ name: props.title.toLowerCase(), value: option.value });
+  }
 
-{
-  /* <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator /> */
-}
+  const menu = selectedOption !== null ? selectedOption.label : props.title;
 
-{
-  /* <DropdownMenuItem>Profile</DropdownMenuItem>
-<DropdownMenuItem>Billing</DropdownMenuItem>
-<DropdownMenuItem>Team</DropdownMenuItem>
-<DropdownMenuItem>Subscription</DropdownMenuItem> */
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className='mr-4'>
+        <Button
+          variant='outline'
+          className='md:w-[180px] w-[120px] flex justify-between border-2 bg-transparent focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 ring-offset-
+          hover:bg-slate-700 hover:text-white'
+        >
+          {menu}
+
+          <ChevronDown />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side='bottom' className='bg-opacity-70'>
+        {props.options.map((option, index) => (
+          <DropdownMenuItem
+            className='md:w-[170px]  text-xl text-black font-roboto hover:text-customOrange hover:bg-slate-500'
+            key={`${index}-${option.value}`}
+            onChange={() => handleOnChange(option)}
+            onClick={() => handleOnChange(option)}
+          >
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 export {

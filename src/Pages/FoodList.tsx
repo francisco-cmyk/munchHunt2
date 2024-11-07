@@ -3,7 +3,7 @@ import useGetRestaurants, { Restaurant } from "../Hooks/useGetRestaurants";
 import { Card, CardContent, CardFooter } from "../Components/Card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StarHalf, Star } from "lucide-react";
 import Modal from "../Components/Modal";
 import { keyBy } from "lodash";
@@ -11,6 +11,7 @@ import MapComponent from "../Components/MapComponent";
 import getMergeState from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
+import DropDown from "../Components/DropDown";
 
 type State = {
   selectedRestaurantID: string | null;
@@ -50,6 +51,33 @@ export default function FoodList(): JSX.Element {
 
   // Filter
 
+  const filteredResults = useMemo(() => {
+    if (!state.distanceFilter && !state.ratingFilter && !state.priceFilter)
+      return yelpRestaurants;
+
+    return yelpRestaurants.filter((result) => {
+      const isPrice =
+        state.priceFilter === null ||
+        (result.price !== undefined && result.price === state.priceFilter);
+
+      const isDistance =
+        state.distanceFilter === null ||
+        Number(convertToMiles(result.distance)) <= state.distanceFilter;
+
+      //TODO: fix
+      const isRating =
+        state.ratingFilter === null ||
+        Math.floor(result.rating) >= state.ratingFilter;
+
+      return isPrice && isDistance && isRating;
+    });
+  }, [
+    yelpRestaurants,
+    state.priceFilter,
+    state.distanceFilter,
+    state.ratingFilter,
+  ]);
+
   // Handler
 
   function handleRestaurantClick(id: string) {
@@ -58,6 +86,25 @@ export default function FoodList(): JSX.Element {
     } else {
       mergeState({ selectedRestaurantID: id });
     }
+  }
+
+  function handleFilterChange(params: { name: string; value: string }) {
+    let formattedValue: string | number = params.value;
+
+    switch (params.name) {
+      case "price": {
+        formattedValue = params.value;
+        break;
+      }
+      case "rating": {
+        formattedValue = Number(params.value);
+        break;
+      }
+      case "distance": {
+        formattedValue = Number(params.value);
+      }
+    }
+    mergeState({ [`${params.name}Filter`]: formattedValue });
   }
 
   //Render
@@ -119,19 +166,60 @@ export default function FoodList(): JSX.Element {
     );
   }
 
+  const priceOptions = new Array(5).fill("$").map((item, i) => {
+    const dollars = item.repeat(i + 1);
+    return {
+      label: dollars,
+      value: dollars,
+    };
+  });
+
+  const ratingOptions = new Array(5).fill("").map((_, i) => {
+    const numeric = i + 1;
+    const rating = numeric.toString() + (i === 0 ? " Star" : " Stars");
+    return { label: rating, value: numeric.toString() };
+  });
+
+  const distanceOptions = ["<1", "1", "5", "10", "25"].map((item, i) => {
+    const miles = item === "<1" ? "0.9" : item;
+
+    return {
+      label: item + " ml",
+      value: miles,
+    };
+  });
+
   return (
     <div className="className='w-full h-full flex flex-col justify-center items-center cursor-default">
       {renderModal()}
-      <div className='flex flex-col justify-center items-center md:p-10'>
+      <div className='flex flex-col justify-center items-center md:p-8 max-h-[100px]'>
         <p className='font-inter text-slate-700 text-[18px]'>The Hunt Chose</p>
         <p className='font-archivo font-bold md:text-[30px] text-[35px]'>
           {munchHuntChoice}
         </p>
       </div>
 
-      <div className='md:w-5/6 w-full  min-h-[420px] max-h-[650px] overflow-auto rounded-lg'>
+      <div className='md:w-5/6 w-full flex md:justify-start justify-center py-3'>
+        <DropDown
+          title='Price'
+          options={priceOptions}
+          onChange={handleFilterChange}
+        />
+        <DropDown
+          title='Distance'
+          options={distanceOptions}
+          onChange={handleFilterChange}
+        />
+        <DropDown
+          title='Rating'
+          options={ratingOptions}
+          onChange={handleFilterChange}
+        />
+      </div>
+
+      <div className='md:w-5/6 w-full 2xl:min-h-[420px] 2xl:max-h-[650px] md:max-h-[550px] md:min-h-[550px]  overflow-auto rounded-lg'>
         <Grid
-          restaurants={yelpRestaurants}
+          restaurants={filteredResults}
           isLoading={isLoading}
           onSelect={handleRestaurantClick}
         />
@@ -151,7 +239,11 @@ function Grid(props: GridProps) {
     const placeHolder = new Array(6).fill("item");
 
     return (
-      <div className='grid md:grid-cols-3 grid-cols-1 gap-5 '>
+      <XyzTransitionGroup
+        appear
+        className='grid md:grid-cols-3 grid-cols-1 gap-5 '
+        xyz='fade small out-down out-rotate-right-0'
+      >
         {placeHolder.map((_, index) => (
           <div key={index} className='w-full h-full text-center md:text-left '>
             <Skeleton
@@ -163,7 +255,7 @@ function Grid(props: GridProps) {
             <Skeleton width={"50%"} style={{ borderRadius: "5px" }} />
           </div>
         ))}
-      </div>
+      </XyzTransitionGroup>
     );
   }
   return (
@@ -171,7 +263,11 @@ function Grid(props: GridProps) {
       {props.isLoading ? (
         renderLoadingPanels()
       ) : (
-        <div className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5 '>
+        <XyzTransitionGroup
+          appear
+          className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5 '
+          xyz='fade small out-down out-rotate-right-0'
+        >
           {props.restaurants.map((restaurant, index) => {
             let availibility = "Available for ";
 
@@ -194,7 +290,7 @@ function Grid(props: GridProps) {
                     <div
                       className='absolute top-0 right-0 z-10 w-[250px] p-3 flex flex-col items-end text-[20px] font-bold text-white
                       opacity-0 group-hover:opacity-100  -translate-x-10 transition-transform duration-500 ease-in-out group-hover:translate-x-0 rounded-lg
-                      drop-shadow-[0_35px_35px_rgba(0, 0, 0, 0.58)]'
+                      drop-shadow-md '
                     >
                       {restaurant.transactions.length > 0 && (
                         <div className=' text-[15px] flex justify-end text-wrap  rounded-lg drop-shadow-lg'>
@@ -234,7 +330,7 @@ function Grid(props: GridProps) {
               </div>
             );
           })}
-        </div>
+        </XyzTransitionGroup>
       )}
     </div>
   );

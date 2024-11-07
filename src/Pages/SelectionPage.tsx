@@ -5,10 +5,12 @@ import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, UtensilsCrossed, X } from "lucide-react";
+import { ArrowLeft, Loader2, UtensilsCrossed, X, XCircle } from "lucide-react";
 import Modal from "../Components/Modal";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Tooltip, TooltipContent } from "@radix-ui/react-tooltip";
+import ToolTip from "../Components/Tooltip";
 
 type State = {
   selectedChoices: string[];
@@ -210,17 +212,33 @@ export default function SelectionPage(): JSX.Element {
 
       <div
         ref={sidePanel}
-        className={`min-h-[500px] max-h-[500px]  flex flex-col  overflow-hidden  ${
+        className={`min-h-[500px] max-h-[500px]  flex flex-col overflow-hidden ${
           state.excludedChoices.length > 0
             ? "w-[400px] py-3 px-4 border-l-2 "
             : "w-0 hidden md:flex "
         }`}
       >
-        <div className='h-full w-full overflow-scroll'>
-          <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
-            Excluded Choices
-          </p>
-          <div className='flex flex-col'>
+        <div className='h-full w-full '>
+          <div className='h-1/5 w-full flex justify-between '>
+            <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
+              Excluded Choices
+            </p>
+
+            <ToolTip
+              className='bg-slate-500 opacity-80 '
+              side='left'
+              content={<p className='text-white'>Remove all from excluded</p>}
+            >
+              <X
+                className=' text-slate-400 '
+                onClick={(e) => {
+                  e.preventDefault();
+                  mergeState({ excludedChoices: [] });
+                }}
+              />
+            </ToolTip>
+          </div>
+          <div className='max-h-[28rem] flex flex-col overflow-auto'>
             {state.excludedChoices.map((choice, index) => (
               <Button
                 key={index}
@@ -261,7 +279,7 @@ function Grid(props: GridProps) {
         <XyzTransitionGroup
           appear
           className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-2 '
-          xyz='fade small out-down out-rotate-right duration-3 '
+          xyz='fade small out-down out-rotate-right-0 duration-3 '
         >
           {props.choices.map((item, index) => (
             <div key={`${index}-${item}`} className='h-[50px]'>

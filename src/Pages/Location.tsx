@@ -79,8 +79,8 @@ export default function Location(): JSX.Element {
     const containerHeight = main.current?.clientHeight ?? 600;
 
     gsap.to(bounce.current, {
-      x: () => gsap.utils.random(3, containerWidth - 100, 5),
-      y: () => gsap.utils.random(0.3, containerHeight - 200, 5),
+      x: () => gsap.utils.random(3, containerWidth - 100, 1),
+      y: () => gsap.utils.random(0.5, containerHeight - 200, 1),
       duration: 3,
       ease: "sine.in",
       repeat: -1,
@@ -95,19 +95,6 @@ export default function Location(): JSX.Element {
     const barTextWidth = barTextRef.current
       ? barTextRef.current.clientWidth
       : 1000;
-    gsap.fromTo(
-      underBarRef.current,
-      {
-        translateY: 0,
-        opacity: 1,
-      },
-      {
-        translateY: -(viewportHeight - barHeight),
-        opacity: 1,
-        scaleY: 0.9,
-        duration: 1,
-      }
-    );
 
     gsap.fromTo(
       containerRef1.current,
@@ -125,6 +112,20 @@ export default function Location(): JSX.Element {
     );
 
     gsap.fromTo(
+      underBarRef.current,
+      {
+        translateY: 0,
+        opacity: 1,
+      },
+      {
+        translateY: -(viewportHeight - barHeight),
+        opacity: 1,
+        scaleY: 0.9,
+        duration: 1,
+      }
+    );
+
+    gsap.fromTo(
       barTextRef.current,
       {
         opacity: 1,
@@ -135,6 +136,17 @@ export default function Location(): JSX.Element {
         scale: 1.3,
         opacity: 0.2,
       }
+    );
+
+    gsap.fromTo(
+      bounce.current,
+      {
+        opacity: 0.9,
+        rotate: 0,
+        delay: 1,
+        ease: "power1.inOut",
+      },
+      { opacity: 0, scale: 1.5, rotate: 360, ease: "power1.inOut" }
     );
   }
 
@@ -160,7 +172,10 @@ export default function Location(): JSX.Element {
   }
 
   return (
-    <div ref={main} className='bg-slate-50 h-screen flex flex-col justify-end'>
+    <div
+      ref={main}
+      className='bg-slate-50 h-screen flex flex-col justify-end cursor-default'
+    >
       <div ref={bounce} className='absolute top-0 '>
         <Crosshair2Icon className='md:h-[200px] md:w-[200px] h-[130px] w-[130px] opacity-85 text-customOrange ' />
       </div>
@@ -172,7 +187,7 @@ export default function Location(): JSX.Element {
           <div className=' flex flex-col justify-start md:items-center mr-10'>
             <p
               ref={titleRef}
-              className='font-archivo font-black text-white tracking-tighter lg:text-[280px] text-[100px] text-wrap m-0 p-0 leading-non mix-blend-difference '
+              className='font-archivo font-black text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] text-[100px] text-wrap m-0 p-0 leading-non mix-blend-difference '
             >
               Munch Hunt
             </p>

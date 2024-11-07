@@ -2,8 +2,10 @@ import { Button } from "./Button";
 import { X } from "lucide-react";
 import { SquareX } from "lucide-react";
 import { useEffect } from "react";
+import { cn } from "../utils";
 
 type ModalProps = {
+  class?: string;
   isOpen?: boolean;
   onClose?: () => void;
   showClose?: boolean;
@@ -42,16 +44,22 @@ export default function Modal(props: ModalProps): JSX.Element | null {
       onClick={handleClose}
     >
       <div
-        className='relative p-4 rounded-lg  max-w-full max-h-full flex flex-col'
+        className={cn(
+          "flex flex-col p-4 rounded-lg  max-w-full max-h-full md:bg-slate-50",
+          props.class
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         {props.showClose && (
-          <div className='absolute right-5' onClick={handleClose}>
-            <X className=' text-black hover:text-customOrange' size={30} />
+          <div
+            className='h-[19px] w-full md:flex justify-end hidden'
+            onClick={handleClose}
+          >
+            <X className=' text-black hover:text-customOrange' size={24} />
           </div>
         )}
 
-        {props.children}
+        <>{props.children}</>
       </div>
     </div>
   );

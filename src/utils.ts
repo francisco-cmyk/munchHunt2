@@ -12,3 +12,21 @@ export default function getMergeState<State>(
     return ss((s: State) => ({ ...s, ...ps }));
   };
 }
+
+export function isFloatBetween(
+  num: number,
+  lowerBound: number,
+  upperBound: number
+) {
+  return num > lowerBound && num < upperBound;
+}
+
+export function convertToMiles(distance: number): string {
+  const converted = (distance * 0.000621371192).toFixed(2);
+  return converted.toString();
+}
+
+export function randomizeChoices(choices: string[]): string {
+  const randomIndex = Math.floor(Math.random() * choices.length);
+  return choices[randomIndex];
+}

@@ -3,21 +3,50 @@ import useGetRestaurants, { Restaurant } from "../Hooks/useGetRestaurants";
 import { Card, CardContent, CardFooter } from "../Components/Card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useMemo, useState } from "react";
-import { StarHalf, Star } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import Modal from "../Components/Modal";
-import { keyBy } from "lodash";
+import { keyBy, rest } from "lodash";
 import MapComponent from "../Components/MapComponent";
-import getMergeState from "../utils";
+import getMergeState, { convertToMiles, isFloatBetween } from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
-import DropDown from "../Components/DropDown";
+import DropDown, { Option } from "../Components/DropDown";
+import Filter from "../Components/Filter";
+import Stars from "../Components/Stars";
+import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
+
+const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
+  const dollars = item.repeat(i + 1);
+  return {
+    label: dollars,
+    value: dollars,
+  };
+});
+
+const ratingOptions: Option[] = new Array(5).fill("").map((_, i) => {
+  const numeric = i + 1;
+  const rating = numeric.toString() + (i === 0 ? " Star" : " Stars");
+  return { label: rating, value: numeric.toString() };
+});
+
+const distanceOptions: Option[] = ["<1", "1", "5", "10", "25"].map(
+  (item, i) => {
+    const miles = item === "<1" ? "0.9" : item;
+
+    return {
+      label: item + " ml",
+      value: miles,
+    };
+  }
+);
 
 type State = {
   selectedRestaurantID: string | null;
   priceFilter: string | null;
   distanceFilter: number | null;
   ratingFilter: number | null;
+  showShadow: boolean;
+  isSmallWindow: boolean;
 };
 
 const initialState: State = {
@@ -25,6 +54,8 @@ const initialState: State = {
   priceFilter: null,
   distanceFilter: null,
   ratingFilter: null,
+  showShadow: false,
+  isSmallWindow: false,
 };
 
 export default function FoodList(): JSX.Element {
@@ -34,20 +65,33 @@ export default function FoodList(): JSX.Element {
   const munchContext = useMunchContext();
   const { munchHuntChoice, currentCoordinates } = munchContext;
 
-  const { data: yelpRestaurants = [], isLoading: isLoadingYelp } =
-    useGetRestaurants({
-      food: munchHuntChoice,
-      coordinates: currentCoordinates,
-    });
+  const isSmallWindow = window.innerWidth < 750;
+
+  const {
+    data: yelpRestaurants = [],
+    isLoading: isLoading = false,
+    isFetching: isFetching,
+  } = useGetRestaurants({
+    food: munchHuntChoice,
+    coordinates: currentCoordinates,
+  });
 
   //TODO: use photos for coursel in modal
   const { data: businessInfo } = useGetBusinessInfo({
     businessID: state.selectedRestaurantID ?? "",
   });
 
-  let isLoading = isLoadingYelp ?? true;
-
   const restaurantsKeyedByID = keyBy(yelpRestaurants, "id");
+
+  // Side Effects
+
+  useEffect(() => {
+    if (window.innerWidth < 700) {
+      mergeState({ isSmallWindow: true });
+    } else {
+      mergeState({ isSmallWindow: false });
+    }
+  }, []);
 
   // Filter
 
@@ -64,10 +108,13 @@ export default function FoodList(): JSX.Element {
         state.distanceFilter === null ||
         Number(convertToMiles(result.distance)) <= state.distanceFilter;
 
-      //TODO: fix
       const isRating =
         state.ratingFilter === null ||
-        Math.floor(result.rating) >= state.ratingFilter;
+        isFloatBetween(
+          result.rating,
+          state.ratingFilter,
+          state.ratingFilter + 1
+        );
 
       return isPrice && isDistance && isRating;
     });
@@ -91,6 +138,13 @@ export default function FoodList(): JSX.Element {
   function handleFilterChange(params: { name: string; value: string }) {
     let formattedValue: string | number = params.value;
 
+    const filterName = `${params.name}Filter` as keyof State;
+
+    if (state[`${filterName}`]?.toString() === params.value) {
+      mergeState({ [filterName]: null });
+      return;
+    }
+
     switch (params.name) {
       case "price": {
         formattedValue = params.value;
@@ -104,7 +158,7 @@ export default function FoodList(): JSX.Element {
         formattedValue = Number(params.value);
       }
     }
-    mergeState({ [`${params.name}Filter`]: formattedValue });
+    mergeState({ [filterName]: formattedValue });
   }
 
   //Render
@@ -134,11 +188,11 @@ export default function FoodList(): JSX.Element {
                 {restaurant.name}
               </p>
 
-              {renderRating({
-                rating: restaurant.rating,
-                direction: "start",
-                iconSize: 24,
-              })}
+              <Stars
+                rating={restaurant.rating}
+                direction='start'
+                iconSize={24}
+              />
 
               <p className='font-semibold text-lg mt-2'>
                 {restaurant.price ?? "--"}
@@ -166,63 +220,85 @@ export default function FoodList(): JSX.Element {
     );
   }
 
-  const priceOptions = new Array(5).fill("$").map((item, i) => {
-    const dollars = item.repeat(i + 1);
-    return {
-      label: dollars,
-      value: dollars,
-    };
-  });
-
-  const ratingOptions = new Array(5).fill("").map((_, i) => {
-    const numeric = i + 1;
-    const rating = numeric.toString() + (i === 0 ? " Star" : " Stars");
-    return { label: rating, value: numeric.toString() };
-  });
-
-  const distanceOptions = ["<1", "1", "5", "10", "25"].map((item, i) => {
-    const miles = item === "<1" ? "0.9" : item;
-
-    return {
-      label: item + " ml",
-      value: miles,
-    };
-  });
-
   return (
-    <div className="className='w-full h-full flex flex-col justify-center items-center cursor-default">
+    <div className="className='w-full h-full flex flex-col justify-center items-center cursor-default md:pt-3 overflow-hidden">
       {renderModal()}
-      <div className='flex flex-col justify-center items-center md:p-8 max-h-[100px]'>
-        <p className='font-inter text-slate-700 text-[18px]'>The Hunt Chose</p>
-        <p className='font-archivo font-bold md:text-[30px] text-[35px]'>
-          {munchHuntChoice}
-        </p>
+      <div className='flex w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 py-2'>
+        <div className='w-1/5 md:flex hidden justify-end pr-3'>
+          <p className='font-roboto text-[17px] text-white'>The Hunt Chose</p>
+          <ChevronRight color='white' />
+        </div>
+        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white md:pl-6'>
+          <p className='font-archivo font-bold md:text-[30px] text-[35px] '>
+            {munchHuntChoice}
+          </p>
+        </div>
       </div>
 
-      <div className='md:w-5/6 w-full flex md:justify-start justify-center py-3'>
-        <DropDown
-          title='Price'
-          options={priceOptions}
-          onChange={handleFilterChange}
-        />
-        <DropDown
-          title='Distance'
-          options={distanceOptions}
-          onChange={handleFilterChange}
-        />
-        <DropDown
-          title='Rating'
-          options={ratingOptions}
-          onChange={handleFilterChange}
-        />
-      </div>
+      <div className='w-full h-full flex md:flex-row flex-col mt-2  '>
+        <div className='md:w-1/5 border-r-2 md:flex flex-col md:px-10 px-5 py-4 '>
+          <p className='font-inter font-semibold text-lg text-slate-500'>
+            Filter By
+          </p>
+          <div className='w-full border-b-2' />
+          <div />
 
-      <div className='md:w-5/6 w-full 2xl:min-h-[420px] 2xl:max-h-[650px] md:max-h-[550px] md:min-h-[550px]  overflow-auto rounded-lg'>
-        <Grid
-          restaurants={filteredResults}
-          isLoading={isLoading}
-          onSelect={handleRestaurantClick}
-        />
+          {state.isSmallWindow ? (
+            <div className='flex flex-row h-[95%] overflow-auto mt-2'>
+              <DropDown
+                title='Price'
+                options={priceOptions}
+                onChange={handleFilterChange}
+              />
+
+              <DropDown
+                title='Distance'
+                options={distanceOptions}
+                onChange={handleFilterChange}
+              />
+              <DropDown
+                title='Rating'
+                options={ratingOptions}
+                onChange={handleFilterChange}
+              />
+            </div>
+          ) : (
+            <div className='flex flex-col h-[95%] overflow-auto mt-2'>
+              <Filter
+                filterName={"price"}
+                label='Price'
+                options={priceOptions}
+                value={state.priceFilter ?? ""}
+                handleChange={handleFilterChange}
+              />
+
+              <Filter
+                filterName={"distance"}
+                label='Distance'
+                options={distanceOptions}
+                value={state.distanceFilter?.toString() ?? ""}
+                handleChange={handleFilterChange}
+              />
+
+              <Filter
+                filterName={"rating"}
+                label='Rating'
+                options={ratingOptions}
+                value={state.ratingFilter?.toString() ?? ""}
+                handleChange={handleFilterChange}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className='md:w-3/4 2xl:max-h-[650px] md:max-h-[550px] md:min-h-[550px] max-h-[600px]  overflow-auto rounded-lg'>
+          <Grid
+            restaurants={filteredResults}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            onSelect={handleRestaurantClick}
+          />
+        </div>
       </div>
     </div>
   );
@@ -231,40 +307,29 @@ export default function FoodList(): JSX.Element {
 type GridProps = {
   restaurants: Restaurant[];
   isLoading: boolean;
+  isFetching: boolean;
   onSelect: (id: string) => void;
 };
 
 function Grid(props: GridProps) {
-  function renderLoadingPanels() {
-    const placeHolder = new Array(6).fill("item");
-
+  if (!props.isFetching && props.restaurants.length === 0) {
     return (
-      <XyzTransitionGroup
-        appear
-        className='grid md:grid-cols-3 grid-cols-1 gap-5 '
-        xyz='fade small out-down out-rotate-right-0'
-      >
-        {placeHolder.map((_, index) => (
-          <div key={index} className='w-full h-full text-center md:text-left '>
-            <Skeleton
-              key={index}
-              width={"90%"}
-              height={200}
-              style={{ borderRadius: "10px" }}
-            />
-            <Skeleton width={"50%"} style={{ borderRadius: "5px" }} />
-          </div>
-        ))}
-      </XyzTransitionGroup>
+      <div className='h-full w-full flex justify-center items-center  opacity-20 mt-2'>
+        <div className='flex flex-col items-center'>
+          <Frown className='h-28 w-28 ' />
+          <p className='font-anton text-[30px]'>No results</p>
+        </div>
+      </div>
     );
   }
+
   return (
     <div className='h-full'>
       {props.isLoading ? (
-        renderLoadingPanels()
+        <Placeholder />
       ) : (
         <XyzTransitionGroup
-          appear
+          appear={props.restaurants.length > 0}
           className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5 '
           xyz='fade small out-down out-rotate-right-0'
         >
@@ -283,7 +348,7 @@ function Grid(props: GridProps) {
             return (
               <div key={`${index}-${restaurant.id}`} className='h-[300px] px-5'>
                 <Card
-                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-xl hover:border-4 cursor-pointer'
+                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] cursor-pointer'
                   onClick={() => props.onSelect(restaurant.id)}
                 >
                   <CardContent className='w-full  overflow-hidden p-0 rounded-lg relative'>
@@ -314,8 +379,7 @@ function Grid(props: GridProps) {
                       <p className='font-semibold text-slate-800 text-[14px] text-wrap'>
                         {restaurant.name}
                       </p>
-
-                      {renderRating({ rating: restaurant.rating })}
+                      <Stars rating={restaurant.rating} />
                     </div>
                     <div className='flex w-full'>
                       <p className='mr-2 font-semibold'>
@@ -336,55 +400,26 @@ function Grid(props: GridProps) {
   );
 }
 
-function convertToMiles(distance: number): string {
-  const converted = (distance * 0.000621371192).toFixed(2);
-  return converted.toString();
-}
-
-type RatingParams = {
-  rating: number;
-  iconSize?: number;
-  direction?: string;
-};
-
-function renderRating(params: RatingParams): JSX.Element {
-  const isWhole = params.rating % 1 === 0;
-
-  let stars;
-
-  if (isWhole) {
-    stars = new Array(params.rating).fill("star");
-  }
-  {
-    stars = new Array(Math.floor(params.rating)).fill("stars");
-    stars.push("half");
-  }
-
-  const size = params.iconSize ?? 16;
+function Placeholder() {
+  const placeHolders = new Array(9).fill("item");
 
   return (
     <XyzTransitionGroup
-      className={`flex ${params.direction ? `flex-start` : `justify-end`}`}
-      appear={!!params.direction}
-      xyz='fade small out-down out-rotate-right appear-stagger'
+      appear
+      className='grid md:grid-cols-3 grid-cols-1 gap-5 px-3'
+      xyz='fade small out-down out-rotate-right-0'
     >
-      {stars.map((type, index) => {
-        return (
-          <div key={index}>
-            {type === "stars" ? (
-              <Star
-                size={size}
-                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
-              />
-            ) : (
-              <StarHalf
-                size={size}
-                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
-              />
-            )}
-          </div>
-        );
-      })}
+      {placeHolders.map((_, index) => (
+        <div key={index} className='w-full h-full text-center md:text-left  '>
+          <Skeleton
+            key={index}
+            width={"90%"}
+            height={200}
+            style={{ borderRadius: "10px" }}
+          />
+          <Skeleton width={"50%"} style={{ borderRadius: "5px" }} />
+        </div>
+      ))}
     </XyzTransitionGroup>
   );
 }

@@ -33,7 +33,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none  data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       inset && "pl-8",
       className
     )}
@@ -89,7 +89,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors  data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-customOrange hover:text-white",
       inset && "pl-8",
       className
     )}
@@ -213,21 +213,17 @@ export default function DropDown(props: DropDownProps): JSX.Element {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className='mr-4'>
-        <Button
-          variant='outline'
-          className='md:w-[180px] w-[120px] flex justify-between border-2 bg-transparent focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 ring-offset-
-          hover:bg-slate-700 hover:text-white'
-        >
-          {menu}
-
-          <ChevronDown />
-        </Button>
+      <DropdownMenuTrigger
+        className='md:w-[180px] w-[120px] h-[40px] flex justify-between items-center border-2 t
+          hover:bg-slate-900 hover:text-white rounded-md mr-2 p-2 focus:outline-orange-300'
+      >
+        {menu}
+        <ChevronDown />
       </DropdownMenuTrigger>
-      <DropdownMenuContent side='bottom' className='bg-opacity-70'>
+      <DropdownMenuContent side='bottom'>
         {props.options.map((option, index) => (
           <DropdownMenuItem
-            className='md:w-[170px]  text-xl text-black font-roboto hover:text-customOrange hover:bg-slate-500'
+            className='md:w-[170px]  text-black font-roboto'
             key={`${index}-${option.value}`}
             onChange={() => handleOnChange(option)}
             onClick={() => handleOnChange(option)}

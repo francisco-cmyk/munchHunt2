@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { foodChoices } from "../foodChoices";
-import getMergeState from "../utils";
+import getMergeState, { randomizeChoices } from "../utils";
 import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, UtensilsCrossed, X, XCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  UtensilsCrossed,
+  X,
+  XCircle,
+} from "lucide-react";
 import Modal from "../Components/Modal";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -71,7 +78,7 @@ export default function SelectionPage(): JSX.Element {
     if (!isOpen) {
       gsap.to(sidePanel.current, {
         width: 0,
-        translateX: 100,
+        translateX: -400,
         duration: 1,
         ease: "power3.out",
       });
@@ -139,19 +146,65 @@ export default function SelectionPage(): JSX.Element {
       runLoop().then(() => {
         setTimeout(() => {
           mergeState({ isLoading: false });
-        }, 600);
+        }, 2000);
       });
     } else {
       const huntChosen = randomizeChoices(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
-      mergeState({ showSelectionModal: true });
+      setTimeout(() => {
+        mergeState({ showSelectionModal: true });
+      }, 2000);
     }
   }
 
   return (
-    <div className=' w-full flex md:flex-row flex-col justify-center items-center'>
+    <div className='w-full flex md:flex-row flex-col md:pt-0 pt-10 justify-center items-center'>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
+
+      <div
+        ref={sidePanel}
+        className={`min-h-[500px] max-h-[500px]  flex flex-col overflow-hidden ${
+          state.excludedChoices.length > 0
+            ? "w-[400px] py-3 px-4 border-r-2 "
+            : "w-0 hidden md:flex "
+        }`}
+      >
+        <div className='h-full w-full '>
+          <div className='h-1/5 w-full flex justify-between '>
+            <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
+              Excluded Choices
+            </p>
+
+            <ToolTip
+              className='bg-slate-500 opacity-80 '
+              side='left'
+              content={<p className='text-white'>Remove all from excluded</p>}
+            >
+              <X
+                className=' text-slate-400 '
+                onClick={(e) => {
+                  e.preventDefault();
+                  mergeState({ excludedChoices: [] });
+                }}
+              />
+            </ToolTip>
+          </div>
+          <div className='max-h-[28rem] flex flex-col overflow-auto'>
+            {state.excludedChoices.map((choice, index) => (
+              <Button
+                key={index}
+                variant='secondary'
+                className='mb-1 hover:bg-slate-900 hover:text-white border-2 w-full flex justify-between'
+                onClick={() => handleSelect(choice)}
+              >
+                {choice}
+                {windowWidth > 700 ? <ArrowRight /> : <X />}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <div className='h-full md:w-3/4 w-5/6 text-center md:text-left  flex flex-col justify-start items-center md:p-10 '>
         {state.isLoading ? (
@@ -174,7 +227,7 @@ export default function SelectionPage(): JSX.Element {
           </div>
         )}
 
-        <div className='2xl:w-2/3 md:w-5/6 w-full  mt-5 max-h-96 min-h-96  overflow-auto py-2'>
+        <div className='2xl:w-full md:w-5/6 w-full  mt-5 max-h-96 min-h-96  overflow-auto py-2'>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'
@@ -207,50 +260,6 @@ export default function SelectionPage(): JSX.Element {
           >
             Hunt
           </Button>
-        </div>
-      </div>
-
-      <div
-        ref={sidePanel}
-        className={`min-h-[500px] max-h-[500px]  flex flex-col overflow-hidden ${
-          state.excludedChoices.length > 0
-            ? "w-[400px] py-3 px-4 border-l-2 "
-            : "w-0 hidden md:flex "
-        }`}
-      >
-        <div className='h-full w-full '>
-          <div className='h-1/5 w-full flex justify-between '>
-            <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
-              Excluded Choices
-            </p>
-
-            <ToolTip
-              className='bg-slate-500 opacity-80 '
-              side='left'
-              content={<p className='text-white'>Remove all from excluded</p>}
-            >
-              <X
-                className=' text-slate-400 '
-                onClick={(e) => {
-                  e.preventDefault();
-                  mergeState({ excludedChoices: [] });
-                }}
-              />
-            </ToolTip>
-          </div>
-          <div className='max-h-[28rem] flex flex-col overflow-auto'>
-            {state.excludedChoices.map((choice, index) => (
-              <Button
-                key={index}
-                variant='secondary'
-                className='mb-1 hover:bg-slate-900 hover:text-white border-2 w-full flex justify-start'
-                onClick={() => handleSelect(choice)}
-              >
-                {windowWidth > 700 ? <ArrowLeft /> : <X />}
-                {choice}
-              </Button>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -305,7 +314,7 @@ function Grid(props: GridProps) {
 
 function SelectionModal(munchChoice: string) {
   return (
-    <Modal>
+    <Modal class='md:bg-transparent'>
       <XyzTransition
         appear
         className='bg-customOrange rounded-[15px]
@@ -333,9 +342,4 @@ function SelectionModal(munchChoice: string) {
       </XyzTransition>
     </Modal>
   );
-}
-
-function randomizeChoices(choices: string[]): string {
-  const randomIndex = Math.floor(Math.random() * choices.length);
-  return choices[randomIndex];
 }

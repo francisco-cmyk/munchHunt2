@@ -44,9 +44,9 @@ export default function Layout() {
     location.pathname === "/" || location.pathname === "/location";
 
   return (
-    <div className='max-h-screen flex flex-col font-inter relative bg-slate-50'>
+    <div className='max-h-screen flex flex-col font-inter relative bg-slate-50 cursor-default'>
       {!isLandingPages ? (
-        <header className=' w-full bg-customOrange p-3 flex justify-between items-center fixed z-20 top-0 left-0 cursor-default'>
+        <header className=' w-full bg-customOrange p-3 flex justify-between items-center fixed z-20 top-0 left-0 cursor-default shadow-[0px_4px_6px_rgba(0,0,0,0.1)]'>
           <div onClick={(e) => handleHeaderClick(e)}>
             <p className='font-archivo font-black  tracking-tighter md:text-[65px] text-[30px] ml-3'>
               Munch Hunt
@@ -57,16 +57,11 @@ export default function Layout() {
 
       <main
         className={`flex-1 overflow-y-auto ${
-          !isLandingPages ? ` mt-[110px]` : ``
+          !isLandingPages ? `md:mt-[110px] mt-16` : ``
         }`}
       >
         <Outlet />
       </main>
     </div>
   );
-}
-function mergeState(arg0: {
-  coordinates: { latitude: string; longitude: string };
-}) {
-  throw new Error("Function not implemented.");
 }

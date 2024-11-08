@@ -11,11 +11,14 @@ async function fetchAddress(coordinates: Coordinate) {
   if (!coordinates.latitude && !coordinates.longitude) return;
 
   try {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
-      coordinates.latitude
-    },${coordinates.longitude}&key=${import.meta.env.VITE_MAPS_API_KEY}`;
+    const url = "/.netlify/functions/getAddress";
 
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      params: {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      },
+    });
     if (response.data.results.length > 0) {
       const formattedAddress = response.data.results[0].formatted_address;
       return formattedAddress;

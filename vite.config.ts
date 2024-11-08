@@ -13,6 +13,9 @@ export default defineConfig({
   },
   server: {
     open: true,
+    proxy: {
+      "/.netlify/functions": "http://localhost:8888",
+    },
   },
   test: {
     globals: true,

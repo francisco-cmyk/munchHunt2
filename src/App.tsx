@@ -6,7 +6,7 @@ import "@animxyz/core";
 import { MunchProvider } from "./Context/MunchContext";
 import SelectionPage from "./Pages/SelectionPage";
 import FoodList from "./Pages/FoodList";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {

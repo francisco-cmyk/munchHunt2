@@ -49,14 +49,13 @@ async function fetchRestaurants(
   params: Params
 ): Promise<YelpResponse[] | undefined> {
   try {
-    const config = {
-      headers: { Authorization: `Bearer ${import.meta.env.VITE_YELP_API_KEY}` },
-    };
-
-    const response = await axios.get(
-      `https://api.yelp.com/v3/businesses/search?term=${params.food}&latitude=${params.coordinates.latitude}&longitude=${params.coordinates.longitude}&radius=40000&limit=50`,
-      config
-    );
+    const response = await axios.get("/.netlify/functions/getRestaurants", {
+      params: {
+        food: params.food,
+        latitude: params.coordinates.latitude,
+        longitude: params.coordinates.longitude,
+      },
+    });
 
     if (response.data && response.data.businesses) {
       return response.data.businesses;
@@ -64,9 +63,12 @@ async function fetchRestaurants(
       return [];
     }
   } catch (error) {
-    toast.error("There was a problem finding restaurant options. Please try again.", {
-      toastId: "fetchRestaurant",
-    });
+    toast.error(
+      "There was a problem finding restaurant options. Please try again.",
+      {
+        toastId: "fetchRestaurant",
+      }
+    );
   }
 }
 

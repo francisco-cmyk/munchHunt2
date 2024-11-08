@@ -7,15 +7,11 @@ export default function useGetCoordinatesFromAddress() {
   return useMutation<Coordinate, Error, string>({
     mutationKey: ["getCoordinates"],
     mutationFn: async (address: string) => {
-      const response = await axios.get(
-        "https://maps.googleapis.com/maps/api/geocode/json",
-        {
-          params: {
-            address: address,
-            key: import.meta.env.VITE_MAPS_API_KEY,
-          },
-        }
-      );
+      const response = await axios.get("/.netlify/functions/getCoordinates", {
+        params: {
+          address: address,
+        },
+      });
 
       const location = response.data.results[0].geometry.location;
 

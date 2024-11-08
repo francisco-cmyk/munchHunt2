@@ -1,12 +1,12 @@
 import { APIGatewayEvent, Context, Handler } from "aws-lambda";
 import axios from "axios";
 
-const { YELP_API_KEY } = process.env;
-
 export const handler: Handler = async (
   event: APIGatewayEvent,
   context: Context
 ) => {
+  const { YELP_API_KEY } = process.env;
+
   const food = event.queryStringParameters?.food;
   const latitude = event.queryStringParameters?.latitude;
   const longitude = event.queryStringParameters?.longitude;

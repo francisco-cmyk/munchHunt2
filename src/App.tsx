@@ -6,15 +6,15 @@ import "@animxyz/core";
 import { MunchProvider } from "./Context/MunchContext";
 import SelectionPage from "./Pages/SelectionPage";
 import FoodList from "./Pages/FoodList";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   return (
     <MunchProvider>
       <ToastContainer
-        position='top-center'
-        autoClose={3000}
+        position='top-right'
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

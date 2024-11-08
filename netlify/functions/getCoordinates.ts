@@ -1,13 +1,11 @@
 import { APIGatewayEvent, Context, Handler } from "aws-lambda";
 import axios from "axios";
 
-const { MAPS_API_KEY } = process.env;
-
 export const handler: Handler = async (
   event: APIGatewayEvent,
   context: Context
 ) => {
-  console.log("EVENT", event);
+  const { MAPS_API_KEY } = process.env;
 
   const address = event.queryStringParameters?.address;
 

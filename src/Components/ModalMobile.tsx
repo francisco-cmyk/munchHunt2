@@ -1,5 +1,3 @@
-
-import { X } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "../utils";
 
@@ -11,7 +9,7 @@ type ModalProps = {
   children?: React.ReactNode;
 };
 
-export default function Modal(props: ModalProps): JSX.Element | null {
+export default function ModalMobile(props: ModalProps): JSX.Element | null {
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -43,21 +41,9 @@ export default function Modal(props: ModalProps): JSX.Element | null {
       onClick={handleClose}
     >
       <div
-        className={cn(
-          "flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50",
-          props.class
-        )}
+        className={cn("relative flex flex-col rounded-lg ", props.class)}
         onClick={(e) => e.stopPropagation()}
       >
-        {props.showClose && (
-          <div
-            className='h-[19px] w-full sm:flex justify-end'
-            onClick={handleClose}
-          >
-            <X className=' text-black hover:text-customOrange' size={24} />
-          </div>
-        )}
-
         <>{props.children}</>
       </div>
     </div>

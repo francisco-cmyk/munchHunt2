@@ -13,7 +13,9 @@ import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import DropDown, { Option } from "../Components/DropDown";
 import Filter from "../Components/Filter";
 import Stars from "../Components/Stars";
-import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Frown, Satellite } from "lucide-react";
+import ModalMobile from "../Components/ModalMobile";
+import { Button } from "../Components/Button";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -161,57 +163,83 @@ export default function FoodList(): JSX.Element {
   function renderModal() {
     if (state.selectedRestaurantID === null) return null;
 
+    const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
+
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    let mapLink = restaurant.displayAddress.replace(/ /g, "+");
+
+    mapLink = "https://www.google.com/maps/search/?api=1&query=1600+" + mapLink;
 
     let mapWidth, mapHeight;
-    if (windowWidth < 700) {
-      mapWidth = windowWidth - 100;
-      mapHeight = windowHeight / 3;
+    if (state.isSmallWindow) {
+      mapWidth = windowWidth - 50;
+      mapHeight = windowHeight / 2;
+      //Mobile link
+      mapLink = `geo:${restaurant.coordinates.latitude},${restaurant.coordinates.longitude}?q=1600+${restaurant.displayAddress}`;
     }
 
-    const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
-    return (
-      <Modal
-        onClose={() => mergeState({ selectedRestaurantID: null })}
-        showClose
-      >
-        <div className='md:w-[850px] md:h-[450px] h-[600px]  bg-slate-50 rounded-xl p-8 flex md:flex-row flex-col cursor-default'>
-          <div className='md:w-2/4 md:h-full h-2/5 flex flex-col justify-between'>
-            <div className='flex flex-col items-start md:h-[90px] h-[50px] justify-between'>
-              <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
-                {restaurant.name}
-              </p>
+    const conent = (
+      <div className='md:w-[850px] md:h-[450px] h-screen bg-slate-50 rounded-xl sm:p-8 p-6 flex md:flex-row flex-col justify-between cursor-default'>
+        <div className='md:w-2/4 md:h-full h-3/5 flex flex-col justify-between'>
+          <div className='flex flex-col items-start md:h-[90px] h-[50px] justify-between'>
+            <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
+              {restaurant.name}
+            </p>
 
-              <Stars
-                rating={restaurant.rating}
-                direction='start'
-                iconSize={24}
-              />
+            <Stars rating={restaurant.rating} direction='start' iconSize={24} />
 
-              <p className='font-semibold text-lg mt-2'>
-                {restaurant.price ?? "--"}
-              </p>
-            </div>
-
-            <div className='flex flex-col items-end mr-5 text-right'>
-              <p className='text-wrap font-semibold '>
-                {restaurant.displayAddress}
-              </p>
-              <p>{restaurant.displayPhone}</p>
-              <p>{restaurant.transactions.join(", ")}</p>
-            </div>
+            <p className='font-semibold text-lg mt-2'>
+              {restaurant.price ?? "--"}
+            </p>
           </div>
 
-          <div>
-            <MapComponent
-              coordintes={restaurant.coordinates}
-              width={mapWidth}
-              height={mapHeight}
-            />
+          <div className='flex flex-col items-end mr-5 text-right'>
+            <a
+              className='text-wrap font-semibold'
+              href={mapLink}
+              target='_blank'
+            >
+              {restaurant.displayAddress}
+            </a>
+            <p>{restaurant.displayPhone}</p>
+            <p>{restaurant.transactions.join(", ")}</p>
           </div>
         </div>
-      </Modal>
+
+        <div>
+          <MapComponent
+            coordintes={restaurant.coordinates}
+            width={mapWidth}
+            height={mapHeight}
+          />
+        </div>
+
+        {state.isSmallWindow && (
+          <Button onClick={() => mergeState({ selectedRestaurantID: null })}>
+            close
+          </Button>
+        )}
+      </div>
+    );
+
+    return (
+      <>
+        {state.isSmallWindow ? (
+          <ModalMobile
+            onClose={() => mergeState({ selectedRestaurantID: null })}
+          >
+            {conent}
+          </ModalMobile>
+        ) : (
+          <Modal
+            onClose={() => mergeState({ selectedRestaurantID: null })}
+            showClose
+          >
+            {conent}
+          </Modal>
+        )}
+      </>
     );
   }
 
@@ -231,7 +259,7 @@ export default function FoodList(): JSX.Element {
       </div>
 
       <div className='w-full h-full flex md:flex-row flex-col mt-2  '>
-        <div className='md:w-1/5 border-r-2 md:flex flex-col md:px-10 px-5 py-4 '>
+        <div className='md:w-1/5 border-r-2 md:flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
           <p className='font-inter font-semibold text-lg text-slate-500'>
             Filter By
           </p>

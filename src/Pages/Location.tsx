@@ -181,13 +181,13 @@ export default function Location(): JSX.Element {
       </div>
       <div
         ref={containerRef1}
-        className='w-full flex justify-center items-center md:mt-10 mb-[100px] md:mb-0'
+        className='w-full flex justify-center items-center md:mt-10 sm:mb-[100px] md:mb-0'
       >
         <div className='w-full flex justify-center items-center'>
           <div className=' flex flex-col justify-start md:items-center mr-10'>
             <p
               ref={titleRef}
-              className='font-archivo font-black text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] text-[100px] text-wrap m-0 p-0 leading-non mix-blend-difference '
+              className='font-archivo font-black text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] sm:text-[100px] text-[80px] text-wrap m-0 p-0 leading-non mix-blend-difference '
             >
               Munch Hunt
             </p>
@@ -197,13 +197,13 @@ export default function Location(): JSX.Element {
 
       <div ref={containerRef2} className='flex justify-center'>
         <div className='md:w-2/3 md:h-28 w-full flex flex-col justify-center items-center rounded-lg border-none  '>
-          <div className='md:w-2/3 w-5/6 flex'>
+          <div className='md:w-2/3 sm:w-5/6 flex'>
             <div className='relative w-full'>
-              <span className='absolute z-10 inset-y-0 right-3 flex items-center text-slate-900'>
+              <span className='absolute z-10 inset-y-0 right-3  sm:flex hidden items-center text-slate-900'>
                 {isLoading ? <LoaderIcon /> : <Search className='h-4 w-4' />}
               </span>
               <Input
-                className={`h-[50px] bg-slate-50 font-inter border-[1px] drop-shadow-lg`}
+                className={`sm:h-[50px] bg-slate-50 font-inter border-[1px] drop-shadow-lg`}
                 type='text'
                 placeholder='Enter your location'
                 value={state.addresssInput}
@@ -214,7 +214,7 @@ export default function Location(): JSX.Element {
             </div>
 
             <Button
-              className='ml-2 w-[100px] shadow-lg drop-shadow-lg h-[50px] hover:bg-customOrange '
+              className='ml-2 w-[100px] shadow-lg drop-shadow-lg sm:h-[50px] hover:bg-customOrange '
               onClick={handleSubmit}
             >
               <ArrowRight style={{ width: "25px", height: "25px" }} />

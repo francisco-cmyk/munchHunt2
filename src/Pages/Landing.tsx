@@ -15,8 +15,24 @@ export default function Landing() {
   const text3 = useRef<HTMLParagraphElement | null>(null);
 
   useGSAP(() => {
-    const time = 1;
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      if (result.state === "granted" || result.state === "denied") {
+        startAnimation();
+      }
+    });
+  }, [text1, text2, text3, currentText]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowFirstPage(false);
+      navigate("/location");
+      setCurrentText("text1");
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  function startAnimation() {
+    const time = 1;
     if (text1.current && currentText === "text1") {
       const text = new SplitType(text1.current, { types: "words" });
       gsap.from(text.words, {
@@ -55,16 +71,7 @@ export default function Landing() {
         ease: "power2.out",
       });
     }
-  }, [text1, text2, text3, currentText]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowFirstPage(false);
-      navigate("/location");
-      setCurrentText("text1");
-    }, 6000);
-    return () => clearTimeout(timer);
-  }, []);
+  }
 
   return (
     <div
@@ -72,7 +79,7 @@ export default function Landing() {
     >
       <p
         ref={text1}
-        className={`md:text-[60px] text-2xl text-wrap text-center ${
+        className={`md:text-[60px] sm:text-2xl text-lg text-wrap text-center ${
           currentText === "text1" ? `inline` : `hidden`
         }  leading-tight text-star`}
       >
@@ -81,7 +88,7 @@ export default function Landing() {
 
       <p
         ref={text2}
-        className={`md:text-[60px] text-2xl ${
+        className={`md:text-[60px] sm:text-2xl ${
           currentText === "text2" ? `inline` : `hidden`
         } leading-tight text-star`}
       >
@@ -90,7 +97,7 @@ export default function Landing() {
 
       <p
         ref={text3}
-        className={`md:text-[60px] text-2xl ${
+        className={`md:text-[60px] sm:text-2xl ${
           currentText === "text3" ? `inline` : `hidden`
         } leading-tight text-star`}
       >

@@ -160,19 +160,19 @@ export default function SelectionPage(): JSX.Element {
   }
 
   return (
-    <div className='w-full flex md:flex-row flex-col md:pt-0 pt-10 justify-center items-center'>
+    <div className='w-full flex md:flex-row flex-col-reverse md:pt-0 pt-10 justify-center items-center '>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
 
       <div
         ref={sidePanel}
-        className={`min-h-[500px] max-h-[500px]  flex flex-col overflow-hidden ${
+        className={`min-h-[500px] max-h-[500px]  flex flex-col  overflow-hidden ${
           state.excludedChoices.length > 0
-            ? "w-[400px] py-3 px-4 border-r-2 "
+            ? "sm:w-[400px] w-[100px] sm:px-4 md:border-r-2 py-3 items-center "
             : "w-0 hidden md:flex "
         }`}
       >
-        <div className='h-full w-full '>
-          <div className='h-1/5 w-full flex justify-between '>
+        <div className='h-full sm:w-full w-4/6'>
+          <div className='h-1/5 w-full flex justify-between item '>
             <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
               Excluded Choices
             </p>
@@ -294,7 +294,7 @@ function Grid(props: GridProps) {
           {props.choices.map((item, index) => (
             <div key={`${index}-${item}`} className='h-[50px]'>
               <Button
-                className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm
+                className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm overflow-hidden
               ${
                 props.selected.includes(item)
                   ? `bg-slate-900 hover:text-white hover:bg-red-500 `
@@ -303,7 +303,7 @@ function Grid(props: GridProps) {
              `}
                 onClick={() => props.onSelect(item)}
               >
-                <p className='font-semibold text-lg'>{item}</p>
+                <p className='font-semibold text-lg text-ellipsis'>{item}</p>
               </Button>
             </div>
           ))}

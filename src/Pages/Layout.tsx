@@ -44,7 +44,7 @@ export default function Layout() {
     location.pathname === "/" || location.pathname === "/location";
 
   return (
-    <div className='max-h-screen flex flex-col font-inter relative bg-slate-50 cursor-default'>
+    <div className='sm:max-h-screen sm:h-screen h-dvh flex flex-col font-inter relative bg-slate-50 cursor-default'>
       {!isLandingPages ? (
         <header className=' w-full bg-customOrange p-3 flex justify-between items-center fixed z-20 top-0 left-0 cursor-default shadow-[0px_4px_6px_rgba(0,0,0,0.1)]'>
           <div onClick={(e) => handleHeaderClick(e)}>
@@ -57,7 +57,7 @@ export default function Layout() {
 
       <main
         className={`flex-1 overflow-y-auto ${
-          !isLandingPages ? `md:mt-[110px] mt-16` : ``
+          !isLandingPages ? `sm:mt-[110px] mt-16` : ``
         }`}
       >
         <Outlet />

@@ -10,19 +10,6 @@ type ModalProps = {
 };
 
 export default function ModalMobile(props: ModalProps): JSX.Element | null {
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        handleClose();
-      }
-    };
-    document.addEventListener("keydown", handleEscKey);
-
-    return () => {
-      document.removeEventListener("keydown", handleEscKey);
-    };
-  }, [props.onClose, handleClose]);
-
   const isOpen = props.isOpen ?? true;
 
   function handleClose() {
@@ -41,7 +28,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
       onClick={handleClose}
     >
       <div
-        className={cn("relative flex flex-col rounded-lg ", props.class)}
+        className={cn("relative flex flex-col rounded-lg h-dvh ", props.class)}
         onClick={(e) => e.stopPropagation()}
       >
         <>{props.children}</>

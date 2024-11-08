@@ -15,11 +15,18 @@ export default function Landing() {
   const text3 = useRef<HTMLParagraphElement | null>(null);
 
   useGSAP(() => {
-    navigator.permissions.query({ name: "geolocation" }).then((result) => {
-      if (result.state === "granted" || result.state === "denied") {
-        startAnimation();
-      }
-    });
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((result) => {
+        if (result.state === "granted" || result.state === "denied") {
+          startAnimation();
+        } else {
+          startAnimation();
+        }
+      })
+      .catch((error) => {
+        navigate("/location");
+      });
   }, [text1, text2, text3, currentText]);
 
   useEffect(() => {

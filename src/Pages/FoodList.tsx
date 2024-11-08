@@ -76,11 +76,6 @@ export default function FoodList(): JSX.Element {
     coordinates: currentCoordinates,
   });
 
-  //TODO: use photos for coursel in modal
-  const { data: businessInfo } = useGetBusinessInfo({
-    businessID: state.selectedRestaurantID ?? "",
-  });
-
   const restaurantsKeyedByID = keyBy(yelpRestaurants, "id");
 
   // Side Effects

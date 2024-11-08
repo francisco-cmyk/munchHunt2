@@ -174,7 +174,7 @@ export default function Location(): JSX.Element {
   return (
     <div
       ref={main}
-      className='bg-slate-50 h-screen flex flex-col justify-end cursor-default'
+      className='bg-slate-50 sm:h-screen h-dvh flex flex-col justify-end cursor-default'
     >
       <div ref={bounce} className='absolute top-0 '>
         <Crosshair2Icon className='md:h-[200px] md:w-[200px] h-[130px] w-[130px] opacity-85 text-customOrange ' />

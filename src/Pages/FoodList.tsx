@@ -67,8 +67,6 @@ export default function FoodList(): JSX.Element {
   const munchContext = useMunchContext();
   const { munchHuntChoice, currentCoordinates } = munchContext;
 
-  const isSmallWindow = window.innerWidth < 750;
-
   const {
     data: yelpRestaurants = [],
     isLoading: isLoading = false,
@@ -175,12 +173,10 @@ export default function FoodList(): JSX.Element {
     if (state.isSmallWindow) {
       mapWidth = windowWidth - 50;
       mapHeight = windowHeight / 2;
-      //Mobile link
-      mapLink = `geo:${restaurant.coordinates.latitude},${restaurant.coordinates.longitude}?q=1600+${restaurant.displayAddress}`;
     }
 
     const conent = (
-      <div className='md:w-[850px] md:h-[450px] h-screen bg-slate-50 rounded-xl sm:p-8 p-6 flex md:flex-row flex-col justify-between cursor-default'>
+      <div className='md:w-[850px] md:h-[450px] sm:h-screen h-dvh bg-slate-50 rounded-xl sm:p-8 p-6 flex md:flex-row flex-col justify-between cursor-default'>
         <div className='md:w-2/4 md:h-full h-3/5 flex flex-col justify-between'>
           <div className='flex flex-col items-start md:h-[90px] h-[50px] justify-between'>
             <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
@@ -196,7 +192,7 @@ export default function FoodList(): JSX.Element {
 
           <div className='flex flex-col items-end mr-5 text-right'>
             <a
-              className='text-wrap font-semibold'
+              className='text-wrap font-semibold hover:text-purple-600 '
               href={mapLink}
               target='_blank'
             >
@@ -244,9 +240,13 @@ export default function FoodList(): JSX.Element {
   }
 
   return (
-    <div className="className='w-full h-full flex flex-col justify-center items-center cursor-default md:pt-3 overflow-hidden">
+    <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
       {renderModal()}
-      <div className='flex w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 py-2'>
+      <div
+        className={`${
+          state.isSmallWindow ? `top-16 z-20 fixed` : ``
+        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 py-2`}
+      >
         <div className='w-1/5 md:flex hidden justify-end pr-3'>
           <p className='font-roboto text-[17px] text-white'>The Hunt Chose</p>
           <ChevronRight color='white' />
@@ -258,8 +258,8 @@ export default function FoodList(): JSX.Element {
         </div>
       </div>
 
-      <div className='w-full h-full flex md:flex-row flex-col mt-2  '>
-        <div className='md:w-1/5 border-r-2 md:flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
+      <div className='w-full h-full flex md:flex-row flex-col mt-2 overflow-auto  '>
+        <div className='md:w-1/5 border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
           <p className='font-inter font-semibold text-lg text-slate-500'>
             Filter By
           </p>

@@ -237,7 +237,7 @@ export default function SelectionPage(): JSX.Element {
               {state.selectedChoices.map((choice, index) => (
                 <div key={`${index}-${choice}`}>
                   <Button
-                    className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
+                    className={`sm:h-full h-[30px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
                   >
                     <p className='font-semibold text-lg'>{choice}</p>
                   </Button>

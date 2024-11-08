@@ -258,7 +258,7 @@ export default function FoodList(): JSX.Element {
         </div>
       </div>
 
-      <div className='w-full h-full flex md:flex-row flex-col mt-2 overflow-auto  '>
+      <div className='w-full h-full flex md:flex-row flex-col mt-5 overflow-auto  '>
         <div className='md:w-1/5 border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
           <p className='font-inter font-semibold text-lg text-slate-500'>
             Filter By
@@ -289,6 +289,7 @@ export default function FoodList(): JSX.Element {
             <div className='flex flex-col h-[95%] overflow-auto mt-2'>
               <Filter
                 filterName={"price"}
+                disabled={yelpRestaurants.length === 0}
                 label='Price'
                 options={priceOptions}
                 value={state.priceFilter ?? ""}
@@ -297,6 +298,7 @@ export default function FoodList(): JSX.Element {
 
               <Filter
                 filterName={"distance"}
+                disabled={yelpRestaurants.length === 0}
                 label='Distance'
                 options={distanceOptions}
                 value={state.distanceFilter?.toString() ?? ""}
@@ -305,6 +307,7 @@ export default function FoodList(): JSX.Element {
 
               <Filter
                 filterName={"rating"}
+                disabled={yelpRestaurants.length === 0}
                 label='Rating'
                 options={ratingOptions}
                 value={state.ratingFilter?.toString() ?? ""}

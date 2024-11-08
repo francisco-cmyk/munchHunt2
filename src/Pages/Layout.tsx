@@ -12,26 +12,22 @@ export default function Layout() {
   useEffect(() => {
     if (!navigator.geolocation) return;
 
-    navigator.geolocation.getCurrentPosition((position) => {
-      if (position.coords) {
-        munchContext.setCoordinates({
-          latitude: position.coords.latitude.toString(),
-          longitude: position.coords.longitude.toString(),
-        });
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (Object.values(munchContext.currentCoordinates).length > 0) {
-      localStorage.setItem(
-        "location",
-        JSON.stringify(munchContext.currentCoordinates)
-      );
+    if (
+      munchContext.currentCoordinates.latitude.length === 0 &&
+      munchContext.currentCoordinates.longitude.length === 0
+    ) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        if (position.coords) {
+          const coordinates = {
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+          };
+          munchContext.setCoordinates(coordinates);
+          localStorage.setItem("location", JSON.stringify(coordinates));
+        }
+      });
     }
-
-    return () => {};
-  }, [munchContext.currentCoordinates]);
+  }, []);
 
   function handleHeaderClick(e: SyntheticEvent) {
     e.preventDefault();

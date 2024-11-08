@@ -1,24 +1,35 @@
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../Components/Button";
 import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
 import { useMunchContext } from "../Context/MunchContext";
-import getMergeState from "../utils";
+import getMergeState, { removeStateAndCountry } from "../utils";
 import { ArrowRight, LoaderIcon, Search } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
 import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import useGetAutoComplete from "../Hooks/useGetAutoComplete";
+import { debounce } from "lodash";
+import { MapPin } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@radix-ui/react-hover-card";
+import { Avatar, AvatarFallback, AvatarImage } from "../Components/Avatar";
 
 type State = {
   addresssInput: string;
   isInvalidAddress: boolean;
+  debouncedInput: string;
 };
 
 const initialState: State = {
   addresssInput: "",
   isInvalidAddress: false,
+  debouncedInput: "",
 };
 
 export default function Location(): JSX.Element {
@@ -28,14 +39,24 @@ export default function Location(): JSX.Element {
   const munchContext = useMunchContext();
   const navigate = useNavigate();
 
+  const viewportHeight = window.innerHeight;
+
+  const main = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const underBarRef = useRef<HTMLDivElement>(null);
+  const containerRef1 = useRef<HTMLDivElement>(null);
+  const containerRef2 = useRef<HTMLDivElement>(null);
+  const barTextRef = useRef<HTMLDivElement>(null);
+  const bounce = useRef<HTMLDivElement>(null);
+
   const mutation = useGetCoordinatesFromAddress();
 
-  const { data: address, isLoading } = useGetFormattedAddress(
+  const { data: address, isFetching: isLoading } = useGetFormattedAddress(
     munchContext.currentCoordinates
   );
 
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+  const { data: predictions = [], isFetching: isFetchingPredictions } =
+    useGetAutoComplete(state.debouncedInput, state.debouncedInput.length > 0);
 
   useEffect(() => {
     if (!address) return;
@@ -45,14 +66,6 @@ export default function Location(): JSX.Element {
       mergeState({ addresssInput: formattedAddresss });
     }
   }, [address]);
-
-  const main = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const underBarRef = useRef<HTMLDivElement>(null);
-  const containerRef1 = useRef<HTMLDivElement>(null);
-  const containerRef2 = useRef<HTMLDivElement>(null);
-  const barTextRef = useRef<HTMLDivElement>(null);
-  const bounce = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const time = 1; //3s
@@ -88,88 +101,52 @@ export default function Location(): JSX.Element {
     });
   }, [titleRef, underBarRef, bounce, main]);
 
-  function triggerAnimations() {
-    const barHeight = underBarRef.current
-      ? underBarRef.current.clientHeight
-      : 150;
-    const barTextWidth = barTextRef.current
-      ? barTextRef.current.clientWidth
-      : 1000;
-
-    gsap.fromTo(
-      containerRef1.current,
-      {
-        opacity: 1,
-        duration: 1,
-      },
-      { opacity: 0, duration: 1 }
-    );
-
-    gsap.fromTo(
-      containerRef2.current,
-      { opacity: 1, translateX: 0 },
-      { opacity: 0, translateX: -2000 }
-    );
-
-    gsap.fromTo(
-      underBarRef.current,
-      {
-        translateY: 0,
-        opacity: 1,
-      },
-      {
-        translateY: -(viewportHeight - barHeight),
-        opacity: 1,
-        scaleY: 0.9,
-        duration: 1,
-      }
-    );
-
-    gsap.fromTo(
-      barTextRef.current,
-      {
-        opacity: 1,
-        translateX: 0,
-      },
-      {
-        translateX: barTextWidth - viewportHeight - 10,
-        scale: 1.3,
-        opacity: 0.2,
-      }
-    );
-
-    gsap.fromTo(
-      bounce.current,
-      {
-        opacity: 0.9,
-        rotate: 0,
-        delay: 1,
-        ease: "power1.inOut",
-      },
-      { opacity: 0, scale: 1.5, rotate: 360, ease: "power1.inOut" }
-    );
-  }
-
   //handler
   async function handleSubmit() {
-    triggerAnimations();
+    triggerAnimations({
+      bar: underBarRef,
+      barText: barTextRef,
+      container1: containerRef1,
+      container2: containerRef2,
+      bounce: bounce,
+      viewportHeight: viewportHeight,
+    });
 
-    const currentCoordiantes = munchContext.currentCoordinates;
-    if (!currentCoordiantes.latitude && !currentCoordiantes.longitude) {
-      const response = await mutation.mutateAsync(state.addresssInput);
-      if (response) {
-        munchContext.setCoordinates({
-          latitude: response.latitude,
-          longitude: response.longitude,
-        });
-      }
+    const response = await mutation.mutateAsync(state.addresssInput);
+    if (response) {
+      const coordinates = {
+        latitude: response.latitude,
+        longitude: response.longitude,
+      };
+      munchContext.setCoordinates(coordinates);
+      localStorage.setItem("location", JSON.stringify(coordinates));
     }
 
     munchContext.setCurrentAddress(state.addresssInput);
     setTimeout(() => {
       navigate("/select");
-    }, 1100);
+    }, 200);
   }
+
+  const debounceSearch = useMemo(
+    () =>
+      debounce((input: string) => {
+        mergeState({ debouncedInput: input });
+      }, 1000),
+    []
+  );
+
+  function handleInputChange(input: string) {
+    mergeState({ addresssInput: input });
+  }
+
+  function handlePredictionChange(input: string) {
+    mergeState({ addresssInput: input, debouncedInput: "" });
+  }
+
+  const fitleredPredictions = predictions.filter(
+    (prediction) => prediction.description !== state.addresssInput
+  );
 
   return (
     <div
@@ -208,9 +185,34 @@ export default function Location(): JSX.Element {
                 placeholder='Enter your location'
                 value={state.addresssInput}
                 onChange={(e) => {
-                  mergeState({ addresssInput: e.target.value });
+                  debounceSearch(e.target.value);
+                  handleInputChange(e.target.value);
                 }}
               />
+              <div
+                className={`mt-0.5 absolute z-30 max-h-44 min-h-32 sm:w-full max-w-full overflow-auto flex flex-col rounded-lg
+                  ${
+                    fitleredPredictions.length > 0
+                      ? "animate-slideDown rounded-md shadow-lg bg-slate-50"
+                      : "animate-slideUp "
+                  } `}
+              >
+                {fitleredPredictions.map((prediction, index) => {
+                  return (
+                    <Button
+                      key={`${prediction.placeID}-${index}`}
+                      className='flex max-w-full justify-start text-slate-800 font-roboto hover:bg-slate-400 hover:text-white sm:text-[15px] text-[10px] rounded-none text-wrap '
+                      variant={"outline"}
+                      onClick={() =>
+                        handlePredictionChange(prediction.description)
+                      }
+                    >
+                      <MapPin />
+                      {prediction.description}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
 
             <Button
@@ -226,7 +228,7 @@ export default function Location(): JSX.Element {
 
       <div
         ref={underBarRef}
-        className='w-full md:h-1/6 h-[80px] bg-customOrange flex justify-center items-center mt-20'
+        className='w-full flex-col  md:h-1/6 h-[80px] bg-customOrange flex justify-center items-center mt-20'
       >
         <p
           ref={barTextRef}
@@ -234,26 +236,109 @@ export default function Location(): JSX.Element {
         >
           Conquer Hunger.
         </p>
+        <HoverCard>
+          <HoverCardTrigger>
+            <p className='text-[10px] opacity-40'>@ Developer</p>
+          </HoverCardTrigger>
+          <HoverCardContent className='sm:w-80 text-white'>
+            <div className='flex justify-start items-center space-x-4 bg-slate-950 rounded-md p-2'>
+              <Avatar>
+                <AvatarImage src='https://i.imgur.com/Z9MSzBn.png' />
+                <AvatarFallback>VC</AvatarFallback>
+              </Avatar>
+
+              <div className='space-y-1'>
+                <p className='sm:text-sm text-[12px]'>
+                  Created by{" "}
+                  <a
+                    className='hover:text-orange-300'
+                    href='https://www.linkedin.com/in/fveranicola'
+                    target='_blank'
+                  >
+                    Francisco Vera Nicola
+                  </a>
+                </p>
+                <p className='sm:text-[10px] text-[8px]'>
+                  Powered by Typescript, React & Tailwind CSS
+                </p>
+                <div className='flex items-center pt-2'>
+                  {/* <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "} */}
+                  <span className='sm:text-xs text-[8px] text-muted-foreground'>
+                    @ 2024 Munch Hunt.xyz
+                  </span>
+                </div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
       </div>
     </div>
   );
 }
 
-const addressRegex = /^\d+\s+[\w\s.]+,\s*([A-Z]{2})$/;
+function triggerAnimations(params: {
+  bar: React.RefObject<HTMLDivElement>;
+  barText: React.RefObject<HTMLDivElement>;
+  container1: React.RefObject<HTMLDivElement>;
+  container2: React.RefObject<HTMLDivElement>;
+  bounce: React.RefObject<HTMLDivElement>;
+  viewportHeight: number;
+}) {
+  const barHeight = params.bar.current ? params.bar.current.clientHeight : 150;
+  const barTextWidth = params.barText.current
+    ? params.barText.current.clientWidth
+    : 1000;
 
-function isValidAddress(address: string) {
-  if (address.length === 0) return true;
-  return addressRegex.test(address);
-}
+  gsap.fromTo(
+    params.container1.current,
+    {
+      opacity: 1,
+      duration: 1,
+    },
+    { opacity: 0, duration: 1 }
+  );
 
-function removeStateAndCountry(address: string | undefined) {
-  if (!address) return;
+  gsap.fromTo(
+    params.container2.current,
+    { opacity: 1, translateX: 0 },
+    { opacity: 0, translateX: -2000 }
+  );
 
-  const parts = address.split(",");
-  if (parts.length > 2) {
-    const newAddress = parts.slice(0, -2).join(",").trim();
-    return newAddress;
-  } else {
-    return address;
-  }
+  gsap.fromTo(
+    params.bar.current,
+    {
+      translateY: 0,
+      opacity: 1,
+    },
+    {
+      translateY: -(params.viewportHeight - barHeight),
+      opacity: 1,
+      scaleY: 0.9,
+      duration: 1,
+    }
+  );
+
+  gsap.fromTo(
+    params.barText.current,
+    {
+      opacity: 1,
+      translateX: 0,
+    },
+    {
+      translateX: barTextWidth - params.viewportHeight - 10,
+      scale: 1.3,
+      opacity: 0.2,
+    }
+  );
+
+  gsap.fromTo(
+    params.bounce.current,
+    {
+      opacity: 0.9,
+      rotate: 0,
+      delay: 1,
+      ease: "power1.inOut",
+    },
+    { opacity: 0, scale: 1.5, rotate: 360, ease: "power1.inOut" }
+  );
 }

@@ -165,9 +165,9 @@ export default function SelectionPage(): JSX.Element {
 
       <div
         ref={sidePanel}
-        className={`min-h-[500px] max-h-[500px]  flex flex-col  overflow-hidden ${
+        className={`sm:min-h-[500px] max-h-[500px]  flex flex-col  overflow-hidden ${
           state.excludedChoices.length > 0
-            ? "sm:w-[400px] w-[100px] sm:px-4 md:border-r-2 py-3 items-center "
+            ? "sm:w-[400px] sm:px-4 max-w-full md:border-r-2 py-3 items-center "
             : "w-0 hidden md:flex "
         }`}
       >
@@ -215,13 +215,13 @@ export default function SelectionPage(): JSX.Element {
           </div>
         ) : (
           <div className='flex flex-col justify-center items-center'>
-            <p className='font-anton font-bold text-[25px]'>
+            <p className='font-anton font-bold sm:text-[25px] text-lg'>
               Lets get started!
             </p>
-            <p className='font-roboto'>
+            <p className='font-roboto sm:text-xl text-[10px]'>
               Select several cuisines or categories you would want to eat.
             </p>
-            <p className='font-roboto'>
+            <p className='font-roboto sm:text-xl text-[10px]'>
               If none are selected, <strong>Munch Hunt</strong> will choose one
               for you
             </p>
@@ -253,10 +253,10 @@ export default function SelectionPage(): JSX.Element {
           )}
         </div>
 
-        <div className='mt-10 md:mb-0 mb-5 2xl:mt-20 '>
+        <div className='mt-5 md:mb-0 mb-5 2xl:mt-20 '>
           <Button
             disabled={state.isLoading}
-            className='w-[200px] h-[50px] text-[25px] font-archivo bg-customOrange text-slate-900 shadow-lg hover:text-white'
+            className='w-[200px] sm:h-[50px] text-[25px] font-archivo bg-customOrange text-slate-900 shadow-lg hover:text-white'
             onClick={handleSubmit}
           >
             Hunt
@@ -288,11 +288,11 @@ function Grid(props: GridProps) {
       {isVisible && (
         <XyzTransitionGroup
           appear
-          className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-2 '
+          className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 '
           xyz='fade small out-down out-rotate-right-0 duration-3 '
         >
           {props.choices.map((item, index) => (
-            <div key={`${index}-${item}`} className='h-[50px]'>
+            <div key={`${index}-${item}`} className='sm:h-[50px] h-[45px]'>
               <Button
                 className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm overflow-hidden
               ${
@@ -303,7 +303,9 @@ function Grid(props: GridProps) {
              `}
                 onClick={() => props.onSelect(item)}
               >
-                <p className='font-semibold text-lg text-ellipsis'>{item}</p>
+                <p className='font-semibold sm:text-lg text-sm text-ellipsis'>
+                  {item}
+                </p>
               </Button>
             </div>
           ))}

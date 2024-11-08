@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
+import { toast } from "react-toastify";
 
 export default function useGetCoordinatesFromAddress() {
   return useMutation<Coordinate, Error, string>({
@@ -36,7 +37,12 @@ export default function useGetCoordinatesFromAddress() {
       return result;
     },
     onError: (error) => {
-      console.log("Error getting coordinates from address");
+      toast.error(
+        "There was a problem gathering coordinates from your address. Please refresh the page.",
+        {
+          toastId: "fetchCoordinates",
+        }
+      );
     },
   });
 }

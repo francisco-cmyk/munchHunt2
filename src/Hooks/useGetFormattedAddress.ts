@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 type Coordinate = {
   latitude: string;
@@ -20,10 +21,9 @@ async function fetchAddress(coordinates: Coordinate) {
       return formattedAddress;
     }
   } catch (error) {
-    console.log("ERROR", error);
-    alert(
-      "Sorry could not find your location, please add your location in the input field."
-    );
+    toast.error("There was a problem gathering your location", {
+      toastId: "fetchAddress",
+    });
   }
 }
 

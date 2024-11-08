@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
+import { toast } from "react-toastify";
 
 type Coordinates = {
   latitude: number;
@@ -63,7 +64,9 @@ async function fetchRestaurants(
       return [];
     }
   } catch (error) {
-    console.log("ERROR", error);
+    toast.error("There was a problem finding restaurant options. Please try again.", {
+      toastId: "fetchRestaurant",
+    });
   }
 }
 

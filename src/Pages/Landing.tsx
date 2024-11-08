@@ -97,50 +97,5 @@ export default function Landing() {
         Lets find the right place for you
       </p>
     </div>
-    // <div className='h-screen flex md:flex-row '>
-    //   <div className='flex-auto flex md:flex-col md:justify-end md:w-2/5 md:py-10 md:px-10'>
-    //     <p className='md:text-[60px] text-xl font-semibold font-roboto leading-tight text-start '>
-    //       Struggling to choose a restaurant?
-    //       <br className='md:hidden' />
-    //       <br /> <em>Date night?</em> <em>Just hungry?</em>
-    //       <br />
-    //       <br className='md:hidden' /> Lets find the right place for you
-    //     </p>
-    //   </div>
-
-    //   <div
-    //     className={`flex-1  bg-[url('https://images.unsplash.com/photo-1548614229-c1fe21dfab63?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]`}
-    //   ></div>
-    // </div>
-
-    // <div
-    //   className={`h-screen flex flex-col justify-center items-center font-inter md:bg-customOrange md:bg-none bg-[url('src/Assets/guyMunching2.gif')] bg-no-repeat bg-cover`}
-    // >
-    //   <div className='md:w-3/4 sm:w-full h-3/5 flex md:flex-row  flex-col  items-center md:bg-transparent bg-slate-50  bg-opacity-95 p-10 rounded-2xl drop-shadow-lg '>
-    //     <div className='md:h-2/3 md:w-2/3 h-full w-full flex flex-col justify-between px-4'>
-    //       <p className='md:text-[35px] text-xl font-semibold font-roboto leading-tight text-start'>
-    //         Struggling to choose a restaurant?
-    //         <br className='md:hidden' />
-    //         <br /> Date night? Just hungry?
-    //         <br />
-    //         <br className='md:hidden' /> Lets find the right place for you
-    //       </p>
-
-    //       <div className=' w-full'>
-    //         {/* <div className='border-y-[1px] rounded-xl  border-black ' /> */}
-    //         <p className='md:text-[70px] text-[40px] font-archivo font-bold leading-tight mt-5'>
-    //           Munch Hunt
-    //         </p>
-    //       </div>
-    //     </div>
-
-    //     <div className='md:w-2/4 md:h-4/5 h-0 opacity-0 md:opacity-100 '>
-    //       <img
-    //         className='rounded-xl h-full w-full'
-    //         src='src/Assets/guyMunching2.gif'
-    //       />
-    //     </div>
-    //   </div>
-    // </div>
   );
 }

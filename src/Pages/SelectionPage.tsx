@@ -152,8 +152,9 @@ export default function SelectionPage(): JSX.Element {
       const huntChosen = randomizeChoices(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
+      mergeState({ isLoading: true });
       setTimeout(() => {
-        mergeState({ showSelectionModal: true });
+        mergeState({ showSelectionModal: true, isLoading: false });
       }, 2000);
     }
   }

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
+import { toast } from "react-toastify";
 
 type Coordinates = {
   latitude: number;
@@ -25,10 +26,6 @@ type Params = {
   businessID: string;
 };
 
-// curl --request GET \
-//      --url https://api.yelp.com/v3/businesses/business_id_or_alias \
-//      --header 'accept: application/json'
-
 async function fetchBusiness(
   params: Params
 ): Promise<YelpResponse | undefined> {
@@ -48,7 +45,12 @@ async function fetchBusiness(
       return undefined;
     }
   } catch (error) {
-    console.log("ERROR", error);
+    toast.error(
+      "There was a problem location information about this business.",
+      {
+        toastId: "fetchBusiness",
+      }
+    );
   }
 }
 

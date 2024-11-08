@@ -8,7 +8,7 @@ Click here to see the deployed site: https://munchhunt.netlify.app/
 
 Why 2.0? The original Munch Hunt was getting a bit old and was created with limited dev skills at the time. This was our chance to redo it!
 
-## Authos
+## Author
 
 - [@Francisco](https://github.com/francisco-cmyk)
 
@@ -18,13 +18,14 @@ Why 2.0? The original Munch Hunt was getting a bit old and was created with limi
 - Randomizes cuisine choices based on user selection (can choose from many and exclude undesired choices)
 - Show a list of results based on location (restaurant information + map)
 - 'Choose for me' feature that lets Munch Hunt ultimately decide your hungry fate!
-- Mobile response because you can't fit your laptop in you pocket
+- Mobile response because you can't fit your laptop in your pocket
 
 ## Tech Stack
 
 - React
 - Typescript
 - React Query
+- Tailwind CSS
 - Shadcn components
 - GSAP
 - XYZ animation

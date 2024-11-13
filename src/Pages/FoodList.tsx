@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useEffect, useMemo, useState } from "react";
 import Modal from "../Components/Modal";
-import { keyBy, rest } from "lodash";
+import { keyBy } from "lodash";
 import MapComponent from "../Components/MapComponent";
 import getMergeState, { convertToMiles, isFloatBetween } from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
@@ -13,9 +13,10 @@ import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import DropDown, { Option } from "../Components/DropDown";
 import Filter from "../Components/Filter";
 import Stars from "../Components/Stars";
-import { ChevronLeft, ChevronRight, Frown, Satellite } from "lucide-react";
+import { ChevronRight, Frown } from "lucide-react";
 import ModalMobile from "../Components/ModalMobile";
 import { Button } from "../Components/Button";
+import { AccordionComponent } from "../Components/Accordion";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -42,22 +43,29 @@ const distanceOptions: Option[] = ["<1", "1", "5", "10", "25"].map(
   }
 );
 
+const isCloseOptions: Option[] = ["Closed", "Open"].map((item) => ({
+  label: item,
+  value: item,
+}));
+
 type State = {
-  selectedRestaurantID: string | null;
-  priceFilter: string | null;
   distanceFilter: number | null;
-  ratingFilter: number | null;
-  showShadow: boolean;
   isSmallWindow: boolean;
+  isClosedFilter: string | null;
+  priceFilter: string | null;
+  ratingFilter: number | null;
+  selectedRestaurantID: string | null;
+  showShadow: boolean;
 };
 
 const initialState: State = {
-  selectedRestaurantID: null,
-  priceFilter: null,
   distanceFilter: null,
-  ratingFilter: null,
-  showShadow: false,
   isSmallWindow: false,
+  isClosedFilter: null,
+  priceFilter: null,
+  ratingFilter: null,
+  selectedRestaurantID: null,
+  showShadow: false,
 };
 
 export default function FoodList(): JSX.Element {
@@ -94,30 +102,42 @@ export default function FoodList(): JSX.Element {
     if (!state.distanceFilter && !state.ratingFilter && !state.priceFilter)
       return yelpRestaurants;
 
-    return yelpRestaurants.filter((result) => {
-      const isPrice =
-        state.priceFilter === null ||
-        (result.price !== undefined && result.price === state.priceFilter);
+    let results = yelpRestaurants;
 
-      const isDistance =
-        state.distanceFilter === null ||
-        Number(convertToMiles(result.distance)) <= state.distanceFilter;
+    results = results
+      .filter((result) => {
+        const isPrice =
+          state.priceFilter === null ||
+          (result.price !== undefined && result.price === state.priceFilter);
 
-      const isRating =
-        state.ratingFilter === null ||
-        isFloatBetween(
-          result.rating,
-          state.ratingFilter,
-          state.ratingFilter + 1
-        );
+        const isStateClosed = state.isClosedFilter === "Closed";
 
-      return isPrice && isDistance && isRating;
-    });
+        const isClosed =
+          state.isClosedFilter === null || result.isClosed === isStateClosed;
+
+        const isDistance =
+          state.distanceFilter === null ||
+          Number(result.distance) <= state.distanceFilter;
+
+        const isRating =
+          state.ratingFilter === null ||
+          isFloatBetween(
+            result.rating,
+            state.ratingFilter,
+            state.ratingFilter + 1
+          );
+
+        return isPrice && isClosed && isDistance && isRating;
+      })
+      .sort((a, b) => Number(a.distance) - Number(b.distance));
+
+    return results;
   }, [
     yelpRestaurants,
     state.priceFilter,
     state.distanceFilter,
     state.ratingFilter,
+    state.isClosedFilter,
   ]);
 
   // Handler
@@ -192,13 +212,18 @@ export default function FoodList(): JSX.Element {
 
           <div className='flex flex-col items-end mr-5 text-right'>
             <a
-              className='text-wrap font-semibold hover:text-purple-600 '
+              className='text-wrap font-semibold hover:text-orange-300 text-customOrange '
               href={mapLink}
               target='_blank'
             >
               {restaurant.displayAddress}
             </a>
-            <p>{restaurant.displayPhone}</p>
+            <a
+              className='hover:text-orange-400'
+              href={`tel:${restaurant.phone}`}
+            >
+              {restaurant.displayPhone}
+            </a>
             <p>{restaurant.transactions.join(", ")}</p>
           </div>
         </div>
@@ -287,32 +312,42 @@ export default function FoodList(): JSX.Element {
             </div>
           ) : (
             <div className='flex flex-col h-[95%] overflow-auto mt-2'>
-              <Filter
-                filterName={"price"}
-                disabled={yelpRestaurants.length === 0}
-                label='Price'
-                options={priceOptions}
-                value={state.priceFilter ?? ""}
-                handleChange={handleFilterChange}
-              />
-
-              <Filter
-                filterName={"distance"}
-                disabled={yelpRestaurants.length === 0}
-                label='Distance'
-                options={distanceOptions}
-                value={state.distanceFilter?.toString() ?? ""}
-                handleChange={handleFilterChange}
-              />
-
-              <Filter
-                filterName={"rating"}
-                disabled={yelpRestaurants.length === 0}
-                label='Rating'
-                options={ratingOptions}
-                value={state.ratingFilter?.toString() ?? ""}
-                handleChange={handleFilterChange}
-              />
+              <AccordionComponent title='Price' isOpen>
+                <Filter
+                  filterName={"price"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={priceOptions}
+                  value={state.priceFilter ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+              <AccordionComponent title='Distance'>
+                <Filter
+                  filterName={"distance"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={distanceOptions}
+                  value={state.distanceFilter?.toString() ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+              <AccordionComponent title='Rating'>
+                <Filter
+                  filterName={"rating"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={ratingOptions}
+                  value={state.ratingFilter?.toString() ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+              {/* <AccordionComponent title='Open now'>
+                <Filter
+                  filterName='isClosed'
+                  disabled={yelpRestaurants.length === 0}
+                  options={isCloseOptions}
+                  value={state.isClosedFilter ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent> */}
             </div>
           )}
         </div>
@@ -411,9 +446,7 @@ function Grid(props: GridProps) {
                       <p className='mr-2 font-semibold'>
                         {restaurant.price ? restaurant.price : "--"}
                       </p>
-                      <p className='text-slate-700'>{`${convertToMiles(
-                        restaurant.distance
-                      )} miles away`}</p>
+                      <p className='text-slate-700'>{`${restaurant.distance} miles away`}</p>
                     </div>
                   </CardFooter>
                 </Card>

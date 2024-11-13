@@ -9,7 +9,7 @@ type FilterProps = {
   options: Option[];
   filterName: string;
   disabled?: boolean;
-  label: string;
+  label?: string;
   value: string;
   handleChange: (params: { name: string; value: string }) => void;
 };
@@ -18,7 +18,9 @@ export default function Filter(props: FilterProps) {
   const isDisabled = props.disabled ?? false;
   return (
     <div className='flex flex-col'>
-      <p className='font-roboto text-slate-500 mt-2'>{props.label}</p>
+      {props.label && (
+        <p className='font-roboto text-slate-500 mt-2'>{props.label}</p>
+      )}
 
       {props.options.map((option, index) => (
         <Button

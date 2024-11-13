@@ -251,7 +251,7 @@ export default function Location(): JSX.Element {
                 <p className='sm:text-sm text-[12px]'>
                   Created by{" "}
                   <a
-                    className='hover:text-orange-300'
+                    className='hover:text-orange-500 text-orange-300'
                     href='https://www.linkedin.com/in/fveranicola'
                     target='_blank'
                   >

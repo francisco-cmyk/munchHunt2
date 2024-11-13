@@ -1,7 +1,7 @@
-
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "../utils";
+import { XyzTransition } from "@animxyz/react";
 
 type ModalProps = {
   class?: string;
@@ -37,14 +37,14 @@ export default function Modal(props: ModalProps): JSX.Element | null {
 
   return (
     <div
-      className={`fixed inset-0 flex justify-center items-center z-[100] ${
-        isOpen ? "visible bg-black bg-opacity-50" : "invisible"
-      }`}
+      className='fixed inset-0 flex justify-center items-center z-[100] visible bg-black bg-opacity-50'
       onClick={handleClose}
     >
       <div
         className={cn(
-          "flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50",
+          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50  ${
+            isOpen ? `animate-scrollOpen` : `animate-scrollClose`
+          }`,
           props.class
         )}
         onClick={(e) => e.stopPropagation()}

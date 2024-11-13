@@ -195,12 +195,13 @@ export type Option = {
 type DropDownProps = {
   title: string;
   options: Option[];
+  selectedOptions?: Option;
   onChange: (params: { name: string; value: string }) => void;
 };
 
 export default function DropDown(props: DropDownProps): JSX.Element {
   const [selectedOption, setSelectedOptions] = React.useState<Option | null>(
-    null
+    props.selectedOptions ?? null
   );
 
   function handleOnChange(option: Option) {
@@ -223,7 +224,11 @@ export default function DropDown(props: DropDownProps): JSX.Element {
       <DropdownMenuContent side='bottom'>
         {props.options.map((option, index) => (
           <DropdownMenuItem
-            className='md:w-[170px]  text-black font-roboto'
+            className={`md:w-[170px]  ${
+              selectedOption?.value === option.value
+                ? `bg-customOrange text-white`
+                : `text-black font-roboto`
+            }`}
             key={`${index}-${option.value}`}
             onChange={() => handleOnChange(option)}
             onClick={() => handleOnChange(option)}

@@ -6,17 +6,14 @@ import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   ArrowRight,
   Loader2,
   UtensilsCrossed,
   X,
-  XCircle,
 } from "lucide-react";
 import Modal from "../Components/Modal";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Tooltip, TooltipContent } from "@radix-ui/react-tooltip";
 import ToolTip from "../Components/Tooltip";
 
 type State = {

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
 import { toast } from "react-toastify";
+import { convertToMiles } from "../utils";
 
 type Coordinates = {
   latitude: number;
@@ -21,6 +22,7 @@ type YelpResponse = {
   };
   name: string;
   price: string;
+  phone: string;
   rating: number;
   transactions: string[];
 };
@@ -30,12 +32,13 @@ export type Restaurant = {
   coordinates: Coordinates;
   displayAddress: string;
   displayPhone: string;
-  distance: number;
+  distance: string;
   id: string;
   imageURL: string;
   isClosed: boolean;
   name: string;
   price: string;
+  phone: string;
   rating: number;
   transactions: string[];
 };
@@ -83,12 +86,13 @@ export default function useGetRestaurants(params: Params) {
         coordinates: datum.coordinates,
         displayAddress: datum.location.display_address.join(),
         displayPhone: datum.display_phone,
-        distance: datum.distance,
+        distance: convertToMiles(datum.distance),
         id: datum.id,
         imageURL: datum.image_url,
         isClosed: datum.is_closed,
         name: datum.name,
         price: datum.price,
+        phone: datum.phone,
         rating: datum.rating,
         transactions: datum.transactions,
       }));

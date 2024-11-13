@@ -7,9 +7,8 @@ import { useEffect, useMemo, useState } from "react";
 import Modal from "../Components/Modal";
 import { keyBy } from "lodash";
 import MapComponent from "../Components/MapComponent";
-import getMergeState, { convertToMiles, isFloatBetween } from "../utils";
+import getMergeState, { isFloatBetween, isPast3PM } from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
-import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import DropDown, { Option } from "../Components/DropDown";
 import Filter from "../Components/Filter";
 import Stars from "../Components/Stars";
@@ -17,6 +16,8 @@ import { ChevronRight, Frown } from "lucide-react";
 import ModalMobile from "../Components/ModalMobile";
 import { Button } from "../Components/Button";
 import { AccordionComponent } from "../Components/Accordion";
+import { Switch } from "../Components/Switch";
+import useGetBusinessInfo from "../Hooks/useGetBusiness";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -42,11 +43,6 @@ const distanceOptions: Option[] = ["<1", "1", "5", "10", "25"].map(
     };
   }
 );
-
-const isCloseOptions: Option[] = ["Closed", "Open"].map((item) => ({
-  label: item,
-  value: item,
-}));
 
 type State = {
   distanceFilter: number | null;
@@ -86,6 +82,10 @@ export default function FoodList(): JSX.Element {
 
   const restaurantsKeyedByID = keyBy(yelpRestaurants, "id");
 
+  const { data: businessInfo } = useGetBusinessInfo({
+    businessID: state.selectedRestaurantID ?? "",
+  });
+
   // Side Effects
 
   useEffect(() => {
@@ -104,32 +104,40 @@ export default function FoodList(): JSX.Element {
 
     let results = yelpRestaurants;
 
-    results = results
-      .filter((result) => {
-        const isPrice =
-          state.priceFilter === null ||
-          (result.price !== undefined && result.price === state.priceFilter);
+    results = results.filter((result) => {
+      const isPrice =
+        state.priceFilter === null ||
+        (result.price !== undefined && result.price === state.priceFilter);
 
-        const isStateClosed = state.isClosedFilter === "Closed";
+      const isStateClosed = state.isClosedFilter === "Open";
 
-        const isClosed =
-          state.isClosedFilter === null || result.isClosed === isStateClosed;
+      const isClosed =
+        state.isClosedFilter === null || result.isClosed !== isStateClosed;
 
-        const isDistance =
-          state.distanceFilter === null ||
-          Number(result.distance) <= state.distanceFilter;
+      const isDistance =
+        state.distanceFilter === null ||
+        Number(result.distance) <= state.distanceFilter;
 
-        const isRating =
-          state.ratingFilter === null ||
-          isFloatBetween(
-            result.rating,
-            state.ratingFilter,
-            state.ratingFilter + 1
-          );
+      const isRating =
+        state.ratingFilter === null ||
+        isFloatBetween(
+          result.rating,
+          state.ratingFilter,
+          state.ratingFilter + 1
+        );
 
-        return isPrice && isClosed && isDistance && isRating;
-      })
-      .sort((a, b) => Number(a.distance) - Number(b.distance));
+      return isPrice && isClosed && isDistance && isRating;
+    });
+
+    results = results.sort((a, b) => {
+      if (!state.distanceFilter) return 0;
+
+      const distanceA = Number(a.distance);
+      const distanceB = Number(b.distance);
+      if (distanceA > distanceB) return -1;
+      if (distanceB < distanceA) return 1;
+      return 0;
+    });
 
     return results;
   }, [
@@ -151,7 +159,7 @@ export default function FoodList(): JSX.Element {
   }
 
   function handleFilterChange(params: { name: string; value: string }) {
-    let formattedValue: string | number = params.value;
+    let formattedValue: string | number | null = params.value;
 
     const filterName = `${params.name}Filter` as keyof State;
 
@@ -171,6 +179,11 @@ export default function FoodList(): JSX.Element {
       }
       case "distance": {
         formattedValue = Number(params.value);
+        break;
+      }
+      case "isClosed": {
+        formattedValue = params.value === "Open" ? "Open" : null;
+        break;
       }
     }
     mergeState({ [filterName]: formattedValue });
@@ -179,7 +192,7 @@ export default function FoodList(): JSX.Element {
   //Render
 
   function renderModal() {
-    if (state.selectedRestaurantID === null) return null;
+    if (state.selectedRestaurantID === null || !businessInfo) return null;
 
     const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
 
@@ -244,6 +257,22 @@ export default function FoodList(): JSX.Element {
       </div>
     );
 
+    const business = {
+      name: businessInfo ? businessInfo.name : restaurant.name,
+      id: businessInfo ? businessInfo.id : restaurant.id,
+      displayAddress: restaurant.displayAddress,
+      rating: restaurant.rating,
+      transactions: restaurant.transactions,
+      price: restaurant.price,
+      phone: restaurant.phone,
+      displayPhone: restaurant.displayPhone,
+      coordinates: restaurant.coordinates,
+      categories: businessInfo ? businessInfo.categories : [],
+      photos: businessInfo ? businessInfo.photos : [],
+      url: businessInfo ? businessInfo.url : "",
+      hours: businessInfo ? businessInfo.hours : [],
+    };
+
     return (
       <>
         {state.isSmallWindow ? (
@@ -256,13 +285,15 @@ export default function FoodList(): JSX.Element {
           <Modal
             onClose={() => mergeState({ selectedRestaurantID: null })}
             showClose
-          >
-            {conent}
-          </Modal>
+            isSmallWindow={state.isSmallWindow}
+            business={business}
+          />
         )}
       </>
     );
   }
+
+  const isAfternoon = isPast3PM();
 
   return (
     <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
@@ -311,7 +342,20 @@ export default function FoodList(): JSX.Element {
               />
             </div>
           ) : (
-            <div className='flex flex-col h-[95%] overflow-auto mt-2'>
+            <div className='flex flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
+              {isAfternoon && (
+                <div className='w-full py-2 px-2 flex justify-between'>
+                  <p className='font-medium'>Open now</p>
+                  <Switch
+                    checked={state.isClosedFilter === "Open"}
+                    onCheckedChange={(value) => {
+                      const valueStr = value ? "Open" : "Closed";
+                      handleFilterChange({ name: "isClosed", value: valueStr });
+                    }}
+                  />
+                </div>
+              )}
+
               <AccordionComponent title='Price' isOpen>
                 <Filter
                   filterName={"price"}
@@ -339,15 +383,6 @@ export default function FoodList(): JSX.Element {
                   handleChange={handleFilterChange}
                 />
               </AccordionComponent>
-              {/* <AccordionComponent title='Open now'>
-                <Filter
-                  filterName='isClosed'
-                  disabled={yelpRestaurants.length === 0}
-                  options={isCloseOptions}
-                  value={state.isClosedFilter ?? ""}
-                  handleChange={handleFilterChange}
-                />
-              </AccordionComponent> */}
             </div>
           )}
         </div>
@@ -426,7 +461,7 @@ function Grid(props: GridProps) {
                       <p className=''>{restaurant.displayPhone}</p>
 
                       <p className='text-[15px]'>
-                        {restaurant.isClosed ? "Open now" : "Closed"}
+                        {restaurant.isClosed ? "Closed" : "Open now"}
                       </p>
                     </div>
                     <img

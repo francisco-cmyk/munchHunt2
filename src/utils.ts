@@ -55,3 +55,28 @@ export function isValidAddress(address: string) {
   if (address.length === 0) return true;
   return addressRegex.test(address);
 }
+
+export function isPast3PM() {
+  const now = new Date();
+  const hours = now.getHours();
+
+  return hours >= 18;
+}
+
+export function formatTimeRange(start: string, end: string) {
+  start = convertTo12HourFormat(start);
+  end = convertTo12HourFormat(end);
+
+  return `${start} - ${end}`;
+}
+
+function convertTo12HourFormat(time: string) {
+  // Parse hours and minutes
+  let hours = parseInt(time.slice(0, 2), 10);
+  let minutes = time.slice(2);
+
+  const suffix = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  return `${hours}:${minutes} ${suffix}`;
+}

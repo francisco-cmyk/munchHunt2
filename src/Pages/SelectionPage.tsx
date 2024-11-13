@@ -5,16 +5,13 @@ import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowRight,
-  Loader2,
-  UtensilsCrossed,
-  X,
-} from "lucide-react";
+import { ArrowRight, Loader2, UtensilsCrossed, X } from "lucide-react";
 import Modal from "../Components/Modal";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ToolTip from "../Components/Tooltip";
+import GenericModa from "../Components/GenericModal";
+import GenericModal from "../Components/GenericModal";
 
 type State = {
   selectedChoices: string[];
@@ -314,7 +311,7 @@ function Grid(props: GridProps) {
 
 function SelectionModal(munchChoice: string) {
   return (
-    <Modal class='md:bg-transparent'>
+    <GenericModal class='md:bg-transparent'>
       <XyzTransition
         appear
         className='bg-customOrange rounded-[15px]
@@ -340,6 +337,6 @@ function SelectionModal(munchChoice: string) {
           </XyzTransition>
         </div>
       </XyzTransition>
-    </Modal>
+    </GenericModal>
   );
 }

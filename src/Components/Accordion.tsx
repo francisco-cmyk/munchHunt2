@@ -59,6 +59,7 @@ type AccordionProps = {
   title: string;
   isOpen?: boolean;
   children: React.ReactNode;
+  class?: string;
 };
 
 export function AccordionComponent(props: AccordionProps) {
@@ -67,6 +68,7 @@ export function AccordionComponent(props: AccordionProps) {
       type='single'
       defaultValue={props.isOpen ? "item-1" : ""}
       collapsible
+      className={props.class}
     >
       <AccordionItem value='item-1'>
         <AccordionTrigger>{props.title}</AccordionTrigger>

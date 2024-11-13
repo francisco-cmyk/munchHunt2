@@ -3,23 +3,40 @@ import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
 import { toast } from "react-toastify";
 
-type Coordinates = {
-  latitude: number;
-  longitude: number;
-};
-
 type YelpResponse = {
   name: string;
   id: string;
+  categories: { name: string; title: string }[];
   photos: string[];
   url: string;
+  hours: {
+    hours_type: string;
+    is_open_now: boolean;
+    open: {
+      day: number;
+      end: string;
+      is_overnight: boolean;
+      start: string;
+    }[];
+  }[];
 };
 
 export type Business = {
   name: string;
   id: string;
+  categories: { name: string; title: string }[];
   photos: string[];
   url: string;
+  hours: {
+    hoursType: string;
+    isOpenNow: boolean;
+    open: {
+      day: number;
+      end: string;
+      isOvernight: boolean;
+      start: string;
+    }[];
+  }[];
 };
 
 type Params = {
@@ -30,14 +47,11 @@ async function fetchBusiness(
   params: Params
 ): Promise<YelpResponse | undefined> {
   try {
-    const config = {
-      headers: { Authorization: `Bearer ${import.meta.env.VITE_YELP_API_KEY}` },
-    };
-
-    const response = await axios.get(
-      `https://api.yelp.com/v3/businesses/${params.businessID}`,
-      config
-    );
+    const response = await axios.get("/.netlify/functions/getBusiness", {
+      params: {
+        businessID: params.businessID,
+      },
+    });
 
     if (response.data) {
       return response.data;
@@ -55,19 +69,30 @@ async function fetchBusiness(
 }
 
 export default function useGetBusinessInfo(params: Params) {
-  return useQuery<Business, Error>({
+  return useQuery<Business | undefined, Error>({
     queryKey: ["business", params.businessID],
     queryFn: async () => {
       const data = await fetchBusiness({ ...params });
 
-      const result: Business = data
+      const result: Business | undefined = data
         ? {
             name: data.name,
             id: data.id,
             photos: data.photos,
             url: data.url,
+            categories: data.categories,
+            hours: data.hours.map((hour) => ({
+              hoursType: hour.hours_type,
+              isOpenNow: hour.is_open_now,
+              open: hour.open.map((item) => ({
+                day: item.day,
+                end: item.end,
+                isOvernight: item.is_overnight,
+                start: item.start,
+              })),
+            })),
           }
-        : { name: "", id: params.businessID, photos: [], url: "" };
+        : undefined;
 
       return result;
     },

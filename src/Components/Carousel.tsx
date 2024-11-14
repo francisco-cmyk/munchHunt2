@@ -266,8 +266,8 @@ export function CarouselComponent(props: Props) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className='bg-slate-600 text-white' />
+      <CarouselNext className='bg-slate-600 text-white' />
     </Carousel>
   );
 }

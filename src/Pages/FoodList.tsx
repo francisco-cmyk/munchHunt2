@@ -82,9 +82,10 @@ export default function FoodList(): JSX.Element {
 
   const restaurantsKeyedByID = keyBy(yelpRestaurants, "id");
 
-  const { data: businessInfo } = useGetBusinessInfo({
-    businessID: state.selectedRestaurantID ?? "",
-  });
+  const { data: businessInfo, isFetching: isFetchingBusiness } =
+    useGetBusinessInfo({
+      businessID: state.selectedRestaurantID ?? "",
+    });
 
   // Side Effects
 
@@ -192,7 +193,7 @@ export default function FoodList(): JSX.Element {
   //Render
 
   function renderModal() {
-    if (state.selectedRestaurantID === null || !businessInfo) return null;
+    if (state.selectedRestaurantID === null) return null;
 
     const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
 
@@ -285,6 +286,7 @@ export default function FoodList(): JSX.Element {
           <Modal
             onClose={() => mergeState({ selectedRestaurantID: null })}
             showClose
+            isLoading={isFetchingBusiness}
             isSmallWindow={state.isSmallWindow}
             business={business}
           />

@@ -284,51 +284,19 @@ function triggerAnimations(params: {
   bounce: React.RefObject<HTMLDivElement>;
   viewportHeight: number;
 }) {
-  const barHeight = params.bar.current ? params.bar.current.clientHeight : 150;
-  const barTextWidth = params.barText.current
-    ? params.barText.current.clientWidth
-    : 1000;
-
   gsap.fromTo(
     params.container1.current,
     {
       opacity: 1,
       duration: 1,
     },
-    { opacity: 0, duration: 1 }
+    { opacity: 0, duration: 3 }
   );
 
   gsap.fromTo(
     params.container2.current,
-    { opacity: 1, translateX: 0 },
-    { opacity: 0, translateX: -2000 }
-  );
-
-  gsap.fromTo(
-    params.bar.current,
-    {
-      translateY: 0,
-      opacity: 1,
-    },
-    {
-      translateY: -(params.viewportHeight - barHeight),
-      opacity: 1,
-      scaleY: 0.9,
-      duration: 1,
-    }
-  );
-
-  gsap.fromTo(
-    params.barText.current,
-    {
-      opacity: 1,
-      translateX: 0,
-    },
-    {
-      translateX: barTextWidth - params.viewportHeight - 10,
-      scale: 1.3,
-      opacity: 0.2,
-    }
+    { opacity: 1, translateX: 0, ease: "power1.out" },
+    { opacity: 0, translateX: -2000, duration: 3 }
   );
 
   gsap.fromTo(
@@ -337,8 +305,8 @@ function triggerAnimations(params: {
       opacity: 0.9,
       rotate: 0,
       delay: 1,
-      ease: "power1.inOut",
+      ease: "sine.in",
     },
-    { opacity: 0, scale: 1.5, rotate: 360, ease: "power1.inOut" }
+    { opacity: 0, scale: 1.5, rotate: 360, ease: "sine.out" }
   );
 }

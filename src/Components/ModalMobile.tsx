@@ -93,7 +93,10 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
             </div>
 
             <div className='flex flex-col items-start text-right font-roboto tracking-normal'>
-              <div className='flex justify-between w-full items-center mt-1 hover:bg-slate-200 rounded-sm'>
+              <div
+                className='flex justify-between w-full items-center mt-1 hover:bg-slate-200 rounded-sm'
+                onClick={() => window.open(mapLink, "_blank")}
+              >
                 <a
                   href={mapLink}
                   target='_blank'

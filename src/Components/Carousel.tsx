@@ -208,7 +208,7 @@ const CarouselPrevious = React.forwardRef<
       className={cn(
         "absolute  h-8 w-8 rounded-full",
         orientation === "horizontal"
-          ? "-left-2 top-1/2 -translate-y-1/2"
+          ? "sm:-left-2 -left-0 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -237,7 +237,7 @@ const CarouselNext = React.forwardRef<
       className={cn(
         "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
-          ? "-right-4 top-1/2 -translate-y-1/2"
+          ? "sm:-right-4 -right-0 top-1/2 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -253,6 +253,7 @@ const CarouselNext = React.forwardRef<
 CarouselNext.displayName = "CarouselNext";
 
 type Props = {
+  class?: string;
   items: string[];
 };
 
@@ -261,8 +262,15 @@ export function CarouselComponent(props: Props) {
     <Carousel>
       <CarouselContent>
         {props.items.map((item, i) => (
-          <CarouselItem key={i} className='h-[400px] w-[400px] rounded-md'>
-            <img src={item} alt='restaurant pics' className=' rounded-md' />
+          <CarouselItem
+            key={i}
+            className={props.class ?? "h-[400px] w-[400px] rounded-md"}
+          >
+            <img
+              src={item}
+              alt='restaurant pics'
+              className='object-cover h-full w-full rounded-md'
+            />
           </CarouselItem>
         ))}
       </CarouselContent>

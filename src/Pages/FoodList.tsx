@@ -1,5 +1,5 @@
 import { useMunchContext } from "../Context/MunchContext";
-import useGetRestaurants, { Restaurant } from "../Hooks/useGetRestaurants";
+import useGetRestaurants from "../Hooks/useGetRestaurants";
 import { Card, CardContent, CardFooter } from "../Components/Card";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -18,6 +18,7 @@ import { Button } from "../Components/Button";
 import { AccordionComponent } from "../Components/Accordion";
 import { Switch } from "../Components/Switch";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
+import { Restaurant } from "../types";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -95,7 +96,7 @@ export default function FoodList(): JSX.Element {
     } else {
       mergeState({ isSmallWindow: false });
     }
-  }, []);
+  }, [window.innerWidth, window.innerHeight]);
 
   // Filter
 
@@ -197,67 +198,6 @@ export default function FoodList(): JSX.Element {
 
     const restaurant = restaurantsKeyedByID[state.selectedRestaurantID];
 
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    let mapLink = restaurant.displayAddress.replace(/ /g, "+");
-
-    mapLink = "https://www.google.com/maps/search/?api=1&query=1600+" + mapLink;
-
-    let mapWidth, mapHeight;
-    if (state.isSmallWindow) {
-      mapWidth = windowWidth - 50;
-      mapHeight = windowHeight / 2;
-    }
-
-    const conent = (
-      <div className='md:w-[850px] md:h-[450px] sm:h-screen h-dvh bg-slate-50 rounded-xl sm:p-8 p-6 flex md:flex-row flex-col justify-between cursor-default'>
-        <div className='md:w-2/4 md:h-full h-3/5 flex flex-col justify-between'>
-          <div className='flex flex-col items-start md:h-[90px] h-[50px] justify-between'>
-            <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
-              {restaurant.name}
-            </p>
-
-            <Stars rating={restaurant.rating} direction='start' iconSize={24} />
-
-            <p className='font-semibold text-lg mt-2'>
-              {restaurant.price ?? "--"}
-            </p>
-          </div>
-
-          <div className='flex flex-col items-end mr-5 text-right'>
-            <a
-              className='text-wrap font-semibold hover:text-orange-300 text-customOrange '
-              href={mapLink}
-              target='_blank'
-            >
-              {restaurant.displayAddress}
-            </a>
-            <a
-              className='hover:text-orange-400'
-              href={`tel:${restaurant.phone}`}
-            >
-              {restaurant.displayPhone}
-            </a>
-            <p>{restaurant.transactions.join(", ")}</p>
-          </div>
-        </div>
-
-        <div>
-          <MapComponent
-            coordintes={restaurant.coordinates}
-            width={mapWidth}
-            height={mapHeight}
-          />
-        </div>
-
-        {state.isSmallWindow && (
-          <Button onClick={() => mergeState({ selectedRestaurantID: null })}>
-            close
-          </Button>
-        )}
-      </div>
-    );
-
     const business = {
       name: businessInfo ? businessInfo.name : restaurant.name,
       id: businessInfo ? businessInfo.id : restaurant.id,
@@ -278,17 +218,19 @@ export default function FoodList(): JSX.Element {
       <>
         {state.isSmallWindow ? (
           <ModalMobile
-            onClose={() => mergeState({ selectedRestaurantID: null })}
-          >
-            {conent}
-          </ModalMobile>
-        ) : (
-          <Modal
-            onClose={() => mergeState({ selectedRestaurantID: null })}
             showClose
             isLoading={isFetchingBusiness}
             isSmallWindow={state.isSmallWindow}
             business={business}
+            onClose={() => mergeState({ selectedRestaurantID: null })}
+          />
+        ) : (
+          <Modal
+            showClose
+            isLoading={isFetchingBusiness}
+            isSmallWindow={state.isSmallWindow}
+            business={business}
+            onClose={() => mergeState({ selectedRestaurantID: null })}
           />
         )}
       </>
@@ -329,17 +271,20 @@ export default function FoodList(): JSX.Element {
               <DropDown
                 title='Price'
                 options={priceOptions}
+                value={state.priceFilter ?? ""}
                 onChange={handleFilterChange}
               />
 
               <DropDown
                 title='Distance'
                 options={distanceOptions}
+                value={state.distanceFilter?.toString() ?? ""}
                 onChange={handleFilterChange}
               />
               <DropDown
                 title='Rating'
                 options={ratingOptions}
+                value={state.ratingFilter?.toString() ?? ""}
                 onChange={handleFilterChange}
               />
             </div>
@@ -444,12 +389,15 @@ function Grid(props: GridProps) {
             });
 
             return (
-              <div key={`${index}-${restaurant.id}`} className='h-[300px] px-5'>
+              <div
+                key={`${index}-${restaurant.id}`}
+                className='sm:h-[300px] h-[200px] px-5'
+              >
                 <Card
                   className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] cursor-pointer'
                   onClick={() => props.onSelect(restaurant.id)}
                 >
-                  <CardContent className='w-full  overflow-hidden p-0 rounded-lg relative'>
+                  <CardContent className='w-full h-5/6 overflow-hidden p-0 rounded-lg relative'>
                     <div
                       className='absolute top-0 right-0 z-10 w-[250px] p-3 flex flex-col items-end text-[20px] font-bold text-white
                       opacity-0 group-hover:opacity-100  -translate-x-10 transition-transform duration-500 ease-in-out group-hover:translate-x-0 rounded-lg
@@ -467,7 +415,7 @@ function Grid(props: GridProps) {
                       </p>
                     </div>
                     <img
-                      className='object-contain  '
+                      className='object-cover h-full w-full'
                       alt='food'
                       src={restaurant.imageURL}
                     />

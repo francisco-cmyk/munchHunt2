@@ -3,6 +3,7 @@ import axios from "axios";
 import { Coordinate } from "../Context/MunchContext";
 import { toast } from "react-toastify";
 import { convertToMiles } from "../utils";
+import { Restaurant } from "../types";
 
 type Coordinates = {
   latitude: number;
@@ -27,21 +28,7 @@ type YelpResponse = {
   transactions: string[];
 };
 
-export type Restaurant = {
-  alias: string;
-  coordinates: Coordinates;
-  displayAddress: string;
-  displayPhone: string;
-  distance: string;
-  id: string;
-  imageURL: string;
-  isClosed: boolean;
-  name: string;
-  price: string;
-  phone: string;
-  rating: number;
-  transactions: string[];
-};
+
 
 type Params = {
   food: string;

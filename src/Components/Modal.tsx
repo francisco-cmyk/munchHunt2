@@ -1,63 +1,22 @@
-import { Clock, Clock1, Loader2Icon, MapPin, Phone, X } from "lucide-react";
+import { Clock, Loader2Icon, MapPin, Phone, X } from "lucide-react";
 import { useEffect } from "react";
 import { cn, formatTimeRange } from "../utils";
 import Stars from "./Stars";
 import MapComponent from "./MapComponent";
 import { Button } from "./Button";
 import { Separator } from "./Separator";
-import { Accordion } from "@radix-ui/react-accordion";
-import { AccordionComponent } from "./Accordion";
 import { TabComponent } from "./Tabs";
 import { CarouselComponent } from "./Carousel";
-
-type Coordinates = {
-  latitude: number;
-  longitude: number;
-};
-
-const Days = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-] as const;
-
-type Business = {
-  name: string;
-  id: string;
-  displayAddress: string;
-  rating: number;
-  transactions: string[];
-  price: string;
-  phone: string;
-  displayPhone: string;
-  coordinates: Coordinates;
-  categories: { name: string; title: string }[];
-  photos: string[];
-  url: string;
-  hours: {
-    hoursType: string;
-    isOpenNow: boolean;
-    open: {
-      day: number;
-      end: string;
-      isOvernight: boolean;
-      start: string;
-    }[];
-  }[];
-};
+import { Business, Days } from "../types";
 
 type ModalProps = {
   class?: string;
   isOpen?: boolean;
-  onClose?: () => void;
   isSmallWindow: boolean;
   isLoading: boolean;
   showClose?: boolean;
   business: Business;
+  onClose?: () => void;
 };
 
 export default function Modal(props: ModalProps): JSX.Element | null {
@@ -108,7 +67,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
       >
         {props.isLoading ? (
           <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 rounded-xl px-6 py-3  flex flex-col justify-center items-center  cursor-default'>
-            <Loader2Icon className='h-20 w-20 animate-spin ' />
+            <Loader2Icon className='h-20 w-20 animate-spin text-slate-400 opacity-55' />
           </div>
         ) : (
           <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 rounded-xl px-6 py-3  flex flex-col  cursor-default'>
@@ -153,7 +112,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
                 </div>
 
                 <Separator orientation='horizontal' className='h-[2px]  mt-2' />
-                <div className='flex flex-col items-start text-rightfont-roboto tracking-normal '>
+                <div className='flex flex-col items-start text-right font-roboto tracking-normal '>
                   <div className='w-full flex justify-between items-center mt-1 p-1 hover:bg-slate-200 rounded-sm'>
                     <a href={mapLink} target='_blank' className='text-wrap'>
                       {props.business.displayAddress}

@@ -1,11 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-type Coordinate = {
-  latitude: string;
-  longitude: string;
-};
+import { Coordinate } from "../Context/MunchContext";
 
 async function fetchAddress(coordinates: Coordinate) {
   if (!coordinates.latitude && !coordinates.longitude) return;

@@ -60,6 +60,8 @@ type AccordionProps = {
   isOpen?: boolean;
   children: React.ReactNode;
   class?: string;
+  triggerClass?: string;
+  contentClass?: string;
 };
 
 export function AccordionComponent(props: AccordionProps) {
@@ -71,8 +73,12 @@ export function AccordionComponent(props: AccordionProps) {
       className={props.class}
     >
       <AccordionItem value='item-1'>
-        <AccordionTrigger>{props.title}</AccordionTrigger>
-        <AccordionContent>{props.children}</AccordionContent>
+        <AccordionTrigger className={props.triggerClass}>
+          {props.title}
+        </AccordionTrigger>
+        <AccordionContent className={props.contentClass}>
+          {props.children}
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

@@ -195,37 +195,31 @@ export type Option = {
 type DropDownProps = {
   title: string;
   options: Option[];
-  selectedOptions?: Option;
+  value: string;
   onChange: (params: { name: string; value: string }) => void;
 };
 
 export default function DropDown(props: DropDownProps): JSX.Element {
-  const [selectedOption, setSelectedOptions] = React.useState<Option | null>(
-    props.selectedOptions ?? null
-  );
-
   function handleOnChange(option: Option) {
-    setSelectedOptions(option);
-
     props.onChange({ name: props.title.toLowerCase(), value: option.value });
   }
 
-  const menu = selectedOption !== null ? selectedOption.label : props.title;
+  const menu = props.value.length > 0 ? props.value : props.title;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className='md:w-[180px] w-[120px] h-[40px] flex justify-between items-center border-2 t
-          hover:bg-slate-900 hover:text-white rounded-md mr-2 p-2 focus:outline-orange-300'
+        className='w-full h-[40px] flex justify-between items-center border-2 text-sm
+          hover:bg-slate-900 hover:text-white rounded-md mr-2 py-2 px-1 focus:outline-orange-300'
       >
         {menu}
-        <ChevronDown />
+        <ChevronDown className='h-4 w-4' />
       </DropdownMenuTrigger>
       <DropdownMenuContent side='bottom'>
         {props.options.map((option, index) => (
           <DropdownMenuItem
             className={`md:w-[170px]  ${
-              selectedOption?.value === option.value
+              props.value === option.value
                 ? `bg-customOrange text-white`
                 : `text-black font-roboto`
             }`}

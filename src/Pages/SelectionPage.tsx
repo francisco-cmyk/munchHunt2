@@ -6,11 +6,9 @@ import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Loader2, UtensilsCrossed, X } from "lucide-react";
-import Modal from "../Components/Modal";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ToolTip from "../Components/Tooltip";
-import GenericModa from "../Components/GenericModal";
 import GenericModal from "../Components/GenericModal";
 
 type State = {
@@ -222,7 +220,7 @@ export default function SelectionPage(): JSX.Element {
           </div>
         )}
 
-        <div className='2xl:w-full md:w-5/6 w-full  mt-5 max-h-96 min-h-96  overflow-auto py-2'>
+        <div className='2xl:w-full md:w-5/6 w-full  mt-5 sm:max-h-96 sm:min-h-96 max-h-72 min-h-64 overflow-auto py-2'>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'
@@ -231,7 +229,7 @@ export default function SelectionPage(): JSX.Element {
               {state.selectedChoices.map((choice, index) => (
                 <div key={`${index}-${choice}`}>
                   <Button
-                    className={`sm:h-full h-[30px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
+                    className={`sm:h-full h-[40px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
                   >
                     <p className='font-semibold text-lg'>{choice}</p>
                   </Button>

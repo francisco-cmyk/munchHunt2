@@ -82,7 +82,7 @@ export default function Landing() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center font-semibold font-archivo bg-customOrange`}
+      className={`min-h-screen flex flex-col justify-center items-center font-semibold font-archivo bg-customOrange dark:bg-slate-900 dark:text-slate-200`}
     >
       <p
         ref={text1}

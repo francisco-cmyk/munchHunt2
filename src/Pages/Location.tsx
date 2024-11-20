@@ -151,10 +151,10 @@ export default function Location(): JSX.Element {
   return (
     <div
       ref={main}
-      className='bg-slate-50 sm:h-screen h-dvh flex flex-col justify-end cursor-default'
+      className='bg-slate-50 dark:bg-slate-950 sm:h-screen h-dvh flex flex-col justify-end cursor-default'
     >
       <div ref={bounce} className='absolute top-0 '>
-        <Crosshair2Icon className='md:h-[200px] md:w-[200px] h-[130px] w-[130px] opacity-85 text-customOrange ' />
+        <Crosshair2Icon className='md:h-[200px] md:w-[200px] h-[130px] w-[130px] opacity-85 text-customOrange dark:text-slate-700 ' />
       </div>
       <div
         ref={containerRef1}
@@ -164,7 +164,7 @@ export default function Location(): JSX.Element {
           <div className=' flex flex-col justify-start md:items-center mr-10'>
             <p
               ref={titleRef}
-              className='font-archivo font-black text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] sm:text-[100px] text-[80px] text-wrap m-0 p-0 leading-non mix-blend-difference '
+              className='font-archivo font-black text-white dark:text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] sm:text-[100px] text-[80px] text-wrap m-0 p-0 leading-non mix-blend-difference dark:mix-blend-normal'
             >
               Munch Hunt
             </p>
@@ -180,7 +180,7 @@ export default function Location(): JSX.Element {
                 {isLoading ? <LoaderIcon /> : <Search className='h-4 w-4' />}
               </span>
               <Input
-                className={`sm:h-[50px] bg-slate-50 font-inter border-[1px] drop-shadow-lg`}
+                className={`sm:h-[50px] bg-slate-50 dark:bg-slate-900 font-inter border-[1px] drop-shadow-lg`}
                 type='text'
                 placeholder='Enter your location'
                 value={state.addresssInput}
@@ -201,7 +201,7 @@ export default function Location(): JSX.Element {
                   return (
                     <Button
                       key={`${prediction.placeID}-${index}`}
-                      className='flex max-w-full justify-start text-slate-800 font-roboto hover:bg-slate-400 hover:text-white sm:text-[15px] text-[10px] rounded-none text-wrap '
+                      className='flex max-w-full justify-start text-slate-800 dark:bg-slate-100 font-roboto hover:bg-slate-400 hover:text-white sm:text-[15px] text-[10px] rounded-none text-wrap '
                       variant={"outline"}
                       onClick={() =>
                         handlePredictionChange(prediction.description)
@@ -216,10 +216,13 @@ export default function Location(): JSX.Element {
             </div>
 
             <Button
-              className='ml-2 w-[100px] shadow-lg drop-shadow-lg sm:h-[50px] hover:bg-customOrange '
+              className='ml-2 w-[100px] shadow-lg drop-shadow-lg sm:h-[50px] hover:bg-customOrange dark:bg-slate-800  '
               onClick={handleSubmit}
             >
-              <ArrowRight style={{ width: "25px", height: "25px" }} />
+              <ArrowRight
+                style={{ width: "25px", height: "25px" }}
+                className='dark:text-white'
+              />
             </Button>
           </div>
           <p className='font-roboto text-slate-300 mt-2'>Enter location</p>
@@ -228,7 +231,7 @@ export default function Location(): JSX.Element {
 
       <div
         ref={underBarRef}
-        className='w-full flex-col  md:h-1/6 h-[80px] bg-customOrange flex justify-center items-center mt-20'
+        className='w-full flex-col  md:h-1/6 h-[80px] bg-customOrange dark:bg-slate-600  flex justify-center items-center mt-20'
       >
         <p
           ref={barTextRef}

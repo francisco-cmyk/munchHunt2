@@ -17,7 +17,7 @@ export default function GenericModal(props: ModalProps) {
 
   return (
     <div
-      className='fixed inset-0 flex justify-center items-center z-[100] visible bg-black bg-opacity-50'
+      className='fixed inset-0 flex justify-center items-center z-[100] visible bg-black  bg-opacity-50'
       onClick={handleClose}
     >
       <div

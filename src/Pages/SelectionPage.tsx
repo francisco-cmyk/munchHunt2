@@ -44,7 +44,7 @@ export default function SelectionPage(): JSX.Element {
 
   useEffect(() => {
     if (
-      state.selectedChoices.length === 5 &&
+      state.selectedChoices.length === 8 &&
       !state.isLoading &&
       state.isHuntChoosing
     ) {
@@ -126,8 +126,8 @@ export default function SelectionPage(): JSX.Element {
   }
 
   async function runLoop() {
-    for (let i = 0; i < 5; i++) {
-      await randomizeSelection(i + 1 * 1000);
+    for (let i = 0; i < 8; i++) {
+      await randomizeSelection(i + 1 * 700);
     }
   }
 
@@ -188,7 +188,7 @@ export default function SelectionPage(): JSX.Element {
               <Button
                 key={index}
                 variant='secondary'
-                className='mb-1 hover:bg-slate-900 hover:text-white border-2 w-full flex justify-between'
+                className='mb-1 hover:bg-slate-900 dark:hover:bg-slate-600 hover:text-white border-2 w-full flex justify-between'
                 onClick={() => handleSelect(choice)}
               >
                 {choice}
@@ -202,18 +202,20 @@ export default function SelectionPage(): JSX.Element {
       <div className='h-full md:w-3/4 w-5/6 text-center md:text-left  flex flex-col justify-start items-center md:p-10 '>
         {state.isLoading ? (
           <div className='flex min-h-[60px] flex-col justify-center items-center'>
-            <Loader2 className='h-[60px] w-[60px] animate-spin text-customOrange duration-1000' />
-            <p className='mt-3 font-inter text-slate-700'>chosing for you...</p>
+            <Loader2 className='h-[60px] w-[60px] animate-spin text-customOrange dark:text-slate-400 duration-1000' />
+            <p className='mt-2 font-inter text-slate-700'>
+              choosing for you...
+            </p>
           </div>
         ) : (
           <div className='flex flex-col justify-center items-center'>
             <p className='font-anton font-bold sm:text-[25px] text-lg'>
               Lets get started!
             </p>
-            <p className='font-roboto sm:text-xl text-[10px]'>
+            <p className='font-roboto sm:text-xl text-[12px]'>
               Select several cuisines or categories you would want to eat.
             </p>
-            <p className='font-roboto sm:text-xl text-[10px]'>
+            <p className='font-roboto sm:text-xl text-[12px]'>
               If none are selected, <strong>Munch Hunt</strong> will choose one
               for you
             </p>
@@ -229,7 +231,7 @@ export default function SelectionPage(): JSX.Element {
               {state.selectedChoices.map((choice, index) => (
                 <div key={`${index}-${choice}`}>
                   <Button
-                    className={`sm:h-full h-[40px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 hover:text-white`}
+                    className={`sm:h-full h-[45px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 dark:bg-slate-300 hover:text-white`}
                   >
                     <p className='font-semibold text-lg'>{choice}</p>
                   </Button>
@@ -248,7 +250,7 @@ export default function SelectionPage(): JSX.Element {
         <div className='mt-5 md:mb-0 mb-5 2xl:mt-20 '>
           <Button
             disabled={state.isLoading}
-            className='w-[200px] sm:h-[50px] text-[25px] font-archivo bg-customOrange text-slate-900 shadow-lg hover:text-white'
+            className='w-[200px] sm:h-[50px] text-[25px] font-archivo bg-customOrange dark:bg-slate-500 text-slate-900 shadow-lg hover:text-white dark:hover:bg-slate-600'
             onClick={handleSubmit}
           >
             Hunt
@@ -289,8 +291,8 @@ function Grid(props: GridProps) {
                 className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm overflow-hidden
               ${
                 props.selected.includes(item)
-                  ? `bg-slate-900 hover:text-white hover:bg-red-500 `
-                  : `bg-slate-50 text-slate-900 hover:bg-slate-900 hover:text-white`
+                  ? `bg-slate-900 dark:bg-slate-600 dark:text-white hover:text-white hover:bg-red-500 `
+                  : `bg-slate-50 text-slate-900 dark:text-slate-200 hover:bg-slate-900 hover:text-white dark:bg-transparent dark:hover:bg-slate-600`
               }
              `}
                 onClick={() => props.onSelect(item)}
@@ -312,16 +314,16 @@ function SelectionModal(munchChoice: string) {
     <GenericModal class='md:bg-transparent'>
       <XyzTransition
         appear
-        className='bg-customOrange rounded-[15px]
-        ring-[9px] ring-customOrange ring-offset-1 ring-offset-transparent ring-opacity-45
+        className='bg-customOrange dark:bg-slate-500  rounded-[15px]
+        ring-[9px] ring-customOrange dark:ring-slate-500 ring-offset-1 ring-offset-transparent ring-opacity-45
         '
         xyz='small-100% origin-center'
       >
         <div className='flex flex-col justify-center items-center  h-[200px] md:min-w-[400px] min-w-72 md:max-w-[600px] rounded-[30px] md:p-4 px-2'>
-          <p className='font-roboto text-[18px] font-semibold text-white'>
+          <p className='font-roboto text-[18px] font-semibold text-white dark:text-slate-200'>
             The Hunt Chose
           </p>
-          <p className='font-archivo font-bold md:text-[65px] text-[40px] text-wrap'>
+          <p className='font-archivo font-bold md:text-[65px] text-[40px] text-wrap dark:text-slate-200'>
             {munchChoice}
           </p>
           <XyzTransition
@@ -330,7 +332,7 @@ function SelectionModal(munchChoice: string) {
             xyz='fade flip-left perspective-1 delay-10 duration-10'
           >
             <div className='mt-4 md:mt-0'>
-              <UtensilsCrossed size={35} />
+              <UtensilsCrossed size={35} className='dark:text-slate-200' />
             </div>
           </XyzTransition>
         </div>

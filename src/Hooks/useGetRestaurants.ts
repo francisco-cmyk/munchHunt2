@@ -28,8 +28,6 @@ type YelpResponse = {
   transactions: string[];
 };
 
-
-
 type Params = {
   food: string;
   coordinates: Coordinate;

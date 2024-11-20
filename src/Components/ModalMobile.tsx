@@ -48,11 +48,11 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
         onClick={(e) => e.stopPropagation()}
       >
         {props.isLoading ? (
-          <div className='w-screen h-dvh bg-slate-50 rounded-xl px-6 py-3  flex flex-col justify-center items-center cursor-default '>
+          <div className='w-screen h-dvh bg-slate-50 dark:bg-slate-900  rounded-xl px-6 py-3  flex flex-col justify-center items-center cursor-default '>
             <Loader2Icon className='h-20 w-20 text-slate-400 animate-spin opacity-55 ' />
           </div>
         ) : (
-          <div className='w-screen h-dvh bg-slate-50 flex md:flex-row flex-col cursor-default px-3 overflow-y-scroll'>
+          <div className='w-screen h-dvh bg-slate-50 dark:bg-slate-900 flex md:flex-row flex-col cursor-default px-3 overflow-y-scroll'>
             <div className='mt-2 max-h-[200px] '>
               <CarouselComponent
                 class='h-[200px]'
@@ -60,9 +60,9 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
               />
             </div>
 
-            <div className='flex flex-col items-start'>
+            <div className='flex flex-col items-start justify-center'>
               <div className='w-full flex justify-between items-center '>
-                <p className='font-archivo md:text-[30px] text-[20px] text-wrap '>
+                <p className='font-archivo md:text-[30px] text-[20px] text-wrap mt-3'>
                   {props.business.name}
                 </p>
 
@@ -79,7 +79,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 {props.business.categories.map((cat, i) => (
                   <p
                     key={`${cat.name}-${i}`}
-                    className='mr-1 text-xs italic text-slate-500 font-light'
+                    className='mr-1 text-xs italic text-slate-500 dark:text-slate-400 font-light'
                   >
                     {cat.title}
                   </p>
@@ -104,7 +104,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 >
                   {props.business.displayAddress}
                 </a>
-                <MapPin className='h-[20px] text-slate-500' />
+                <MapPin className='h-[20px] text-slate-500 dark:text-slate-200' />
               </div>
 
               <div className='flex justify-between w-full items-center mt-3 rounded-sm hover:bg-slate-200'>
@@ -114,7 +114,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 >
                   {props.business.displayPhone}
                 </a>
-                <Phone className='h-[20px] text-slate-500' />
+                <Phone className='h-[20px] text-slate-500 dark:text-slate-200' />
               </div>
               <AccordionComponent
                 class='w-full mt-2'
@@ -122,7 +122,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 title='Hours'
               >
                 {hours ? (
-                  <div className='flex flex-col w-full bg-slate-100 rounded-lg p-2'>
+                  <div className='flex flex-col w-full bg-slate-100 dark:bg-slate-700 rounded-lg p-2'>
                     <div className=' overflow-auto w-full flex flex-col items-start'>
                       {hours.open.map((hour, i) => (
                         <div
@@ -143,7 +143,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 onClick={() => window.open(props.business.url, "_blank")}
               >
                 <p className='text-sm'> Visit Yelp page</p>
-                <Navigation className='h-[20px] text-slate-500' />
+                <Navigation className='h-[20px] text-slate-500 dark:text-slate-200' />
               </div>
 
               <div className='mt-4 mb-3'>
@@ -155,8 +155,13 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
               </div>
             </div>
 
-            <div className='fixed w-full flex bottom-1'>
-              <Button onClick={handleClose}>close</Button>
+            <div className='fixed w-full flex bottom-1 '>
+              <Button
+                className='dark:bg-slate-900 dark:text-slate-200'
+                onClick={handleClose}
+              >
+                close
+              </Button>
             </div>
           </div>
         )}

@@ -34,12 +34,12 @@ export default function Stars(params: RatingParams): JSX.Element {
             {type === "stars" ? (
               <Star
                 size={size}
-                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
+                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800 dark:fill-slate-200 dark:text-slate-200 `}
               />
             ) : (
               <StarHalf
                 size={size}
-                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 text-slate-800`}
+                className={` mr-1 group-hover:fill-[#ffcf40] group-hover:text-[#ffcf40] fill-slate-800 dark:fill-slate-200 text-slate-800 dark:text-slate-200 `}
               />
             )}
           </div>

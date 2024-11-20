@@ -58,7 +58,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
     >
       <div
         className={cn(
-          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50  ${
+          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50 dark:bg-slate-900   ${
             isOpen ? `animate-scrollOpen` : `animate-scrollClose`
           }`,
           props.class
@@ -66,11 +66,11 @@ export default function Modal(props: ModalProps): JSX.Element | null {
         onClick={(e) => e.stopPropagation()}
       >
         {props.isLoading ? (
-          <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 rounded-xl px-6 py-3  flex flex-col justify-center items-center  cursor-default'>
+          <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 dark:bg-slate-900  rounded-xl px-6 py-3  flex flex-col justify-center items-center  cursor-default'>
             <Loader2Icon className='h-20 w-20 animate-spin text-slate-400 opacity-55' />
           </div>
         ) : (
-          <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 rounded-xl px-6 py-3  flex flex-col  cursor-default'>
+          <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 dark:bg-slate-900 rounded-xl px-6 py-3  flex flex-col  cursor-default'>
             <div className='w-full flex justify-between items-center mb-3 '>
               <p className=' font-archivo md:text-[30px] text-[20px] text-wrap '>
                 {props.business.name}
@@ -79,7 +79,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
               {props.showClose && (
                 <div className='' onClick={handleClose}>
                   <X
-                    className=' text-black hover:text-customOrange'
+                    className=' text-black dark:text-white dark:hover:text-slate-700 hover:text-customOrange'
                     size={30}
                   />
                 </div>
@@ -111,30 +111,33 @@ export default function Modal(props: ModalProps): JSX.Element | null {
                   ))}
                 </div>
 
-                <Separator orientation='horizontal' className='h-[2px]  mt-2' />
+                <Separator
+                  orientation='horizontal'
+                  className='h-[2px]  mt-2 dark:bg-slate-400'
+                />
                 <div className='flex flex-col items-start text-right font-roboto tracking-normal '>
-                  <div className='w-full flex justify-between items-center mt-1 p-1 hover:bg-slate-200 rounded-sm'>
+                  <div className='w-full flex justify-between items-center mt-1 p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-sm'>
                     <a href={mapLink} target='_blank' className='text-wrap'>
                       {props.business.displayAddress}
                     </a>
-                    <MapPin className='h-[20px] text-slate-500' />
+                    <MapPin className='h-[20px] text-slate-500 dark:text-slate-200' />
                   </div>
 
                   <div className='w-full flex justify-between items-center mt-1 p-1 rounded-sm'>
                     <a href={`tel:${props.business.phone}`}>
                       {props.business.displayPhone}
                     </a>
-                    <Phone className='h-[20px] text-slate-500' />
+                    <Phone className='h-[20px] text-slate-500 dark:text-slate-200' />
                   </div>
 
                   <div className='w-full flex justify-between items-center mt-1 p-1 rounded-sm'>
                     <p>Hours</p>
-                    <Clock className='h-[20px] text-slate-500' />
+                    <Clock className='h-[20px] text-slate-500 dark:text-slate-200' />
                   </div>
 
                   <div className='max-h-[200px] w-full overflow-auto'>
                     {hours ? (
-                      <div className='flex flex-col w-full bg-slate-100 rounded-lg p-2'>
+                      <div className='flex flex-col w-full bg-slate-100 dark:bg-slate-700 rounded-lg p-2'>
                         <div className=' overflow-auto w-full flex flex-col items-start'>
                           {hours.open.map((hour, i) => (
                             <div
@@ -153,7 +156,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
                   <div className='w-full mt-5'>
                     <Button
                       variant='outline'
-                      className='hover:bg-red-400 hover:text-white'
+                      className='hover:bg-red-400 hover:text-white '
                       onClick={() => window.open(props.business.url, "_blank")}
                     >
                       Visit Yelp page
@@ -163,7 +166,10 @@ export default function Modal(props: ModalProps): JSX.Element | null {
               </div>
 
               <div className='flex '>
-                <Separator orientation='vertical' className='mr-4' />
+                <Separator
+                  orientation='vertical'
+                  className='mr-4 dark:bg-slate-400 '
+                />
                 <TabComponent
                   tabName={["Map", "Photos"]}
                   tabContent={[

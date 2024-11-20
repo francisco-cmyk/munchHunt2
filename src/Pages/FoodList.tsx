@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useEffect, useMemo, useState } from "react";
 import Modal from "../Components/Modal";
-import { keyBy } from "lodash";
+import { keyBy, result } from "lodash";
 import MapComponent from "../Components/MapComponent";
 import getMergeState, { isFloatBetween, isPast3PM } from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
@@ -237,7 +237,8 @@ export default function FoodList(): JSX.Element {
     );
   }
 
-  const isAfternoon = isPast3PM();
+  //TODO: Fix filtering on open status
+  // const isAfternoon = isPast3PM();
 
   return (
     <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
@@ -245,13 +246,15 @@ export default function FoodList(): JSX.Element {
       <div
         className={`${
           state.isSmallWindow ? `top-16 z-20 fixed` : ``
-        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 py-2`}
+        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border py-2`}
       >
         <div className='w-1/5 md:flex hidden justify-end pr-3'>
-          <p className='font-roboto text-[17px] text-white'>The Hunt Chose</p>
+          <p className='font-inter text-[17px] text-white dark:text-slate-100 '>
+            The Hunt Chose
+          </p>
           <ChevronRight color='white' />
         </div>
-        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white md:pl-6'>
+        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white dark:text-slate-100 md:pl-6'>
           <p className='font-archivo font-bold md:text-[30px] text-[35px] '>
             {munchHuntChoice}
           </p>
@@ -260,7 +263,7 @@ export default function FoodList(): JSX.Element {
 
       <div className='w-full h-full flex md:flex-row flex-col mt-5 overflow-auto  '>
         <div className='md:w-1/5 border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
-          <p className='font-inter font-semibold text-lg text-slate-500'>
+          <p className='font-inter font-semibold text-lg text-slate-500 dark:text-slate-100'>
             Filter By
           </p>
           <div className='w-full border-b-2' />
@@ -290,7 +293,7 @@ export default function FoodList(): JSX.Element {
             </div>
           ) : (
             <div className='flex flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
-              {isAfternoon && (
+              {/* {isAfternoon && (
                 <div className='w-full py-2 px-2 flex justify-between'>
                   <p className='font-medium'>Open now</p>
                   <Switch
@@ -301,7 +304,7 @@ export default function FoodList(): JSX.Element {
                     }}
                   />
                 </div>
-              )}
+              )} */}
 
               <AccordionComponent title='Price' isOpen>
                 <Filter
@@ -394,7 +397,7 @@ function Grid(props: GridProps) {
                 className='sm:h-[300px] h-[200px] px-5'
               >
                 <Card
-                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] cursor-pointer'
+                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent dark:bg-slate-950 dark:border-2 shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] dark:hover:bg-slate-900 cursor-pointer'
                   onClick={() => props.onSelect(restaurant.id)}
                 >
                   <CardContent className='w-full h-5/6 overflow-hidden p-0 rounded-lg relative'>
@@ -403,16 +406,17 @@ function Grid(props: GridProps) {
                       opacity-0 group-hover:opacity-100  -translate-x-10 transition-transform duration-500 ease-in-out group-hover:translate-x-0 rounded-lg
                       drop-shadow-md '
                     >
+                      <p className='text-[16px] text-right text-wrap'>
+                        {restaurant.displayAddress}
+                      </p>
+
+                      <p className='text-[14px]'>{restaurant.displayPhone}</p>
+
                       {restaurant.transactions.length > 0 && (
-                        <div className=' text-[15px] flex justify-end text-wrap  rounded-lg drop-shadow-lg'>
+                        <div className=' text-[11px] flex justify-end text-wrap  rounded-lg drop-shadow-lg'>
                           <p className='text-wrap text-right'>{availibility}</p>
                         </div>
                       )}
-                      <p className=''>{restaurant.displayPhone}</p>
-
-                      <p className='text-[15px]'>
-                        {restaurant.isClosed ? "Closed" : "Open now"}
-                      </p>
                     </div>
                     <img
                       className='object-cover h-full w-full'
@@ -420,9 +424,9 @@ function Grid(props: GridProps) {
                       src={restaurant.imageURL}
                     />
                   </CardContent>
-                  <CardFooter className='px-2 py-1 w-full flex flex-col justify-between items-start text-sm mt-1'>
-                    <div className='w-full flex justify-between'>
-                      <p className='font-semibold text-slate-800 text-[14px] text-wrap'>
+                  <CardFooter className='px-2 py-1 w-full flex flex-col justify-between items-start text-sm mt-1 '>
+                    <div className='w-full flex justify-between '>
+                      <p className='font-semibold text-slate-800 dark:text-slate-100 text-[14px] text-wrap'>
                         {restaurant.name}
                       </p>
                       <Stars rating={restaurant.rating} />
@@ -431,7 +435,7 @@ function Grid(props: GridProps) {
                       <p className='mr-2 font-semibold'>
                         {restaurant.price ? restaurant.price : "--"}
                       </p>
-                      <p className='text-slate-700'>{`${restaurant.distance} miles away`}</p>
+                      <p className='text-slate-700 dark:text-slate-200'>{`${restaurant.distance} miles away`}</p>
                     </div>
                   </CardFooter>
                 </Card>

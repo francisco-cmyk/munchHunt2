@@ -218,10 +218,10 @@ export default function DropDown(props: DropDownProps): JSX.Element {
       <DropdownMenuContent side='bottom'>
         {props.options.map((option, index) => (
           <DropdownMenuItem
-            className={`md:w-[170px]  ${
+            className={`md:w-[170px] bg-slate-900  ${
               props.value === option.value
-                ? `bg-customOrange text-white`
-                : `text-black font-roboto`
+                ? `bg-customOrange dark:bg-slate-600 text-white`
+                : `text-black dark:text-slate-200 font-roboto`
             }`}
             key={`${index}-${option.value}`}
             onChange={() => handleOnChange(option)}

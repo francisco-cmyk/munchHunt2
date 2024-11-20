@@ -246,7 +246,7 @@ export default function FoodList(): JSX.Element {
       <div
         className={`${
           state.isSmallWindow ? `top-16 z-20 fixed` : ``
-        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border py-2`}
+        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border-b-2 py-2`}
       >
         <div className='w-1/5 md:flex hidden justify-end pr-3'>
           <p className='font-inter text-[17px] text-white dark:text-slate-100 '>

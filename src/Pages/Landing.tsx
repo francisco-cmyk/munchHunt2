@@ -5,7 +5,6 @@ import gsap from "gsap";
 import SplitType from "split-type";
 
 export default function Landing() {
-  const [showFirstPage, setShowFirstPage] = useState(true);
   const [currentText, setCurrentText] = useState("text1");
 
   const navigate = useNavigate();
@@ -31,7 +30,6 @@ export default function Landing() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowFirstPage(false);
       navigate("/location");
       setCurrentText("text1");
     }, 6000);
@@ -39,15 +37,15 @@ export default function Landing() {
   }, []);
 
   function startAnimation() {
-    const time = 1;
+    const time = 2;
+    const yScale = 300;
     if (text1.current && currentText === "text1") {
       const text = new SplitType(text1.current, { types: "words" });
       gsap.from(text.words, {
         opacity: 0,
-        y: 50,
-        stagger: 0.1,
+        y: -yScale,
         duration: time,
-        ease: "power2.out",
+        ease: "circ",
         onComplete: () => {
           setCurrentText("text2");
         },
@@ -58,10 +56,9 @@ export default function Landing() {
       const secondText = new SplitType(text2.current, { types: "words" });
       gsap.from(secondText.words, {
         opacity: 0,
-        y: 50,
-        stagger: 0.1,
+        y: yScale,
         duration: time,
-        ease: "power2.out",
+        ease: "circ",
         onComplete: () => {
           setCurrentText("text3");
         },
@@ -72,17 +69,16 @@ export default function Landing() {
       const thirdText = new SplitType(text3.current, { types: "words" });
       gsap.from(thirdText.words, {
         opacity: 0,
-        y: 50,
-        stagger: 0.1,
-        duration: 1,
-        ease: "power2.out",
+        x: -100,
+        duration: time,
+        ease: "circ",
       });
     }
   }
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center font-semibold font-archivo bg-customOrange dark:bg-slate-900 dark:text-slate-200`}
+      className={`min-h-screen flex flex-col justify-center items-center font-semibold font-archivo bg-slate-200 text-customOrange dark:bg-slate-900 dark:text-slate-200`}
     >
       <p
         ref={text1}
@@ -90,7 +86,7 @@ export default function Landing() {
           currentText === "text1" ? `inline` : `hidden`
         }  leading-tight text-star`}
       >
-        Struggling to choose a restaurant?
+        {"Struggling to choose a restaurant? \u{1FAE0}"}
       </p>
 
       <p
@@ -99,7 +95,7 @@ export default function Landing() {
           currentText === "text2" ? `inline` : `hidden`
         } leading-tight text-star`}
       >
-        Date night? Or just hungry?
+        Date night 🧡? Or just hungry?
       </p>
 
       <p
@@ -108,7 +104,7 @@ export default function Landing() {
           currentText === "text3" ? `inline` : `hidden`
         } leading-tight text-star`}
       >
-        Lets find the right place for you
+        Lets find the right place for you 🍽️
       </p>
     </div>
   );

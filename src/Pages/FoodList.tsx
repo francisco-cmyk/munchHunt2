@@ -293,18 +293,6 @@ export default function FoodList(): JSX.Element {
             </div>
           ) : (
             <div className='flex flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
-              {/* {isAfternoon && (
-                <div className='w-full py-2 px-2 flex justify-between'>
-                  <p className='font-medium'>Open now</p>
-                  <Switch
-                    checked={state.isClosedFilter === "Open"}
-                    onCheckedChange={(value) => {
-                      const valueStr = value ? "Open" : "Closed";
-                      handleFilterChange({ name: "isClosed", value: valueStr });
-                    }}
-                  />
-                </div>
-              )} */}
 
               <AccordionComponent title='Price' isOpen>
                 <Filter

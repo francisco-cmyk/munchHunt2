@@ -38,14 +38,19 @@ export function randomizeChoice(choices: string[]): string {
   return choices[randomIndex];
 }
 
-export function randomizeMultipleChoices(choices: string[]): string[] {
+export function randomizeMultipleChoices(
+  choices: string[],
+  limit: number
+): string[] {
   const indexes = new Set();
   const newChoices: string[] = [];
 
-  let randomIndex = Math.floor(Math.random() * choices.length);
-  while (!indexes.has(randomIndex) && newChoices.length < 8) {
-    newChoices.push(choices[randomIndex]);
-    randomIndex = Math.floor(Math.random() * choices.length);
+  while (newChoices.length < limit) {
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    if (!indexes.has(randomIndex)) {
+      newChoices.push(choices[randomIndex]);
+      indexes.add(randomIndex);
+    }
   }
 
   return newChoices;

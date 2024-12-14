@@ -13,6 +13,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ToolTip from "../Components/Tooltip";
 import GenericModal from "../Components/GenericModal";
+import useGetCategories from "../Hooks/useGetCategories";
+import Skeleton from "react-loading-skeleton";
 
 type State = {
   selectedChoices: string[];
@@ -37,13 +39,20 @@ export default function SelectionPage(): JSX.Element {
   const munchContext = useMunchContext();
   const navigate = useNavigate();
 
+  const { data: categories = [], isFetching: isLoadingCategories } =
+    useGetCategories({
+      coordinates: munchContext.currentCoordinates,
+    });
+
+  const categoriesLimit = categories.length < 8 ? 4 : 8;
+
   ////
 
   const windowWidth = window.innerWidth;
 
   const filteredFoodChoices = useMemo(() => {
-    return foodChoices.filter((food) => !state.excludedChoices.includes(food));
-  }, [state.excludedChoices]);
+    return categories.filter((food) => !state.excludedChoices.includes(food));
+  }, [state.excludedChoices, categories]);
 
   useEffect(() => {
     if (
@@ -130,7 +139,10 @@ export default function SelectionPage(): JSX.Element {
 
     if (hasNoSelections) {
       mergeState({ isLoading: true, isHuntChoosing: true });
-      const newChoices = randomizeMultipleChoices(filteredFoodChoices);
+      const newChoices = randomizeMultipleChoices(
+        filteredFoodChoices,
+        categoriesLimit
+      );
       processChoices(newChoices).then(() => {
         setTimeout(() => {
           mergeState({ isLoading: false });
@@ -239,6 +251,7 @@ export default function SelectionPage(): JSX.Element {
             <Grid
               choices={filteredFoodChoices}
               selected={state.selectedChoices}
+              isLoading={isLoadingCategories}
               onSelect={handleSelect}
             />
           )}
@@ -261,6 +274,7 @@ export default function SelectionPage(): JSX.Element {
 type GridProps = {
   choices: string[];
   selected: string[];
+  isLoading: boolean;
   onSelect: (value: string) => void;
 };
 
@@ -268,15 +282,16 @@ function Grid(props: GridProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!props.isLoading) {
+      setTimeout(() => {
+        setIsVisible(true);
+      }, 500);
+    }
+  }, [props.isLoading]);
 
   return (
     <div className='h-full'>
-      {isVisible && (
+      {isVisible ? (
         <XyzTransitionGroup
           appear
           className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 '
@@ -301,6 +316,16 @@ function Grid(props: GridProps) {
             </div>
           ))}
         </XyzTransitionGroup>
+      ) : (
+        <div className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 '>
+          {new Array(16).fill(null).map((_, index) => (
+            <Skeleton
+              key={index}
+              height={"50px"}
+              style={{ borderRadius: "10px" }}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

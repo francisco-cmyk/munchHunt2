@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { random, shuffle } from "lodash";
 import { twMerge } from "tailwind-merge";
 
 // For Shadcn components
@@ -32,9 +33,22 @@ export function convertToMiles(distance: number): string {
   return converted.toString();
 }
 
-export function randomizeChoices(choices: string[]): string {
+export function randomizeChoice(choices: string[]): string {
   const randomIndex = Math.floor(Math.random() * choices.length);
   return choices[randomIndex];
+}
+
+export function randomizeMultipleChoices(choices: string[]): string[] {
+  const indexes = new Set();
+  const newChoices: string[] = [];
+
+  let randomIndex = Math.floor(Math.random() * choices.length);
+  while (!indexes.has(randomIndex) && newChoices.length < 8) {
+    newChoices.push(choices[randomIndex]);
+    randomIndex = Math.floor(Math.random() * choices.length);
+  }
+
+  return newChoices;
 }
 
 export function removeStateAndCountry(address: string | undefined) {

@@ -4,7 +4,7 @@ import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
 import { useMunchContext } from "../Context/MunchContext";
 import getMergeState, { removeStateAndCountry } from "../utils";
-import { ArrowRight, LoaderIcon, Search } from "lucide-react";
+import { ArrowRight, LoaderIcon, Moon, Search, Sun } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ import {
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
 import { Avatar, AvatarFallback, AvatarImage } from "../Components/Avatar";
+import { useDarkMode } from "../Context/DarkModeProvider";
 
 type State = {
   addresssInput: string;
@@ -35,6 +36,7 @@ const initialState: State = {
 export default function Location(): JSX.Element {
   const [state, setState] = useState(initialState);
   const mergeState = getMergeState(setState);
+  const { isDarkMode, setIsDarkMode } = useDarkMode();
 
   const munchContext = useMunchContext();
   const navigate = useNavigate();
@@ -153,6 +155,15 @@ export default function Location(): JSX.Element {
       ref={main}
       className='bg-slate-50 dark:bg-slate-950 sm:h-screen h-dvh flex flex-col justify-end cursor-default'
     >
+      <div className='absolute top-1 right-1'>
+        <Button
+          size='icon'
+          variant='ghost'
+          onClick={() => setIsDarkMode(!isDarkMode)}
+        >
+          {isDarkMode ? <Sun /> : <Moon className='text-black' />}
+        </Button>
+      </div>
       <div ref={bounce} className='absolute top-0 '>
         <Crosshair2Icon className='md:h-[200px] md:w-[200px] h-[130px] w-[130px] opacity-85 text-customOrange dark:text-slate-700 ' />
       </div>
@@ -216,7 +227,7 @@ export default function Location(): JSX.Element {
             </div>
 
             <Button
-              className='ml-2 w-[100px] shadow-lg drop-shadow-lg sm:h-[50px] hover:bg-customOrange dark:bg-slate-800  '
+              className='ml-2 w-[100px] shadow-lg drop-shadow-lg sm:h-[50px] hover:bg-customOrange dark:bg-slate-800 dark:hover:bg-slate-600 '
               onClick={handleSubmit}
             >
               <ArrowRight

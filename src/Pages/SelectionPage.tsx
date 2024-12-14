@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { foodChoices } from "../foodChoices";
-import getMergeState, { randomizeChoices } from "../utils";
+import getMergeState, {
+  randomizeChoice,
+  randomizeMultipleChoices,
+} from "../utils";
 import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
@@ -48,7 +51,7 @@ export default function SelectionPage(): JSX.Element {
       !state.isLoading &&
       state.isHuntChoosing
     ) {
-      const huntChosen = randomizeChoices(state.selectedChoices);
+      const huntChosen = randomizeChoice(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
       mergeState({ showSelectionModal: true });
@@ -106,28 +109,19 @@ export default function SelectionPage(): JSX.Element {
     }
   }
 
-  function randomizeSelection(delay: number): Promise<void> {
-    mergeState({ isLoading: true, isHuntChoosing: true });
-
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        setState((prevState) => {
-          return {
-            ...prevState,
-            selectedChoices: [
-              ...prevState.selectedChoices,
-              randomizeChoices(filteredFoodChoices),
-            ],
-          };
-        });
-        resolve();
-      }, delay);
-    });
-  }
-
-  async function runLoop() {
-    for (let i = 0; i < 8; i++) {
-      await randomizeSelection(i + 1 * 700);
+  async function processChoices(choices: string[]): Promise<void> {
+    for (const choice of choices) {
+      await new Promise<void>((resolve) =>
+        setTimeout(() => {
+          setState((prevState) => {
+            return {
+              ...prevState,
+              selectedChoices: [...prevState.selectedChoices, choice],
+            };
+          });
+          resolve();
+        }, 500)
+      );
     }
   }
 
@@ -135,13 +129,15 @@ export default function SelectionPage(): JSX.Element {
     const hasNoSelections = state.selectedChoices.length === 0;
 
     if (hasNoSelections) {
-      runLoop().then(() => {
+      mergeState({ isLoading: true, isHuntChoosing: true });
+      const newChoices = randomizeMultipleChoices(filteredFoodChoices);
+      processChoices(newChoices).then(() => {
         setTimeout(() => {
           mergeState({ isLoading: false });
-        }, 2000);
+        }, 1000);
       });
     } else {
-      const huntChosen = randomizeChoices(state.selectedChoices);
+      const huntChosen = randomizeChoice(state.selectedChoices);
       munchContext.setMunchHuntChoice(huntChosen);
       localStorage.setItem("choice", huntChosen);
       mergeState({ isLoading: true });
@@ -213,11 +209,12 @@ export default function SelectionPage(): JSX.Element {
               Lets get started!
             </p>
             <p className='font-roboto sm:text-xl text-[12px]'>
-              Select several cuisines or categories you would want to eat.
+              Select several cuisines or categories you would want to eat or
+              double-select an option to exclude it.
             </p>
             <p className='font-roboto sm:text-xl text-[12px]'>
               If none are selected, <strong>Munch Hunt</strong> will choose one
-              for you
+              for you.
             </p>
           </div>
         )}

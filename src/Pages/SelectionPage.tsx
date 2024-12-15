@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { foodChoices } from "../foodChoices";
 import getMergeState, {
   randomizeChoice,
   randomizeMultipleChoices,
@@ -14,7 +13,7 @@ import gsap from "gsap";
 import ToolTip from "../Components/Tooltip";
 import GenericModal from "../Components/GenericModal";
 import useGetCategories from "../Hooks/useGetCategories";
-import Skeleton from "react-loading-skeleton";
+import { Skeleton } from "../Components/Skeleton";
 
 type State = {
   selectedChoices: string[];
@@ -44,8 +43,6 @@ export default function SelectionPage(): JSX.Element {
       coordinates: munchContext.currentCoordinates,
     });
 
-  const categoriesLimit = categories.length < 8 ? 4 : 8;
-
   ////
 
   const windowWidth = window.innerWidth;
@@ -54,9 +51,12 @@ export default function SelectionPage(): JSX.Element {
     return categories.filter((food) => !state.excludedChoices.includes(food));
   }, [state.excludedChoices, categories]);
 
+  const categoriesLimit =
+    filteredFoodChoices.length < 8 ? filteredFoodChoices.length : 8;
+
   useEffect(() => {
     if (
-      state.selectedChoices.length === 8 &&
+      state.selectedChoices.length > 0 &&
       !state.isLoading &&
       state.isHuntChoosing
     ) {
@@ -294,7 +294,7 @@ function Grid(props: GridProps) {
       {isVisible ? (
         <XyzTransitionGroup
           appear
-          className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 '
+          className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 gap-1 '
           xyz='fade small out-down out-rotate-right-0 duration-3 '
         >
           {props.choices.map((item, index) => (
@@ -317,13 +317,9 @@ function Grid(props: GridProps) {
           ))}
         </XyzTransitionGroup>
       ) : (
-        <div className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 '>
+        <div className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 gap-1'>
           {new Array(16).fill(null).map((_, index) => (
-            <Skeleton
-              key={index}
-              height={"50px"}
-              style={{ borderRadius: "10px" }}
-            />
+            <Skeleton key={index} className='sm:h-[50px] h-[45px] ' />
           ))}
         </div>
       )}

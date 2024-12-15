@@ -1,12 +1,9 @@
 import { useMunchContext } from "../Context/MunchContext";
 import useGetRestaurants from "../Hooks/useGetRestaurants";
 import { Card, CardContent, CardFooter } from "../Components/Card";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 import { useEffect, useMemo, useState } from "react";
 import Modal from "../Components/Modal";
-import { keyBy, result } from "lodash";
-import MapComponent from "../Components/MapComponent";
+import { keyBy } from "lodash";
 import getMergeState, { isFloatBetween, isPast3PM } from "../utils";
 import { XyzTransitionGroup } from "@animxyz/react";
 import DropDown, { Option } from "../Components/DropDown";
@@ -14,11 +11,13 @@ import Filter from "../Components/Filter";
 import Stars from "../Components/Stars";
 import { ChevronRight, Frown } from "lucide-react";
 import ModalMobile from "../Components/ModalMobile";
-import { Button } from "../Components/Button";
 import { AccordionComponent } from "../Components/Accordion";
-import { Switch } from "../Components/Switch";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import { Restaurant } from "../types";
+import { Skeleton } from "../Components/Skeleton";
+import { Button } from "../Components/Button";
+import { Separator } from "../Components/Separator";
+import ToolTip from "../Components/Tooltip";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -237,9 +236,6 @@ export default function FoodList(): JSX.Element {
     );
   }
 
-  //TODO: Fix filtering on open status
-  // const isAfternoon = isPast3PM();
-
   return (
     <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
       {renderModal()}
@@ -262,15 +258,17 @@ export default function FoodList(): JSX.Element {
       </div>
 
       <div className='w-full h-full flex md:flex-row flex-col mt-5 overflow-auto  '>
-        <div className='md:w-1/5 border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
-          <p className='font-inter font-semibold text-lg text-slate-500 dark:text-slate-100'>
-            Filter By
-          </p>
-          <div className='w-full border-b-2' />
+        <div className='md:w-1/5 md:border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
+          {!state.isSmallWindow ? (
+            <p className='font-inter font-semibold text-lg text-slate-500 dark:text-slate-100'>
+              Filter By
+            </p>
+          ) : null}
+
           <div />
 
           {state.isSmallWindow ? (
-            <div className='flex flex-row h-[95%] overflow-auto mt-2'>
+            <div className='flex flex-row h-[95%] overflow-auto mt-9'>
               <DropDown
                 title='Price'
                 options={priceOptions}
@@ -293,7 +291,6 @@ export default function FoodList(): JSX.Element {
             </div>
           ) : (
             <div className='flex flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
-
               <AccordionComponent title='Price' isOpen>
                 <Filter
                   filterName={"price"}
@@ -447,13 +444,11 @@ function Placeholder() {
     >
       {placeHolders.map((_, index) => (
         <div key={index} className='w-full h-full text-center md:text-left  '>
+          <Skeleton key={`main-skel-${index}`} className='w-[100%] h-[190px]' />
           <Skeleton
-            key={index}
-            width={"90%"}
-            height={200}
-            style={{ borderRadius: "10px" }}
+            key={`sub-skil-${index}`}
+            className='w-[50%] h-[10px] mt-1'
           />
-          <Skeleton width={"50%"} style={{ borderRadius: "5px" }} />
         </div>
       ))}
     </XyzTransitionGroup>

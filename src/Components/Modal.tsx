@@ -58,7 +58,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
     >
       <div
         className={cn(
-          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50 dark:bg-slate-900   ${
+          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50 dark:bg-slate-900 overflow-scroll   ${
             isOpen ? `animate-scrollOpen` : `animate-scrollClose`
           }`,
           props.class

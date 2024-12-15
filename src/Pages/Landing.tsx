@@ -95,7 +95,7 @@ export default function Landing() {
           currentText === "text2" ? `inline` : `hidden`
         } leading-tight text-star`}
       >
-        Date night 🧡? Or just hungry?
+        Date night? Or just hungry?
       </p>
 
       <p

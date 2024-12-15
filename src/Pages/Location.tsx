@@ -1,4 +1,4 @@
-import { Ref, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../Components/Button";
 import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
@@ -42,6 +42,7 @@ export default function Location(): JSX.Element {
   const navigate = useNavigate();
 
   const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
 
   const main = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
@@ -57,8 +58,10 @@ export default function Location(): JSX.Element {
     munchContext.currentCoordinates
   );
 
-  const { data: predictions = [], isFetching: isFetchingPredictions } =
-    useGetAutoComplete(state.debouncedInput, state.debouncedInput.length > 0);
+  const { data: predictions = [] } = useGetAutoComplete(
+    state.debouncedInput,
+    state.debouncedInput.length > 0
+  );
 
   useEffect(() => {
     if (!address) return;
@@ -276,7 +279,6 @@ export default function Location(): JSX.Element {
                   Powered by Typescript, React & Tailwind CSS
                 </p>
                 <div className='flex items-center pt-2'>
-                  {/* <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "} */}
                   <span className='sm:text-xs text-[8px] text-muted-foreground'>
                     @ 2024 Munch Hunt.xyz
                   </span>
@@ -321,6 +323,6 @@ function triggerAnimations(params: {
       delay: 1,
       ease: "sine.in",
     },
-    { opacity: 0, scale: 1.5, rotate: 360, ease: "sine.out" }
+    { opacity: 0.2, scale: 1.1, ease: "sine.out" }
   );
 }

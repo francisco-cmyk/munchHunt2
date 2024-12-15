@@ -45,6 +45,8 @@ export function randomizeMultipleChoices(
   const indexes = new Set();
   const newChoices: string[] = [];
 
+  //Tidbit- time complexity best case O(limit) but expected case O(nlogn)
+  // space - O(limit)
   while (newChoices.length < limit) {
     const randomIndex = Math.floor(Math.random() * choices.length);
     if (!indexes.has(randomIndex)) {

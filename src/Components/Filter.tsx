@@ -31,7 +31,7 @@ export default function Filter(props: FilterProps) {
           variant='outline'
           className={`mb-1 hover:bg-slate-900 dark:bg-slate-700 dark:text-slate-100 hover:text-white border-[1px] w-full h-[30px] flex justify-between ${
             props.value === option.value
-              ? `bg-customOrange dark:bg-orange-600 text-white `
+              ? `bg-customOrange  dark:bg-slate-400 text-white `
               : ``
           }`}
           onClick={() =>

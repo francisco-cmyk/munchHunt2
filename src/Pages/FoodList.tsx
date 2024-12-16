@@ -236,8 +236,6 @@ export default function FoodList(): JSX.Element {
     );
   }
 
-  // state.isSmallWindow ? `top-16 z-20 fixed` : ``
-
   return (
     <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
       {renderModal()}

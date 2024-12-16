@@ -236,13 +236,15 @@ export default function FoodList(): JSX.Element {
     );
   }
 
+  // state.isSmallWindow ? `top-16 z-20 fixed` : ``
+
   return (
     <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
       {renderModal()}
       <div
-        className={`${
-          state.isSmallWindow ? `top-16 z-20 fixed` : ``
-        } flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border-b-2 py-2`}
+        className={
+          "flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border-b-2 py-2"
+        }
       >
         <div className='w-1/5 md:flex hidden justify-end pr-3'>
           <p className='font-inter text-[17px] text-white dark:text-slate-100 '>
@@ -250,76 +252,69 @@ export default function FoodList(): JSX.Element {
           </p>
           <ChevronRight color='white' />
         </div>
-        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white dark:text-slate-100 md:pl-6'>
-          <p className='font-archivo font-bold md:text-[30px] text-[35px] '>
+        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white dark:text-slate-100 md:pl-6 pt-1'>
+          <p className='font-archivo font-bold md:text-[30px] text-[20px] '>
             {munchHuntChoice}
           </p>
         </div>
       </div>
 
-      <div className='w-full h-full flex md:flex-row flex-col mt-5 overflow-auto  '>
-        <div className='md:w-1/5 md:border-r-2 flex flex-col md:px-10 sm:px-5 px-1 py-4 '>
-          {!state.isSmallWindow ? (
-            <p className='font-inter font-semibold text-lg text-slate-500 dark:text-slate-100'>
-              Filter By
-            </p>
-          ) : null}
-
+      <div className='w-full h-full flex md:flex-row flex-col md:mt-5 overflow-auto  '>
+        <div className='md:w-1/5 md:border-r-2 flex flex-col md:px-10 sm:px-2 px-1 py-2 '>
+          <p className='font-inter hidden md:block font-semibold text-lg text-slate-500 dark:text-slate-100'>
+            Filter By
+          </p>
           <div />
+          <div className='flex flex-row h-[95%] overflow-auto md:hidden'>
+            <DropDown
+              title='Price'
+              options={priceOptions}
+              value={state.priceFilter ?? ""}
+              onChange={handleFilterChange}
+            />
 
-          {state.isSmallWindow ? (
-            <div className='flex flex-row h-[95%] overflow-auto mt-9'>
-              <DropDown
-                title='Price'
+            <DropDown
+              title='Distance'
+              options={distanceOptions}
+              value={state.distanceFilter?.toString() ?? ""}
+              onChange={handleFilterChange}
+            />
+            <DropDown
+              title='Rating'
+              options={ratingOptions}
+              value={state.ratingFilter?.toString() ?? ""}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div className='md:flex hidden flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
+            <AccordionComponent title='Price' isOpen>
+              <Filter
+                filterName={"price"}
+                disabled={yelpRestaurants.length === 0}
                 options={priceOptions}
                 value={state.priceFilter ?? ""}
-                onChange={handleFilterChange}
+                handleChange={handleFilterChange}
               />
-
-              <DropDown
-                title='Distance'
+            </AccordionComponent>
+            <AccordionComponent title='Distance'>
+              <Filter
+                filterName={"distance"}
+                disabled={yelpRestaurants.length === 0}
                 options={distanceOptions}
                 value={state.distanceFilter?.toString() ?? ""}
-                onChange={handleFilterChange}
+                handleChange={handleFilterChange}
               />
-              <DropDown
-                title='Rating'
+            </AccordionComponent>
+            <AccordionComponent title='Rating'>
+              <Filter
+                filterName={"rating"}
+                disabled={yelpRestaurants.length === 0}
                 options={ratingOptions}
                 value={state.ratingFilter?.toString() ?? ""}
-                onChange={handleFilterChange}
+                handleChange={handleFilterChange}
               />
-            </div>
-          ) : (
-            <div className='flex flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
-              <AccordionComponent title='Price' isOpen>
-                <Filter
-                  filterName={"price"}
-                  disabled={yelpRestaurants.length === 0}
-                  options={priceOptions}
-                  value={state.priceFilter ?? ""}
-                  handleChange={handleFilterChange}
-                />
-              </AccordionComponent>
-              <AccordionComponent title='Distance'>
-                <Filter
-                  filterName={"distance"}
-                  disabled={yelpRestaurants.length === 0}
-                  options={distanceOptions}
-                  value={state.distanceFilter?.toString() ?? ""}
-                  handleChange={handleFilterChange}
-                />
-              </AccordionComponent>
-              <AccordionComponent title='Rating'>
-                <Filter
-                  filterName={"rating"}
-                  disabled={yelpRestaurants.length === 0}
-                  options={ratingOptions}
-                  value={state.ratingFilter?.toString() ?? ""}
-                  handleChange={handleFilterChange}
-                />
-              </AccordionComponent>
-            </div>
-          )}
+            </AccordionComponent>
+          </div>
         </div>
 
         <div className='md:w-3/4 2xl:max-h-[650px] md:max-h-[550px] md:min-h-[550px] max-h-[600px]  overflow-auto rounded-lg'>

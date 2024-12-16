@@ -175,7 +175,7 @@ export default function Location(): JSX.Element {
         className='w-full flex justify-center items-center md:mt-10 sm:mb-[100px] md:mb-0'
       >
         <div className='w-full flex justify-center items-center'>
-          <div className=' flex flex-col justify-start md:items-center mr-10'>
+          <div className=' flex flex-col justify-start md:items-center md:mr-10 ml-4'>
             <p
               ref={titleRef}
               className='font-archivo font-black text-white dark:text-white tracking-tighter 2xl:text-[250px] lg:text-[200px] sm:text-[100px] text-[80px] text-wrap m-0 p-0 leading-non mix-blend-difference dark:mix-blend-normal'

@@ -4,7 +4,7 @@ import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
 import { useMunchContext } from "../Context/MunchContext";
 import getMergeState, { removeStateAndCountry } from "../utils";
-import { ArrowRight, LoaderIcon, Moon, Pin, Search, Sun } from "lucide-react";
+import { LoaderIcon, Moon, Sun } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
 import { useNavigate } from "react-router-dom";
@@ -291,12 +291,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='src/Assets/variety_foods.svg'
+              src='public/variety_foods.svg'
               alt='woman looking at food hover in air'
             />
             <img
               className='hidden dark:block'
-              src='src/Assets/variety_food_dark.svg'
+              src='public/variety_food_dark.svg'
               alt='woman looking at food hover in air'
             />
           </div>
@@ -317,12 +317,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='src/Assets/sushi_cook.svg'
+              src='public/sushi_cook.svg'
               alt='Sushi cook preparing sushi'
             />
             <img
               className='hidden dark:block'
-              src='src/Assets/sushi_cook_dark.svg'
+              src='public/sushi_cook_dark.svg'
               alt='Sushi cook preparing sushi'
             />
           </div>
@@ -364,12 +364,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='src/Assets/pizza_share.svg'
+              src='public/pizza_share.svg'
               alt='Sushi cook preparing sushi'
             />
             <img
               className='hidden dark:block'
-              src='src/Assets/pizza_share_dark.svg'
+              src='public/pizza_share_dark.svg'
               alt='Sushi cook preparing sushi'
             />
           </div>

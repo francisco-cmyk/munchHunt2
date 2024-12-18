@@ -22,8 +22,6 @@ type ProviderPops = {
 export const DarkModeProvider: React.FC<ProviderPops> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (localStorage.getItem("theme") === "dark") return true;
-    // if (localStorage.getItem('theme') === 'light') return false;
-    // return window.matchMedia('(prefers-color-scheme: dark)').matches;
     return false;
   });
 
@@ -31,9 +29,11 @@ export const DarkModeProvider: React.FC<ProviderPops> = ({ children }) => {
     const root = document.documentElement;
     if (isDarkMode) {
       root.classList.add("dark");
+      document.body.className = "bg-slate-950";
       localStorage.setItem("theme", "dark");
     } else {
       root.classList.remove("dark");
+      document.body.className = "bg-slate-50";
       localStorage.setItem("theme", "light");
     }
   }, [isDarkMode]);

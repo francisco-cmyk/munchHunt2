@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Landing from "./Pages/Landing";
 import Location from "./Pages/Location";
 import Layout from "./Pages/Layout";
 import "@animxyz/core";
@@ -26,8 +25,7 @@ export default function App() {
         <Router>
           <Routes>
             <Route path='/' element={<Layout />}>
-              <Route index element={<Landing />} />
-              <Route path='location' element={<Location />} />
+              <Route index element={<Location />} />
               <Route path='select' element={<SelectionPage />} />
               <Route path='restaurants' element={<FoodList />} />
             </Route>

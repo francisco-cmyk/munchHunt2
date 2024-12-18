@@ -7,7 +7,7 @@ import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Loader2, UtensilsCrossed, X } from "lucide-react";
+import { ArrowRight, LoaderIcon, UtensilsCrossed, X } from "lucide-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ToolTip from "../Components/Tooltip";
@@ -72,7 +72,7 @@ export default function SelectionPage(): JSX.Element {
       setTimeout(() => {
         mergeState({ showSelectionModal: false });
         navigate("/restaurants");
-      }, 3000); //3s
+      }, 3000);
     }
   }, [state.showSelectionModal]);
 
@@ -160,20 +160,20 @@ export default function SelectionPage(): JSX.Element {
   }
 
   return (
-    <div className='w-full flex md:flex-row flex-col-reverse md:pt-0 pt-10 justify-center items-center '>
+    <div className='w-full flex md:flex-row flex-col-reverse justify-center sm:items-start items-center sm:mt-0 mt-3  '>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
 
       <div
         ref={sidePanel}
-        className={`sm:min-h-[500px] max-h-[500px]  flex flex-col  overflow-hidden ${
+        className={`flex flex-col h-full overflow-hidden ${
           state.excludedChoices.length > 0
             ? "sm:w-[400px] sm:px-4 max-w-full md:border-r-2 py-3 items-center "
             : "w-0 hidden md:flex "
         }`}
       >
-        <div className='h-full sm:w-full w-4/6'>
+        <div className='h-full w-full px-5 sm:pt-10'>
           <div className='h-1/5 w-full flex justify-between item '>
-            <p className='font-inter text-slate-500 text-[20px] mb-3 font-semibold '>
+            <p className='font-inter text-slate-500 sm:text-[20px] text-sm mb-3 font-semibold '>
               Excluded Choices
             </p>
 
@@ -207,31 +207,31 @@ export default function SelectionPage(): JSX.Element {
         </div>
       </div>
 
-      <div className='h-full md:w-3/4 w-5/6 text-center md:text-left  flex flex-col justify-start items-center md:p-10 '>
+      <div className='h-full md:w-3/4 w-5/6 sm:text-left text-center flex flex-col justify-start items-center sm:p-10'>
         {state.isLoading ? (
           <div className='flex min-h-[60px] flex-col justify-center items-center'>
-            <Loader2 className='h-[60px] w-[60px] animate-spin text-customOrange dark:text-slate-400 duration-1000' />
-            <p className='mt-2 font-inter text-slate-700'>
+            <LoaderIcon className='sm:h-[60px] sm:w-[60px] h-7 w-7 animate-spin text-customOrange dark:text-slate-400 duration-1000' />
+            <p className='mt-2 font-inter text-slate-700 sm:text-base text-sm'>
               choosing for you...
             </p>
           </div>
         ) : (
           <div className='flex flex-col justify-center items-center'>
-            <p className='font-anton font-bold sm:text-[25px] text-lg'>
+            <p className='font-radioCanada font-bold sm:text-3xl'>
               Lets get started!
             </p>
-            <p className='font-roboto sm:text-xl text-[12px]'>
-              Select several cuisines or categories you would want to eat or
-              double-select an option to exclude it.
+            <p className='font-roboto  sm:text-base text-xs'>
+              Choose multiple cuisines or categories you’d like, or
+              double-select to exclude an option.
             </p>
-            <p className='font-roboto sm:text-xl text-[12px]'>
-              If none are selected, <strong>Munch Hunt</strong> will choose one
-              for you.
+            <p className='font-roboto  sm:text-base text-xs'>
+              Can’t decide? Munch Hunt will pick one for you if no options are
+              selected
             </p>
           </div>
         )}
 
-        <div className='2xl:w-full md:w-5/6 w-full  mt-5 sm:max-h-96 sm:min-h-96 max-h-72 min-h-64 overflow-auto py-2'>
+        <div className='2xl:w-full md:w-5/6 w-full  mt-5 sm:max-h-96 sm:min-h-96 max-h-72 min-h-64 overflow-auto '>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'
@@ -240,7 +240,7 @@ export default function SelectionPage(): JSX.Element {
               {state.selectedChoices.map((choice, index) => (
                 <div key={`${index}-${choice}`}>
                   <Button
-                    className={`sm:h-full h-[45px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 dark:bg-slate-300 hover:text-white`}
+                    className={`sm:h-full h-[40px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 dark:bg-slate-300 hover:text-white`}
                   >
                     <p className='font-semibold text-lg'>{choice}</p>
                   </Button>
@@ -332,16 +332,16 @@ function SelectionModal(munchChoice: string) {
     <GenericModal class='md:bg-transparent'>
       <XyzTransition
         appear
-        className='bg-customOrange dark:bg-slate-500  rounded-[15px]
-        ring-[9px] ring-customOrange dark:ring-slate-500 ring-offset-1 ring-offset-transparent ring-opacity-45
+        className='bg-customOrange dark:bg-slate-700 ring-customOrange dark:ring-slateDark rounded-[15px]
+        ring-[9px] ring-offset-1 ring-offset-transparent ring-opacity-45 dark:ring-opacity-45
         '
         xyz='small-100% origin-center'
       >
-        <div className='flex flex-col justify-center items-center  h-[200px] md:min-w-[400px] min-w-72 md:max-w-[600px] rounded-[30px] md:p-4 px-2'>
-          <p className='font-roboto text-[18px] font-semibold text-white dark:text-slate-200'>
+        <div className='flex flex-col justify-center items-center  sm:h-[200px] h-[150px] md:min-w-[400px] min-w-64 md:max-w-[600px] rounded-[30px] md:p-4 px-2'>
+          <p className='font-roboto sm:text-base font-semibold text-white dark:text-slate-200'>
             The Hunt Chose
           </p>
-          <p className='font-archivo font-bold md:text-[65px] text-[40px] text-wrap dark:text-slate-200'>
+          <p className='font-archivo font-bold sm:text-4xl text-2xl text-wrap dark:text-slate-200'>
             {munchChoice}
           </p>
           <XyzTransition

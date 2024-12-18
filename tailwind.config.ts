@@ -28,6 +28,7 @@ module.exports = {
       colors: {
         customOrange: "#FF8345",
         customRedOrange: "#F5AE7A",
+        slateDark: "#374151",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -85,6 +86,7 @@ module.exports = {
         inter: ["Inter", "sans-serif"],
         paytone: ["Paytone One", "sans-serif"],
         archivo: ["Archivo Black", "sans-serif"],
+        radioCanada: ["Radio Canada", "serif"],
       },
       fontSize: {
         "200px": "200px", // Custom font size

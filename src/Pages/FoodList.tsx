@@ -15,9 +15,6 @@ import { AccordionComponent } from "../Components/Accordion";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import { Restaurant } from "../types";
 import { Skeleton } from "../Components/Skeleton";
-import { Button } from "../Components/Button";
-import { Separator } from "../Components/Separator";
-import ToolTip from "../Components/Tooltip";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -237,7 +234,7 @@ export default function FoodList(): JSX.Element {
   }
 
   return (
-    <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default md:pt-3 ">
+    <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default">
       {renderModal()}
       <div
         className={

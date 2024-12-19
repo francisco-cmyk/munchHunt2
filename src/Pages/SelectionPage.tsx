@@ -231,7 +231,7 @@ export default function SelectionPage(): JSX.Element {
           </div>
         )}
 
-        <div className='2xl:w-full md:w-5/6 w-full sm:min-h-56 sm:h-1/3 h-72  mt-5 overflow-auto '>
+        <div className='2xl:w-full md:w-5/6 w-full sm:min-h-56 xl:1/3 sm:2/5 h-72  mt-5 overflow-auto '>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'

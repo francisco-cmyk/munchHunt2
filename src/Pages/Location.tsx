@@ -4,7 +4,7 @@ import { Input } from "../Components/Input";
 import { Crosshair2Icon } from "@radix-ui/react-icons";
 import { useMunchContext } from "../Context/MunchContext";
 import getMergeState, { removeStateAndCountry } from "../utils";
-import { LoaderIcon, Moon, Sun } from "lucide-react";
+import { ArrowRight, LoaderIcon, Moon, Sun } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
 import { useNavigate } from "react-router-dom";
@@ -208,18 +208,18 @@ export default function Location(): JSX.Element {
       >
         <Button
           size='icon'
-          variant='ghost'
+          className='bg-slate-700  text-white'
           onClick={() => setIsDarkMode(!isDarkMode)}
         >
-          {isDarkMode ? <Sun className='' /> : <Moon className='text-black' />}
+          {isDarkMode ? <Sun /> : <Moon />}
         </Button>
       </div>
 
       <div
         ref={titleRef}
-        className='w-full flex justify-center items-center md:items-center md:mr-10 sm:py-3 py-10'
+        className='w-full flex justify-center items-center md:items-center md:mr-10 sm:py-3 py-10 sm:mt-3 sm:mb-24 mb-14'
       >
-        <p className='font-archivo font-black tracking-tighter 2xl:text-[200px] lg:text-[150px] sm:text-[100px] text-[40px] text-wrap m-0 p-0 leading-non'>
+        <p className='font-archivo font-black tracking-tighter 2xl:text-[200px] lg:text-[150px] sm:text-[100px] text-[40px] text-wrap leading-none'>
           Munch Hunt
         </p>
       </div>
@@ -249,6 +249,7 @@ export default function Location(): JSX.Element {
                   handleInputChange(e.target.value);
                 }}
               />
+
               <Button
                 size='icon'
                 disabled={
@@ -285,11 +286,20 @@ export default function Location(): JSX.Element {
               </div>
             </div>
           </div>
+
           <p className='font-roboto sm:text-sm text-xs text-slate-500 dark:text-slate-100 mt-2'>
             {state.isLoadingAddress
               ? "Looking for address..."
               : "Enter location or click map pin button"}
           </p>
+          <Button
+            size='icon'
+            disabled={state.addresssInput.length === 0 || !state.addresssInput}
+            className='bg-customOrange dark:bg-slate-500 sm:hidden w-[100px]  items-center text-white font-archivo mt-3'
+            onClick={handleSubmit}
+          >
+            <ArrowRight />
+          </Button>
         </div>
       </div>
 
@@ -414,7 +424,7 @@ export default function Location(): JSX.Element {
           </div>
         </div>
 
-        <div className='w-full sm:h-20 h-16 flex justify-center items-center bg-slate-600 dark:bg-slate-800 text-white text-wrap mt-11'>
+        <div className='w-full sm:h-20 h-16 flex justify-center items-center bg-slate-600 dark:bg-slate-800 text-white text-wrap mt-14'>
           <div className='sm:w-2/3 sm:px-0 px-2 flex sm:justify-center sm:text-base text-[10px] text-wrap'>
             <p>2025 |</p>
             <HoverCard>

@@ -379,8 +379,8 @@ export default function Location(): JSX.Element {
               alt='Sushi cook preparing sushi'
             />
           </div>
-          <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full'>
-            <p className='font-semibold sm:text-[40px] sm:text-right mb-4'>
+          <div className='sm:text-xl sm:px-0 px-4 flex flex-col sm:w-1/2 w-full'>
+            <p className='font-semibold sm:text-[40px] sm:text-right text-center mb-4'>
               How it works -
             </p>
             <p className='mb-2 sm:text-base text-sm'>
@@ -405,8 +405,8 @@ export default function Location(): JSX.Element {
           }}
           className='flex sm:flex-row flex-col items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'
         >
-          <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full '>
-            <p className='font-semibold sm:text-[40px]  mb-4'>
+          <div className='sm:text-xl sm:px-0 px-4 flex flex-col sm:w-1/2 w-full '>
+            <p className='font-semibold sm:text-[40px] sm:text-left text-center  mb-4'>
               Lets start hunting!
             </p>
             <p className='mb-2 sm:text-base text-sm'>

@@ -217,7 +217,7 @@ export default function Location(): JSX.Element {
 
       <div
         ref={titleRef}
-        className='w-full flex justify-center items-center md:items-center md:mr-10 sm:py-3 py-10 sm:mt-3 sm:mb-24 mb-14'
+        className='w-full flex justify-center items-center md:items-center md:mr-10 sm:py-3 py-10 sm:mt-16 sm:mb-24 mb-14'
       >
         <p className='font-archivo font-black tracking-tighter 2xl:text-[200px] lg:text-[150px] sm:text-[100px] text-[40px] text-wrap leading-none'>
           Munch Hunt

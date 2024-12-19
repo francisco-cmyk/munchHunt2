@@ -52,6 +52,7 @@ export default function Location(): JSX.Element {
   const titleRef = useRef<HTMLDivElement>(null);
   const underBarRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLDivElement[]>([]);
+  const inputbarRef = useRef<HTMLDivElement>(null);
 
   const mutation = useGetCoordinatesFromAddress();
 
@@ -149,10 +150,15 @@ export default function Location(): JSX.Element {
       localStorage.setItem("location", JSON.stringify(coordinates));
     }
 
+    gsap.to(inputbarRef.current, {
+      opacity: 0,
+      ease: "sine.out",
+    });
+
     munchContext.setCurrentAddress(state.addresssInput);
     setTimeout(() => {
-      navigate("/select");
       mergeState({ addresssInput: "" });
+      navigate("/select");
     }, 200);
   }
 
@@ -225,7 +231,10 @@ export default function Location(): JSX.Element {
       </div>
 
       <div className='flex justify-center sm:mb-28 mb-16'>
-        <div className='md:w-2/3 md:h-28 w-full flex flex-col justify-center items-center rounded-lg border-none  '>
+        <div
+          ref={inputbarRef}
+          className='md:w-2/3 md:h-28 w-full flex flex-col justify-center items-center rounded-lg border-none  '
+        >
           <div className='md:w-4/5 w-5/6 sm:w-5/6 flex'>
             <div className='relative w-full'>
               <Button

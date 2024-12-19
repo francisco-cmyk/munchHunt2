@@ -1,13 +1,13 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../index.css";
-import { SyntheticEvent } from "react";
+import { SyntheticEvent, useEffect } from "react";
 import { useDarkMode } from "../Context/DarkModeProvider";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "../Components/Button";
 
 export default function Layout() {
   const { isDarkMode, setIsDarkMode } = useDarkMode();
-  let location = useLocation();
+  const location = useLocation();
 
   const naviagte = useNavigate();
 

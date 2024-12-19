@@ -160,19 +160,19 @@ export default function SelectionPage(): JSX.Element {
   }
 
   return (
-    <div className='w-full flex md:flex-row flex-col-reverse justify-center sm:items-start items-center sm:mt-0 mt-3  '>
+    <div className='w-full sm:h-screen  flex md:flex-row flex-col-reverse justify-center sm:items-start items-center sm:mt-0 mt-3  '>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
 
       <div
         ref={sidePanel}
-        className={`flex flex-col h-full overflow-hidden ${
+        className={`flex h-full flex-col overflow-hidden ${
           state.excludedChoices.length > 0
-            ? "sm:w-[400px] sm:px-4 max-w-full md:border-r-2 py-3 items-center "
+            ? "sm:w-[400px] sm:px-4 max-w-full sm:border-r-2 items-center "
             : "w-0 hidden md:flex "
         }`}
       >
-        <div className='h-full w-full px-5 sm:pt-10'>
-          <div className='h-1/5 w-full flex justify-between item '>
+        <div className=' w-full h-full px-5 sm:pt-10'>
+          <div className=' w-full flex justify-between items-center item mb-2'>
             <p className='font-inter text-slate-500 sm:text-[20px] text-sm mb-3 font-semibold '>
               Excluded Choices
             </p>
@@ -207,7 +207,7 @@ export default function SelectionPage(): JSX.Element {
         </div>
       </div>
 
-      <div className='h-full md:w-3/4 w-5/6 sm:text-left text-center flex flex-col justify-start items-center sm:p-10'>
+      <div className='md:w-3/4 w-5/6 h-full sm:text-left text-center flex flex-col justify-start items-center sm:px-10 sm:pt-10'>
         {state.isLoading ? (
           <div className='flex min-h-[60px] flex-col justify-center items-center'>
             <LoaderIcon className='sm:h-[60px] sm:w-[60px] h-7 w-7 animate-spin text-customOrange dark:text-slate-400 duration-1000' />
@@ -231,7 +231,7 @@ export default function SelectionPage(): JSX.Element {
           </div>
         )}
 
-        <div className='2xl:w-full md:w-5/6 w-full  mt-5 sm:max-h-96 sm:min-h-96 max-h-72 min-h-64 overflow-auto '>
+        <div className='2xl:w-full md:w-5/6 w-full sm:min-h-56 sm:h-1/3 h-72  mt-5 overflow-auto '>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'

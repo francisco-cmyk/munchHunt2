@@ -121,7 +121,7 @@ export default function Location(): JSX.Element {
           duration: 1,
           scrollTrigger: {
             trigger: section, // Trigger for each section
-            start: "top 75%", // When the top of the element hits 75% of the viewport
+            start: "top 70%%", // When the top of the element hits 75% of the viewport
             end: "bottom 25%", // When the bottom of the element hits 25% of the viewport
             toggleActions: "play none none none",
           },
@@ -230,7 +230,7 @@ export default function Location(): JSX.Element {
         </p>
       </div>
 
-      <div className='flex justify-center sm:mb-20 mb-16'>
+      <div className='flex justify-center sm:mb-20 mb-28'>
         <div
           ref={inputbarRef}
           className='md:w-2/3 md:h-28 w-full flex flex-col justify-center items-center rounded-lg border-none  '
@@ -317,10 +317,10 @@ export default function Location(): JSX.Element {
           ref={(el) => {
             if (el) sectionsRef.current[0] = el;
           }}
-          className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly sm:mt-7 mt-4 2xl:3/5 md:3/4 lg:mr-20'
+          className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly sm:mt-7 mt-2 2xl:3/5 md:3/4 lg:mr-20'
         >
           <div className=' flex flex-col sm:text-left text-center sm:w-1/2 sm:pr-10'>
-            <p className='font-semibold md:text-4xl text-base sm:mb-4 mb-32'>
+            <p className='font-semibold md:text-4xl text-base sm:mb-4 mb-3 '>
               Hungry and indecisive?
             </p>
             <p className='sm:mb-2 sm:text-base text-sm'>

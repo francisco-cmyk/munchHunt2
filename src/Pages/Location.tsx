@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import useGetAutoComplete from "../Hooks/useGetAutoComplete";
-import { debounce, merge } from "lodash";
+import { debounce } from "lodash";
 import { MapPin } from "lucide-react";
 import {
   HoverCard,
@@ -22,6 +22,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "../Components/Avatar";
 import { useDarkMode } from "../Context/DarkModeProvider";
 import { toast } from "react-toastify";
 import { Separator } from "../Components/Separator";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type State = {
   addresssInput: string;
@@ -48,6 +51,7 @@ export default function Location(): JSX.Element {
   const main = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const underBarRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLDivElement[]>([]);
 
   const mutation = useGetCoordinatesFromAddress();
 
@@ -104,6 +108,26 @@ export default function Location(): JSX.Element {
       { translateY: 0, duration: time }
     );
   }, [titleRef, underBarRef, main]);
+
+  useEffect(() => {
+    sectionsRef.current.forEach((section, index) => {
+      gsap.fromTo(
+        section,
+        { opacity: 0, x: index % 2 == 0 ? 50 : -50 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1,
+          scrollTrigger: {
+            trigger: section, // Trigger for each section
+            start: "top 75%", // When the top of the element hits 75% of the viewport
+            end: "bottom 25%", // When the bottom of the element hits 25% of the viewport
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+  }, []);
 
   const debounceSearch = useMemo(
     () =>
@@ -270,7 +294,12 @@ export default function Location(): JSX.Element {
       </div>
 
       <div className='flex flex-col items-center w-full font-radioCanada'>
-        <div className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly mt-1 md:w-4/6 lg:mr-20'>
+        <div
+          ref={(el) => {
+            if (el) sectionsRef.current[0] = el;
+          }}
+          className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly mt-1 md:w-4/6 lg:mr-20'
+        >
           <div className=' flex flex-col sm:text-right text-center sm:w-1/2 sm:pr-10'>
             <p className='font-semibold md:text-4xl text-base sm:mb-4'>
               Hungry and indecisive?
@@ -291,12 +320,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='public/variety_foods.svg'
+              src='/variety_foods.svg'
               alt='woman looking at food hover in air'
             />
             <img
               className='hidden dark:block'
-              src='public/variety_food_dark.svg'
+              src='/variety_food_dark.svg'
               alt='woman looking at food hover in air'
             />
           </div>
@@ -307,7 +336,12 @@ export default function Location(): JSX.Element {
           className='h-[2px] sm:mt-16 mt-4 w-2/3'
         />
 
-        <div className='flex sm:flex-row flex-col-reverse items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'>
+        <div
+          ref={(el) => {
+            if (el) sectionsRef.current[1] = el;
+          }}
+          className='flex sm:flex-row flex-col-reverse items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'
+        >
           <div className='sm:w-[350px] sm:h-[300px] w-72 h-72'>
             <a
               href='https://storyset.com/together'
@@ -317,12 +351,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='public/sushi_cook.svg'
+              src='/sushi_cook.svg'
               alt='Sushi cook preparing sushi'
             />
             <img
               className='hidden dark:block'
-              src='public/sushi_cook_dark.svg'
+              src='/sushi_cook_dark.svg'
               alt='Sushi cook preparing sushi'
             />
           </div>
@@ -344,7 +378,12 @@ export default function Location(): JSX.Element {
           className='h-[2px] sm:mt-16 mt-4 w-3/5 '
         />
 
-        <div className='flex sm:flex-row flex-col items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'>
+        <div
+          ref={(el) => {
+            if (el) sectionsRef.current[2] = el;
+          }}
+          className='flex sm:flex-row flex-col items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'
+        >
           <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full sm:text-right'>
             <p className='font-semibold sm:text-[40px] mb-4'>
               Lets start hunting!
@@ -364,12 +403,12 @@ export default function Location(): JSX.Element {
             </a>
             <img
               className='dark:hidden'
-              src='public/pizza_share.svg'
+              src='/pizza_share.svg'
               alt='Sushi cook preparing sushi'
             />
             <img
               className='hidden dark:block'
-              src='public/pizza_share_dark.svg'
+              src='/pizza_share_dark.svg'
               alt='Sushi cook preparing sushi'
             />
           </div>

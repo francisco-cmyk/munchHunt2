@@ -206,11 +206,11 @@ export default function Location(): JSX.Element {
   return (
     <div
       ref={main}
-      className='bg-slate-50 dark:bg-slate-950  flex flex-col justify-start cursor-default sm:overflow-x-auto overflow-x-hidden scroll-smooth'
+      className=' dark:bg-slate-950 bg-customOrange  flex flex-col justify-start cursor-default overflow-x-hidden scroll-smooth'
     >
       <div
         ref={underBarRef}
-        className='w-full flex items-center justify-end px-4 py-1  sm:h-20 h-[50px] bg-customOrange dark:bg-slate-600 '
+        className='w-full flex items-center justify-end sm:px-8 px-2 py-1  sm:h-20 h-[50px] '
       >
         <Button
           size='icon'
@@ -223,14 +223,14 @@ export default function Location(): JSX.Element {
 
       <div
         ref={titleRef}
-        className='w-full flex justify-center items-center md:items-center md:mr-10 sm:py-3 py-10 sm:mt-16 sm:mb-24 mb-14'
+        className='w-full flex justify-center items-center md:items-center sm:py-3 py-10 sm:mt-16 sm:mb-24 mb-14'
       >
         <p className='font-archivo font-black tracking-tighter 2xl:text-[200px] lg:text-[150px] sm:text-[100px] text-[40px] text-wrap leading-none'>
           Munch Hunt
         </p>
       </div>
 
-      <div className='flex justify-center sm:mb-28 mb-16'>
+      <div className='flex justify-center sm:mb-20 mb-16'>
         <div
           ref={inputbarRef}
           className='md:w-2/3 md:h-28 w-full flex flex-col justify-center items-center rounded-lg border-none  '
@@ -264,7 +264,7 @@ export default function Location(): JSX.Element {
                 disabled={
                   state.addresssInput.length === 0 || !state.addresssInput
                 }
-                className='bg-customOrange dark:bg-slate-500 absolute z-10 inset-y-0 right-0 sm:flex h-full sm:w-20 hidden items-center text-white rounded-tl-none rounded-bl-none'
+                className='absolute z-10 inset-y-0 right-0 sm:flex h-full sm:w-20 hidden items-center  rounded-tl-none rounded-bl-none'
                 onClick={handleSubmit}
               >
                 <Crosshair2Icon className='w-5 h-5' />
@@ -296,7 +296,7 @@ export default function Location(): JSX.Element {
             </div>
           </div>
 
-          <p className='font-roboto sm:text-sm text-xs text-slate-500 dark:text-slate-100 mt-2'>
+          <p className='font-roboto sm:text-sm text-xs text-slate-700 dark:text-slate-100 mt-2'>
             {state.isLoadingAddress
               ? "Looking for address..."
               : "Enter location or click map pin button"}
@@ -304,7 +304,7 @@ export default function Location(): JSX.Element {
           <Button
             size='icon'
             disabled={state.addresssInput.length === 0 || !state.addresssInput}
-            className='bg-customOrange dark:bg-slate-500 sm:hidden w-[100px]  items-center text-white font-archivo mt-3'
+            className=' sm:hidden w-[100px]  items-center  font-archivo mt-3'
             onClick={handleSubmit}
           >
             <ArrowRight />
@@ -312,15 +312,15 @@ export default function Location(): JSX.Element {
         </div>
       </div>
 
-      <div className='flex flex-col items-center w-full font-radioCanada'>
+      <div className='flex bg-slate-50 dark:bg-slate-700 flex-col items-center w-full font-radioCanada '>
         <div
           ref={(el) => {
             if (el) sectionsRef.current[0] = el;
           }}
-          className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly mt-1 md:w-4/6 lg:mr-20'
+          className='flex sm:flex-row sm:justify-evenly flex-col items-center justify-evenly sm:mt-7 mt-4 2xl:3/5 md:3/4 lg:mr-20'
         >
-          <div className=' flex flex-col sm:text-right text-center sm:w-1/2 sm:pr-10'>
-            <p className='font-semibold md:text-4xl text-base sm:mb-4'>
+          <div className=' flex flex-col sm:text-left text-center sm:w-1/2 sm:pr-10'>
+            <p className='font-semibold md:text-4xl text-base sm:mb-4 mb-32'>
               Hungry and indecisive?
             </p>
             <p className='sm:mb-2 sm:text-base text-sm'>
@@ -352,7 +352,7 @@ export default function Location(): JSX.Element {
 
         <Separator
           orientation='horizontal'
-          className='h-[2px] sm:mt-16 mt-4 w-2/3'
+          className='h-[2px] sm:mt-16 mt-4 w-2/3 dark:bg-slate-50 dark:opacity-40'
         />
 
         <div
@@ -380,7 +380,9 @@ export default function Location(): JSX.Element {
             />
           </div>
           <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full'>
-            <p className='font-semibold sm:text-[40px] mb-4'>How it works -</p>
+            <p className='font-semibold sm:text-[40px] sm:text-right mb-4'>
+              How it works -
+            </p>
             <p className='mb-2 sm:text-base text-sm'>
               Munch Hunt lets you explore cuisine categories or leave the
               decision to chance with a randomized pick ~
@@ -394,7 +396,7 @@ export default function Location(): JSX.Element {
 
         <Separator
           orientation='horizontal'
-          className='h-[2px] sm:mt-16 mt-4 w-3/5 '
+          className='h-[2px] sm:mt-16 mt-4 w-3/5 dark:bg-slate-50 dark:opacity-40'
         />
 
         <div
@@ -403,8 +405,8 @@ export default function Location(): JSX.Element {
           }}
           className='flex sm:flex-row flex-col items-center justify-evenly 2xl:3/5 md:3/4 sm:mt-9 mt-3'
         >
-          <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full sm:text-right'>
-            <p className='font-semibold sm:text-[40px] mb-4'>
+          <div className='sm:text-xl sm:px-0 px-3 flex flex-col sm:w-1/2 w-full '>
+            <p className='font-semibold sm:text-[40px]  mb-4'>
               Lets start hunting!
             </p>
             <p className='mb-2 sm:text-base text-sm'>
@@ -433,7 +435,7 @@ export default function Location(): JSX.Element {
           </div>
         </div>
 
-        <div className='w-full sm:h-20 h-16 flex justify-center items-center bg-slate-600 dark:bg-slate-800 text-white text-wrap mt-14'>
+        <div className='w-full sm:h-32 h-20 flex justify-center items-center  text-wrap mt-14'>
           <div className='sm:w-2/3 sm:px-0 px-2 flex sm:justify-center sm:text-base text-[10px] text-wrap'>
             <p>2025 |</p>
             <HoverCard>
@@ -463,7 +465,7 @@ export default function Location(): JSX.Element {
                     </p>
                     <div className='flex items-center pt-2'>
                       <span className='sm:text-xs text-[8px] text-muted-foreground'>
-                        @ 2024 Munch Hunt.xyz
+                        @ 2025 Munch Hunt.xyz
                       </span>
                     </div>
                   </div>

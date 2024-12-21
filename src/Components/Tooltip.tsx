@@ -55,3 +55,5 @@ export default function ToolTip(props: ToolTipProps) {
     </TooltipProvider>
   );
 }
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

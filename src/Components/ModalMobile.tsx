@@ -62,9 +62,9 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
 
             <div className='flex flex-col items-start justify-center'>
               <div className='w-full flex justify-between items-center '>
-                <p className='font-archivo md:text-[30px] text-[20px] text-wrap mt-3'>
+                <div className='font-archivo text-base truncate text-wrap mt-3'>
                   {props.business.name}
-                </p>
+                </div>
 
                 <Stars
                   rating={props.business.rating}
@@ -94,7 +94,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
 
             <div className='flex flex-col items-start text-right font-roboto tracking-normal'>
               <div
-                className='flex justify-between w-full items-center mt-1 hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm'
+                className='flex justify-between w-full items-center mt-1 mb-2 hover:bg-slate-200 dark:hover:bg-slate-500 rounded-sm'
                 onClick={() => window.open(mapLink, "_blank")}
               >
                 <a
@@ -107,7 +107,7 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
                 <MapPin className='h-[20px] text-slate-500 dark:text-slate-200' />
               </div>
 
-              <div className='flex justify-between w-full items-center mt-3 rounded-sm hover:bg-slate-200'>
+              <div className='flex justify-between w-full items-center mt-3 mb-2 rounded-sm hover:bg-slate-200'>
                 <a
                   href={`tel:${props.business.phone}`}
                   className='text-wrap text-left text-sm'
@@ -118,8 +118,9 @@ export default function ModalMobile(props: ModalProps): JSX.Element | null {
               </div>
               <AccordionComponent
                 class='w-full mt-2'
-                triggerClass='h-[30px] text-sm p-0 font-normal px-[2px]'
+                triggerClass='h-8 mb-1 text-sm p-0 font-normal px-[2px]'
                 title='Hours'
+                borderBottomOff
               >
                 {hours ? (
                   <div className='flex flex-col w-full bg-slate-100 dark:bg-slate-700 rounded-lg p-2'>

@@ -1,6 +1,13 @@
 import { clsx, type ClassValue } from "clsx";
-import { random, shuffle } from "lodash";
 import { twMerge } from "tailwind-merge";
+
+type CuisineState = "unselected" | "selected" | "excluded";
+
+type CuisineOption = {
+  id: string;
+  name: string;
+  state: CuisineState;
+};
 
 // For Shadcn components
 
@@ -39,11 +46,11 @@ export function randomizeChoice(choices: string[]): string {
 }
 
 export function randomizeMultipleChoices(
-  choices: string[],
+  choices: CuisineOption[],
   limit: number
-): string[] {
+): CuisineOption[] {
   const indexes = new Set();
-  const newChoices: string[] = [];
+  const newChoices: CuisineOption[] = [];
 
   //Tidbit- time complexity best case O(limit) but expected case O(nlogn)
   // space - O(limit)

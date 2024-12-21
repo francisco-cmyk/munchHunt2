@@ -221,7 +221,7 @@ export default function DropDown(props: DropDownProps): JSX.Element {
             className={`md:w-[170px] bg-slate-900  ${
               props.value === option.value
                 ? `bg-customOrange dark:bg-slate-600 text-white`
-                : `text-black bg-slate-50 dark:bg-slate-800 dark:text-slate-200 font-roboto`
+                : `text-black bg-slate-50 dark:bg-slate-900 dark:text-slate-200 font-roboto`
             }`}
             key={`${index}-${option.value}`}
             onChange={() => handleOnChange(option)}

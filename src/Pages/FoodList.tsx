@@ -9,12 +9,16 @@ import { XyzTransitionGroup } from "@animxyz/react";
 import DropDown, { Option } from "../Components/DropDown";
 import Filter from "../Components/Filter";
 import Stars from "../Components/Stars";
-import { ChevronRight, Frown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Frown, Moon, Sun } from "lucide-react";
 import ModalMobile from "../Components/ModalMobile";
 import { AccordionComponent } from "../Components/Accordion";
 import useGetBusinessInfo from "../Hooks/useGetBusiness";
 import { Restaurant } from "../types";
 import { Skeleton } from "../Components/Skeleton";
+import { Button } from "../Components/Button";
+import { useDarkMode } from "../Context/DarkModeProvider";
+import { useNavigate } from "react-router-dom";
+import ThemeButton from "../Components/ThemeButton";
 
 const priceOptions: Option[] = new Array(5).fill("$").map((item, i) => {
   const dollars = item.repeat(i + 1);
@@ -64,6 +68,8 @@ const initialState: State = {
 export default function FoodList(): JSX.Element {
   const [state, setState] = useState(initialState);
   const mergeState = getMergeState(setState);
+
+  const navigate = useNavigate();
 
   const munchContext = useMunchContext();
   const { munchHuntChoice, currentCoordinates } = munchContext;
@@ -234,92 +240,99 @@ export default function FoodList(): JSX.Element {
   }
 
   return (
-    <div className="className='w-full sm:h-full flex flex-col justify-center items-center  cursor-default">
+    <div className='relative max-h-screen bg-slate-100 dark:bg-slate-950'>
       {renderModal()}
-      <div
-        className={
-          "flex  w-full justify-start items-center  md:max-h-[130px] md:min-h-[80px] bg-stone-900 dark:bg-slate-950 dark:border-b-2 py-2"
-        }
-      >
-        <div className='w-1/5 md:flex hidden justify-end pr-3'>
-          <p className='font-inter text-[17px] text-white dark:text-slate-100 '>
-            The Hunt Chose
-          </p>
-          <ChevronRight color='white' />
-        </div>
-        <div className='md:w-3/4 w-full flex md:justify-start justify-center items-center text-white dark:text-slate-100 md:pl-6 pt-1'>
-          <p className='font-archivo font-bold md:text-[30px] text-[20px] '>
-            {munchHuntChoice}
-          </p>
-        </div>
-      </div>
-
-      <div className='w-full h-full flex md:flex-row flex-col md:mt-5 overflow-auto  '>
-        <div className='md:w-1/5 md:border-r-2 flex flex-col md:px-10 sm:px-2 px-1 py-2 '>
-          <p className='font-inter hidden md:block font-semibold text-lg text-slate-500 dark:text-slate-100'>
-            Filter By
-          </p>
-          <div />
-          <div className='flex flex-row h-[95%] overflow-auto md:hidden'>
-            <DropDown
-              title='Price'
-              options={priceOptions}
-              value={state.priceFilter ?? ""}
-              onChange={handleFilterChange}
-            />
-
-            <DropDown
-              title='Distance'
-              options={distanceOptions}
-              value={state.distanceFilter?.toString() ?? ""}
-              onChange={handleFilterChange}
-            />
-            <DropDown
-              title='Rating'
-              options={ratingOptions}
-              value={state.ratingFilter?.toString() ?? ""}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className='md:flex hidden flex-col h-[95%] overflow-auto mt-2 text-slate-500'>
-            <AccordionComponent title='Price' isOpen>
-              <Filter
-                filterName={"price"}
-                disabled={yelpRestaurants.length === 0}
-                options={priceOptions}
-                value={state.priceFilter ?? ""}
-                handleChange={handleFilterChange}
-              />
-            </AccordionComponent>
-            <AccordionComponent title='Distance'>
-              <Filter
-                filterName={"distance"}
-                disabled={yelpRestaurants.length === 0}
-                options={distanceOptions}
-                value={state.distanceFilter?.toString() ?? ""}
-                handleChange={handleFilterChange}
-              />
-            </AccordionComponent>
-            <AccordionComponent title='Rating'>
-              <Filter
-                filterName={"rating"}
-                disabled={yelpRestaurants.length === 0}
-                options={ratingOptions}
-                value={state.ratingFilter?.toString() ?? ""}
-                handleChange={handleFilterChange}
-              />
-            </AccordionComponent>
+      <header className='flex justify-between items-center pr-2 sticky top-0 z-[90]  border-b  bg-customOrange dark:bg-slate-600'>
+        <div className='flex h-16 items-center px-4'>
+          <Button
+            variant='ghost'
+            size='icon'
+            className='sm:mr-4 hover:bg-orange-600 hover:dark:bg-slate-800'
+            onClick={() => navigate("/select")}
+          >
+            <ChevronLeft className='h-6 w-6' />
+          </Button>
+          <div className='flex sm:flex-col flex-row'>
+            <p className='text-sm sm:block hidden text-slate-800 dark:text-slate-300'>
+              The Hunt Chose
+            </p>
+            <h1 className=' font-archivo text-xl font-semibold'>
+              {munchContext.munchHuntChoice}
+            </h1>
           </div>
         </div>
+        <ThemeButton />
+      </header>
+      {/* Contents */}
+      <div className='flex sm:flex-row flex-col'>
+        <div className='flex flex-row h-[95%] sm:hidden mb-2'>
+          <DropDown
+            title='Price'
+            options={priceOptions}
+            value={state.priceFilter ?? ""}
+            onChange={handleFilterChange}
+          />
 
-        <div className='md:w-3/4 2xl:max-h-[650px] md:max-h-[550px] md:min-h-[550px] max-h-[600px]  overflow-auto rounded-lg'>
+          <DropDown
+            title='Distance'
+            options={distanceOptions}
+            value={state.distanceFilter?.toString() ?? ""}
+            onChange={handleFilterChange}
+          />
+          <DropDown
+            title='Rating'
+            options={ratingOptions}
+            value={state.ratingFilter?.toString() ?? ""}
+            onChange={handleFilterChange}
+          />
+        </div>
+        <aside className='sticky top-0 hidden sm:block h-screen   w-[300px] border-r dark:border-r-slate-900 bg-slate-50 dark:bg-slate-900'>
+          <div className='flex flex-col md:px-10 sm:px-2 px-1 py-2 max-h-full overflow-y-scroll '>
+            <p className='font-inter hidden md:block font-semibold text-lg text-slate-500 dark:text-slate-100 mt-2'>
+              Filter By
+            </p>
+            <div />
+
+            <div className='md:flex hidden flex-col overflow-auto text-slate-500 mt-4'>
+              <AccordionComponent title='Price' isOpen>
+                <Filter
+                  filterName={"price"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={priceOptions}
+                  value={state.priceFilter ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+              <AccordionComponent title='Distance' isOpen>
+                <Filter
+                  filterName={"distance"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={distanceOptions}
+                  value={state.distanceFilter?.toString() ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+              <AccordionComponent title='Rating'>
+                <Filter
+                  filterName={"rating"}
+                  disabled={yelpRestaurants.length === 0}
+                  options={ratingOptions}
+                  value={state.ratingFilter?.toString() ?? ""}
+                  handleChange={handleFilterChange}
+                />
+              </AccordionComponent>
+            </div>
+          </div>
+        </aside>
+
+        <main className='flex-1 sm:px-6 mb-4'>
           <Grid
             restaurants={filteredResults}
             isLoading={isLoading}
             isFetching={isFetching}
             onSelect={handleRestaurantClick}
           />
-        </div>
+        </main>
       </div>
     </div>
   );
@@ -335,23 +348,23 @@ type GridProps = {
 function Grid(props: GridProps) {
   if (!props.isFetching && props.restaurants.length === 0) {
     return (
-      <div className='h-full w-full flex justify-center items-center  opacity-20 mt-2'>
+      <div className='h-screen w-full flex justify-center items-center  opacity-20 mt-2'>
         <div className='flex flex-col items-center'>
           <Frown className='h-28 w-28 ' />
-          <p className='font-anton text-[30px]'>No results</p>
+          <p className='font-anton text-lg'>No results</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='h-full'>
+    <div className='sm:pt-4 h-screen overflow-y-scroll'>
       {props.isLoading ? (
         <Placeholder />
       ) : (
         <XyzTransitionGroup
           appear={props.restaurants.length > 0}
-          className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5 '
+          className='grid md:grid-cols-3 grid-cols-1 gap-5 gap-y-5'
           xyz='fade small out-down out-rotate-right-0'
         >
           {props.restaurants.map((restaurant, index) => {
@@ -372,24 +385,43 @@ function Grid(props: GridProps) {
                 className='sm:h-[300px] h-[200px] px-5'
               >
                 <Card
-                  className='group w-full h-full  flex flex-col justify-between  p-1 border-none bg-transparent dark:bg-slate-950 dark:border-2 shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] dark:hover:bg-slate-900 cursor-pointer'
+                  className='group w-full h-full  flex flex-col justify-between  border-none bg-white dark:bg-slate-800 dark:border-2 shadow-none hover:shadow-2xl hover:border-4 hover:bg-[#FAFAFA] dark:hover:bg-slate-700 cursor-pointer'
                   onClick={() => props.onSelect(restaurant.id)}
                 >
-                  <CardContent className='w-full h-5/6 overflow-hidden p-0 rounded-lg relative'>
+                  <CardContent className='w-full h-5/6 overflow-hidden p-0 rounded-lg rounded-br-none rounded-bl-none  relative'>
                     <div
                       className='absolute top-0 right-0 z-10 w-[250px] p-3 flex flex-col items-end text-[20px] font-bold text-white
                       opacity-0 group-hover:opacity-100  -translate-x-10 transition-transform duration-500 ease-in-out group-hover:translate-x-0 rounded-lg
                       drop-shadow-md '
                     >
-                      <p className='text-[16px] text-right text-wrap'>
+                      <p
+                        className='text-[16px] text-right text-wrap'
+                        style={{
+                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.9)",
+                        }}
+                      >
                         {restaurant.displayAddress}
                       </p>
 
-                      <p className='text-[14px]'>{restaurant.displayPhone}</p>
+                      <p
+                        className='text-[14px]'
+                        style={{
+                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.9)",
+                        }}
+                      >
+                        {restaurant.displayPhone}
+                      </p>
 
                       {restaurant.transactions.length > 0 && (
-                        <div className=' text-[11px] flex justify-end text-wrap  rounded-lg drop-shadow-lg'>
-                          <p className='text-wrap text-right'>{availibility}</p>
+                        <div className=' text-[11px] flex justify-end text-wrap drop-shadow-lg rounded-lg'>
+                          <p
+                            className='text-wrap text-right'
+                            style={{
+                              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.9)",
+                            }}
+                          >
+                            {availibility}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -399,7 +431,7 @@ function Grid(props: GridProps) {
                       src={restaurant.imageURL}
                     />
                   </CardContent>
-                  <CardFooter className='px-2 py-1 w-full flex flex-col justify-between items-start text-sm mt-1 '>
+                  <CardFooter className='px-2 py-1 w-full flex flex-col justify-between items-start text-sm mt-1 font-radioCanada'>
                     <div className='w-full flex justify-between '>
                       <p className='font-semibold text-slate-800 dark:text-slate-100 text-[14px] text-wrap'>
                         {restaurant.name}
@@ -434,11 +466,20 @@ function Placeholder() {
     >
       {placeHolders.map((_, index) => (
         <div key={index} className='w-full h-full text-center md:text-left  '>
-          <Skeleton key={`main-skel-${index}`} className='w-[100%] h-[190px]' />
           <Skeleton
-            key={`sub-skil-${index}`}
-            className='w-[50%] h-[10px] mt-1'
+            key={`main-skel-${index}`}
+            className='w-[100%] h-[190px] bg-slate-200'
           />
+          <div className='w-full flex justify-between'>
+            <Skeleton
+              key={`sub-address-${index}`}
+              className='w-2/5 mt-1 bg-slate-200'
+            />
+            <Skeleton
+              key={`sub-star-${index}`}
+              className='w-[50%] h-[10px] mt-1 bg-slate-200'
+            />
+          </div>
         </div>
       ))}
     </XyzTransitionGroup>

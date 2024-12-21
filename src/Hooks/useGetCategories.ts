@@ -82,6 +82,15 @@ export default function useGetCategories(params: Params) {
       nearbyFoodOptions =
         nearbyFoodOptions.length > 0 ? nearbyFoodOptions : foodChoices;
 
+      nearbyFoodOptions = [
+        ...nearbyFoodOptions,
+        "Fast Food",
+        "Brunch",
+        "Takeout",
+        "Breakfast",
+        "Lunch",
+      ].sort();
+
       return nearbyFoodOptions;
     },
     enabled:

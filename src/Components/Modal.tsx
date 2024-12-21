@@ -58,7 +58,7 @@ export default function Modal(props: ModalProps): JSX.Element | null {
     >
       <div
         className={cn(
-          `flex flex-col p-4 rounded-lg  max-w-full max-h-full sm:bg-slate-50 dark:bg-slate-900 overflow-scroll   ${
+          `flex flex-col p-4 rounded-lg sm:bg-slate-50 dark:bg-slate-900   ${
             isOpen ? `animate-scrollOpen` : `animate-scrollClose`
           }`,
           props.class
@@ -72,9 +72,9 @@ export default function Modal(props: ModalProps): JSX.Element | null {
         ) : (
           <div className='md:w-[850px] md:h-[550px] sm:h-screen h-dvh bg-slate-50 dark:bg-slate-900 rounded-xl px-6 py-3  flex flex-col  cursor-default'>
             <div className='w-full flex justify-between items-center mb-3 '>
-              <p className=' font-archivo md:text-[30px] text-[20px] text-wrap '>
+              <div className='w-3/4 font-archivo md:text-[30px] text-[20px]  truncate'>
                 {props.business.name}
-              </p>
+              </div>
 
               {props.showClose && (
                 <div className='' onClick={handleClose}>

@@ -7,13 +7,32 @@ import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, LoaderIcon, UtensilsCrossed, X } from "lucide-react";
+import {
+  ArrowRight,
+  LoaderIcon,
+  Shuffle,
+  UtensilsCrossed,
+  X,
+} from "lucide-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ToolTip from "../Components/Tooltip";
 import GenericModal from "../Components/GenericModal";
 import useGetCategories from "../Hooks/useGetCategories";
 import { Skeleton } from "../Components/Skeleton";
+
+const CuisineStates = {
+  Unselected: "unselected",
+  Selected: "selected",
+  Excluded: "excluded",
+} as const;
+
+type CuisineState = (typeof CuisineStates)[keyof typeof CuisineStates];
+
+type CuisineOption = {
+  id: string;
+  name: string;
+  state: CuisineState;
+};
 
 type State = {
   selectedChoices: string[];
@@ -38,18 +57,46 @@ export default function SelectionPage(): JSX.Element {
   const munchContext = useMunchContext();
   const navigate = useNavigate();
 
-  const { data: categories = [], isFetching: isLoadingCategories } =
+  const { data: _categories = [], isFetching: isLoadingCategories } =
     useGetCategories({
       coordinates: munchContext.currentCoordinates,
     });
 
+  let categories: CuisineOption[] = _categories.map((category) => ({
+    id: category,
+    name: category,
+    state: CuisineStates.Unselected,
+  }));
+
   ////
 
-  const windowWidth = window.innerWidth;
-
   const filteredFoodChoices = useMemo(() => {
-    return categories.filter((food) => !state.excludedChoices.includes(food));
-  }, [state.excludedChoices, categories]);
+    let filteredCategories = categories;
+
+    if (state.excludedChoices.length > 0) {
+      filteredCategories = filteredCategories.map((choice) => {
+        if (state.excludedChoices.includes(choice.name)) {
+          return {
+            ...choice,
+            state: CuisineStates.Excluded,
+          };
+        }
+        return choice;
+      });
+    }
+    if (state.selectedChoices.length > 0) {
+      filteredCategories = filteredCategories.map((choice) => {
+        if (state.selectedChoices.includes(choice.name)) {
+          return {
+            ...choice,
+            state: CuisineStates.Selected,
+          };
+        }
+        return choice;
+      });
+    }
+    return filteredCategories;
+  }, [categories, state.excludedChoices, state.selectedChoices]);
 
   const categoriesLimit =
     filteredFoodChoices.length < 8 ? filteredFoodChoices.length : 8;
@@ -76,26 +123,6 @@ export default function SelectionPage(): JSX.Element {
     }
   }, [state.showSelectionModal]);
 
-  const sidePanel = useRef<HTMLDivElement>(null);
-  useGSAP(() => {
-    const isOpen = state.excludedChoices.length > 0;
-    if (!isOpen) {
-      gsap.to(sidePanel.current, {
-        width: 0,
-        translateX: -400,
-        duration: 1,
-        ease: "power3.out",
-      });
-    } else {
-      gsap.to(sidePanel.current, {
-        width: 400,
-        translateX: 0,
-        duration: 1,
-        ease: "power3.out",
-      });
-    }
-  }, [sidePanel, state.excludedChoices]);
-
   ////
 
   function handleSelect(choice: string) {
@@ -108,7 +135,6 @@ export default function SelectionPage(): JSX.Element {
       const filtered = state.selectedChoices.filter(
         (_choice) => _choice !== choice
       );
-
       mergeState({
         selectedChoices: filtered,
         excludedChoices: [...state.excludedChoices, choice],
@@ -118,14 +144,14 @@ export default function SelectionPage(): JSX.Element {
     }
   }
 
-  async function processChoices(choices: string[]): Promise<void> {
+  async function processChoices(choices: CuisineOption[]): Promise<void> {
     for (const choice of choices) {
       await new Promise<void>((resolve) =>
         setTimeout(() => {
           setState((prevState) => {
             return {
               ...prevState,
-              selectedChoices: [...prevState.selectedChoices, choice],
+              selectedChoices: [...prevState.selectedChoices, choice.name],
             };
           });
           resolve();
@@ -160,78 +186,34 @@ export default function SelectionPage(): JSX.Element {
   }
 
   return (
-    <div className='w-full sm:h-screen  flex md:flex-row flex-col-reverse justify-center sm:items-start items-center sm:mt-0 mt-3  '>
+    <div className='max-h-screen bg-gray-50 dark:bg-transparent px-4 sm:py-12 py-6'>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
 
-      <div
-        ref={sidePanel}
-        className={`flex h-full flex-col overflow-hidden ${
-          state.excludedChoices.length > 0
-            ? "sm:w-[400px] sm:px-4 max-w-full sm:border-r-2 items-center "
-            : "w-0 hidden md:flex "
-        }`}
-      >
-        <div className=' w-full h-full px-5 sm:pt-10'>
-          <div className=' w-full flex justify-between items-center item mb-2'>
-            <p className='font-inter text-slate-500 sm:text-[20px] text-sm mb-3 font-semibold '>
-              Excluded Choices
-            </p>
-
-            <ToolTip
-              className='bg-slate-500 opacity-80 '
-              side='left'
-              content={<p className='text-white'>Remove all from excluded</p>}
-            >
-              <X
-                className=' text-slate-400 '
-                onClick={(e) => {
-                  e.preventDefault();
-                  mergeState({ excludedChoices: [] });
-                }}
-              />
-            </ToolTip>
-          </div>
-          <div className='max-h-[28rem] flex flex-col overflow-auto'>
-            {state.excludedChoices.map((choice, index) => (
-              <Button
-                key={index}
-                variant='secondary'
-                className='mb-1 hover:bg-slate-900 dark:hover:bg-slate-600 hover:text-white border-2 w-full flex justify-between'
-                onClick={() => handleSelect(choice)}
-              >
-                {choice}
-                {windowWidth > 700 ? <ArrowRight /> : <X />}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className='md:w-3/4 w-5/6 h-full sm:text-left text-center flex flex-col justify-start items-center sm:px-10 sm:pt-10'>
+      <div className='mx-auto max-w-6xl'>
         {state.isLoading ? (
-          <div className='flex min-h-[60px] flex-col justify-center items-center'>
+          <div className='flex h-16 mb-6 flex-col justify-center items-center'>
             <LoaderIcon className='sm:h-[60px] sm:w-[60px] h-7 w-7 animate-spin text-customOrange dark:text-slate-400 duration-1000' />
-            <p className='mt-2 font-inter text-slate-700 sm:text-base text-sm'>
-              choosing for you...
+            <p className='mt-2 font-inter font-semibold text-slate-700 sm:text-base text-sm'>
+              Munch Hunt is choosing for you...
             </p>
           </div>
         ) : (
-          <div className='flex flex-col justify-center items-center'>
-            <p className='font-radioCanada font-bold sm:text-3xl'>
-              Lets get started!
+          <div className='sm:text-center'>
+            <h1 className='sm:mb-4 md:text-4xl text-2xl text-center font-bold tracking-tight text-slate-900 dark:text-slate-100'>
+              Let's get started!
+            </h1>
+            <p className='mb-2 sm:text-base text-xs text-slate-600 dark:text-slate-300'>
+              Choose multiple cuisines or categories you'd like, or double-click
+              to exclude an option.
             </p>
-            <p className='font-roboto  sm:text-base text-xs'>
-              Choose multiple cuisines or categories you’d like, or
-              double-select to exclude an option.
-            </p>
-            <p className='font-roboto  sm:text-base text-xs'>
-              Can’t decide? Munch Hunt will pick one for you if no options are
+            <p className='sm:mb-12 mb-6 sm:text-base text-xs text-slate-600 dark:text-slate-300'>
+              Can't decide? Munch Hunt will pick one for you if no options are
               selected
             </p>
           </div>
         )}
 
-        <div className='2xl:w-full md:w-5/6 w-full sm:min-h-56 xl:1/3 sm:2/5 h-72  mt-5 overflow-auto '>
+        <div className='mb-6'>
           {state.isHuntChoosing ? (
             <XyzTransitionGroup
               className='md:grid grid-cols-4 gap-4 p-1 py-3'
@@ -240,7 +222,7 @@ export default function SelectionPage(): JSX.Element {
               {state.selectedChoices.map((choice, index) => (
                 <div key={`${index}-${choice}`}>
                   <Button
-                    className={`sm:h-full h-[40px] w-full flex justify-center border p-3 rounded-xl shadow-sm bg-slate-900 dark:bg-slate-300 hover:text-white`}
+                    className={`relative bg-slate-700 dark:text-white flex sm:h-14 h-11 w-full items-center justify-center rounded-lg border border-gray-200 text-center font-medium shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#FF7043] focus:dark:ring-slate-300 focus:ring-offset-2`}
                   >
                     <p className='font-semibold text-lg'>{choice}</p>
                   </Button>
@@ -249,7 +231,7 @@ export default function SelectionPage(): JSX.Element {
             </XyzTransitionGroup>
           ) : (
             <Grid
-              choices={filteredFoodChoices}
+              cuisines={filteredFoodChoices}
               selected={state.selectedChoices}
               isLoading={isLoadingCategories}
               onSelect={handleSelect}
@@ -257,12 +239,15 @@ export default function SelectionPage(): JSX.Element {
           )}
         </div>
 
-        <div className='mt-5 md:mb-0 mb-5 2xl:mt-20 '>
+        <div className='text-center'>
           <Button
-            disabled={state.isLoading}
-            className='w-[200px] sm:h-[50px] text-[25px] font-archivo bg-customOrange dark:bg-slate-500 text-slate-900 shadow-lg hover:text-white dark:hover:bg-slate-600'
+            size='lg'
+            className={`sm:h-14 sm:mb-0 mb-5 h-11 bg-[#FF7043] dark:bg-slate-800 dark:text-white px-8 text-lg font-semibold hover:bg-orange-600 hover:dark:bg-slate-500 ${
+              state.isHuntChoosing ? "hidden" : ""
+            }`}
             onClick={handleSubmit}
           >
+            <Shuffle className='mr-2 h-5 w-5' />
             Hunt
           </Button>
         </div>
@@ -272,7 +257,7 @@ export default function SelectionPage(): JSX.Element {
 }
 
 type GridProps = {
-  choices: string[];
+  cuisines: CuisineOption[];
   selected: string[];
   isLoading: boolean;
   onSelect: (value: string) => void;
@@ -290,41 +275,49 @@ function Grid(props: GridProps) {
   }, [props.isLoading]);
 
   return (
-    <div className='h-full'>
+    <div className='2xl:max-h-fit md:max-h-2/3 max-h-80 overflow-y-scroll '>
       {isVisible ? (
         <XyzTransitionGroup
           appear
-          className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 gap-1 '
+          className='sm:p-1 p-2 grid sm:gap-4 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 '
           xyz='fade small out-down out-rotate-right-0 duration-3 '
         >
-          {props.choices.map((item, index) => (
-            <div key={`${index}-${item}`} className='sm:h-[50px] h-[45px]'>
+          {props.cuisines.map((cuisine, index) => (
+            <div key={`${index}-${cuisine}`}>
               <Button
-                className={` h-full w-full flex justify-center border p-3 rounded-xl shadow-sm overflow-hidden
-              ${
-                props.selected.includes(item)
-                  ? `bg-slate-900 dark:bg-slate-600 dark:text-white hover:text-white hover:bg-red-500 `
-                  : `bg-slate-50 text-slate-900 dark:text-slate-200 hover:bg-slate-900 hover:text-white dark:bg-transparent dark:hover:bg-slate-600`
-              }
-             `}
-                onClick={() => props.onSelect(item)}
+                className={`relative flex sm:h-14 h-11 w-full items-center justify-center rounded-lg border border-gray-200 text-center font-medium shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#FF7043] focus:dark:ring-slate-300 focus:ring-offset-2 ${getButtonStyles(
+                  cuisine.state
+                )}`}
+                onClick={() => props.onSelect(cuisine.name)}
               >
-                <p className='font-semibold sm:text-lg text-sm text-ellipsis'>
-                  {item}
-                </p>
+                {cuisine.name}
               </Button>
             </div>
           ))}
         </XyzTransitionGroup>
       ) : (
-        <div className='md:grid md:grid-cols-4 md:gap-4 md:p-1 md:py-3 grid grid-cols-1 gap-1'>
+        <div className='sm:p-1 p-2 grid sm:gap-4 gap-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
           {new Array(16).fill(null).map((_, index) => (
-            <Skeleton key={index} className='sm:h-[50px] h-[45px] ' />
+            <Skeleton
+              key={index}
+              className='relative flex sm:h-14 h-11 w-full items-center justify-center rounded-lg  text-center font-medium shadow-sm transition-all'
+            />
           ))}
         </div>
       )}
     </div>
   );
+}
+
+function getButtonStyles(state: CuisineState) {
+  switch (state) {
+    case "selected":
+      return "bg-[#FF7043] dark:bg-slate-500 text-white hover:bg-[#FF7043]/90 hover:dark:bg-slate-700";
+    case "excluded":
+      return "bg-red-100 dark:bg-red-300 dark:text-red-800 text-red-500 hover:bg-red-200";
+    default:
+      return "bg-white dark:bg-slate-200 text-black hover:bg-gray-50 hover:dark:bg-gray-500";
+  }
 }
 
 function SelectionModal(munchChoice: string) {
@@ -337,8 +330,8 @@ function SelectionModal(munchChoice: string) {
         '
         xyz='small-100% origin-center'
       >
-        <div className='flex flex-col justify-center items-center  sm:h-[200px] h-[150px] md:min-w-[400px] min-w-64 md:max-w-[600px] rounded-[30px] md:p-4 px-2'>
-          <p className='font-roboto sm:text-base font-semibold text-white dark:text-slate-200'>
+        <div className='flex flex-col justify-evenly items-center  sm:h-[200px] h-[150px] md:min-w-[400px] min-w-64 md:max-w-[600px] rounded-[30px] md:p-4 px-2'>
+          <p className='font-roboto sm:text-lg text-base font-semibold text-white dark:text-slate-200'>
             The Hunt Chose
           </p>
           <p className='font-archivo font-bold sm:text-4xl text-2xl text-wrap dark:text-slate-200'>
@@ -349,8 +342,8 @@ function SelectionModal(munchChoice: string) {
             className='mb-1'
             xyz='fade flip-left perspective-1 delay-10 duration-10'
           >
-            <div className='mt-4 md:mt-0'>
-              <UtensilsCrossed size={35} className='dark:text-slate-200' />
+            <div>
+              <UtensilsCrossed className='dark:text-slate-200 w-8 h-10' />
             </div>
           </XyzTransition>
         </div>

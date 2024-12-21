@@ -1,6 +1,6 @@
 # Munch Hunt 2.0
 
-Are you ever hungry and can't decide where to eat? Introducing Munch Hunt! 
+Are you ever hungry and can't decide where to eat? Introducing Munch Hunt!
 
 Munch Hunt is a randomized food picker web app that takes away all the hardship of choosing a place to get grub at, for you!
 
@@ -11,7 +11,7 @@ Why 2.0? The original Munch Hunt was getting a bit old and was created with limi
 ## Author
 
 - [@Francisco](https://github.com/francisco-cmyk)
-
+- [@Seiji - Co-founder](https://github.com/SeijiMatsumoto)
 
 ## Features
 
@@ -34,7 +34,5 @@ Why 2.0? The original Munch Hunt was getting a bit old and was created with limi
 
 ## Notes
 
-This app is mostly for development practice and educational purposes. No money is intended to be made or distributed. 
+This app is mostly for development practice and educational purposes. No money is intended to be made or distributed.
 All content comes from Yelp Fusion API ~ thank you all ~
-
-

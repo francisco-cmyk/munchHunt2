@@ -62,6 +62,7 @@ type AccordionProps = {
   class?: string;
   triggerClass?: string;
   contentClass?: string;
+  borderBottomOff?: boolean;
 };
 
 export function AccordionComponent(props: AccordionProps) {
@@ -72,7 +73,10 @@ export function AccordionComponent(props: AccordionProps) {
       collapsible
       className={props.class}
     >
-      <AccordionItem value='item-1'>
+      <AccordionItem
+        value='item-1'
+        className={props.borderBottomOff ? "border-b-0" : ""}
+      >
         <AccordionTrigger className={props.triggerClass}>
           {props.title}
         </AccordionTrigger>

@@ -1,1 +1,3 @@
 /api/* /.netlify/functions/:splat 200
+
+/* https://munchhunt.xyz/:splat 301!

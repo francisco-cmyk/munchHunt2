@@ -3,21 +3,17 @@ import { Button } from "../Components/Button";
 import { Input } from "../Components/Input";
 import { useMunchContext } from "../Context/MunchContext";
 import getMergeState, { removeStateAndCountry } from "../utils";
-import { LoaderIcon, Moon, Navigation, Sun } from "lucide-react";
+import { Compass, LoaderIcon, MapPinned, Search, Sparkles } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
-import { useNavigate } from "react-router-dom";
-import gsap from "gsap";
+import { Link, useNavigate } from "react-router-dom";
 import useGetAutoComplete from "../Hooks/useGetAutoComplete";
 import { debounce } from "lodash";
 import { MapPin } from "lucide-react";
 import { useDarkMode } from "../Context/DarkModeProvider";
 import { toast } from "react-toastify";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Utensils } from "lucide-react";
 import ThemeButton from "../Components/ThemeButton";
-
-gsap.registerPlugin(ScrollTrigger);
 
 type State = {
   addresssInput: string;
@@ -77,26 +73,6 @@ export default function Location(): JSX.Element {
     }
   }, [address]);
 
-  useEffect(() => {
-    sectionsRef.current.forEach((section) => {
-      gsap.fromTo(
-        section,
-        { opacity: 0, y: -50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          scrollTrigger: {
-            trigger: section, // Trigger for each section
-            start: "top 80%", // When the top of the element hits 75% of the viewport
-            end: "bottom 25%", // When the bottom of the element hits 25% of the viewport
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    });
-  }, []);
-
   const debounceSearch = useMemo(
     () =>
       debounce((input: string) => {
@@ -123,11 +99,6 @@ export default function Location(): JSX.Element {
       munchContext.setCoordinates(coordinates);
       localStorage.setItem("location", JSON.stringify(coordinates));
     }
-
-    gsap.to(inputbarRef.current, {
-      opacity: 0,
-      ease: "sine.out",
-    });
 
     munchContext.setCurrentAddress(state.addresssInput);
     setTimeout(() => {
@@ -173,172 +144,324 @@ export default function Location(): JSX.Element {
     mergeState({ addresssInput: input, debouncedInput: "" });
   }
 
+  function scrollToSection(id: string) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
   const fitleredPredictions = predictions.filter(
     (prediction) => prediction.description !== state.addresssInput
   );
 
   return (
-    <div className='flex flex-col min-h-screen'>
-      <header className='px-4 lg:px-6 sm:h-20 h-14 flex items-center justify-between  bg-customOrange dark:bg-slate-800'>
-        <span className='font-bold font-archivo text-slate-800 dark:text-slate-50 md:text-3xl text-2xl'>
-          Munch Hunt
-        </span>
-
-        <ThemeButton />
+    <div className='min-h-screen bg-gradient-to-b from-background to-background/50'>
+      {/* Header */}
+      <header className='container py-6'>
+        <div className='flex items-center justify-between'>
+          <Link to='/' className='flex items-center gap-2'>
+            <div className='relative flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white'>
+              <Utensils className='h-5 w-5' />
+              <div className='absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500'>
+                <Sparkles className='h-2.5 w-2.5 text-white' />
+              </div>
+            </div>
+            <span className='text-xl font-bold font-archivo tracking-tight'>
+              MunchHunt
+            </span>
+          </Link>
+          <ThemeButton />
+        </div>
       </header>
 
-      <main className='flex-1'>
-        <section className='w-full py-12 md:py-24 lg:py-32 xl:py-32 2xl:py-48'>
-          <div className='container px-4 md:px-6'>
-            <div className='flex flex-col items-center space-y-4 text-center'>
-              <div className='space-y-2'>
-                <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none'>
-                  Can't decide what to eat?
-                </h1>
-                <p className='mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400'>
-                  Let us help you discover your next favorite meal
-                </p>
-              </div>
-              <div className='flex sm:flex-row flex-col gap-3'>
-                <div ref={inputbarRef} className='relative md:w-96 w-64'>
-                  <Button
-                    className='absolute z-10 inset-y-0 left-0 dark:bg-slate-700 dark:text-white sm:flex h-full items-center rounded-tr-none rounded-br-none'
-                    onClick={handleGetLocationPermission}
-                  >
-                    {state.isLoadingAddress || isLoadingFormatAddress ? (
-                      <LoaderIcon className='animate-spin ' />
-                    ) : (
-                      <MapPin />
-                    )}
-                  </Button>
-                  <Input
-                    id='address-input'
-                    className={`h-12 border-2 border-slate-900/10 bg-white dark:text-slate-900 pl-14 text-base shadow-lg placeholder:text-slate-900/50 `}
-                    placeholder='Enter your location'
-                    type='text'
-                    value={state.addresssInput}
-                    onChange={(e) => {
-                      debounceSearch(e.target.value);
-                      handleInputChange(e.target.value);
-                    }}
-                  />
+      {/* Hero Section */}
+      <section className='container pb-24 pt-12 md:pt-20'>
+        <div className='relative mx-auto max-w-5xl'>
+          {/* Decorative elements */}
+          <div className='absolute -left-4 top-1/4 h-24 w-24 rounded-full bg-orange-200 blur-3xl md:h-40 md:w-40'></div>
+          <div className='absolute -right-4 top-1/2 h-20 w-20 rounded-full bg-blue-200 blur-3xl md:h-32 md:w-32'></div>
+          <div className='absolute bottom-0 left-1/3 h-16 w-16 rounded-full bg-green-200 blur-3xl md:h-28 md:w-28'></div>
+
+          <div className='relative z-10 flex flex-col items-center'>
+            <div className='mb-6 inline-flex items-center gap-2 rounded-full border border-orange-200 dark:border-zinc-500 bg-orange-50 dark:bg-zinc-900 px-4 py-2 text-sm font-medium text-orange-800 dark:text-zinc-200 backdrop-blur'>
+              <span className='flex h-2 w-2 rounded-full bg-orange-500 dark:bg-zinc-200'></span>
+              Food decision made simple
+            </div>
+
+            <h1 className='mb-6 text-center text-4xl font-bold tracking-tighter md:text-6xl lg:text-7xl'>
+              Can't decide <br className='hidden sm:inline' />
+              <span className='relative inline-block'>
+                what to eat?
+                <span className='absolute -bottom-1 left-0 h-3 w-full bg-orange-200 dark:bg-orange-700'></span>
+              </span>
+            </h1>
+
+            <p className='mb-12 max-w-2xl text-center text-lg text-muted-foreground md:text-xl'>
+              Let us help you discover your next favorite meal when you're
+              feeling indecisive
+            </p>
+
+            <div className='relative mb-1 w-full max-w-2xl'>
+              <div className='overflow-hidden rounded-2xl border border-orange-100 dark:border-zinc-600 bg-white dark:bg-zinc-800 shadow-lg'>
+                <div className='flex items-center gap-2 border-b border-orange-100 dark:border-zinc-600 bg-customOrange dark:bg-zinc-900 bg-opacity-75 px-4 py-3'>
+                  <div className='h-3 w-3 rounded-full bg-red-400'></div>
+                  <div className='h-3 w-3 rounded-full bg-yellow-400'></div>
+                  <div className='h-3 w-3 rounded-full bg-green-400'></div>
+                  <div className='ml-2 text-xs text-white'>
+                    Find restaurants near you
+                  </div>
                 </div>
-                <Button
-                  size='lg'
-                  className='h-12 bg-slate-900 dark:bg-slate-700 dark:text-white text-base hover:bg-slate-800'
-                  onClick={handleSubmit}
-                >
-                  <Navigation className='mr-2 h-5 w-5' />
-                  Find Food
-                </Button>
-                <div
-                  className={`mt-12 absolute z-30 max-h-44 min-h-32 md:w-96  overflow-auto flex flex-col rounded-lg
+                <div className='flex flex-col gap-4 p-6 md:flex-row md:items-center'>
+                  <div className='relative flex-1'>
+                    <Button
+                      className='absolute bg-transparent z-[10000] pointer-events-none top-1/2 -translate-y-1/2 text-muted-foreground'
+                      onClick={() => {
+                        console.log("HEY");
+                        handleGetLocationPermission();
+                      }}
+                    >
+                      {state.isLoadingAddress || isLoadingFormatAddress ? (
+                        <LoaderIcon className='animate-spin ' />
+                      ) : (
+                        <MapPin className='h-5 w-5' />
+                      )}
+                    </Button>
+
+                    <Input
+                      id='address-input'
+                      type='text'
+                      className='h-12 pl-10 text-base relative '
+                      placeholder='Enter your location'
+                      value={state.addresssInput}
+                      onChange={(e) => {
+                        debounceSearch(e.target.value);
+                        handleInputChange(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <Button
+                    className='h-12 gap-2 px-6 md:w-auto dark:bg-orange-400 dark:text-white'
+                    size='lg'
+                    onClick={handleSubmit}
+                  >
+                    <Search className='h-4 w-4' />
+                    <span>Find Food</span>
+                  </Button>
+                  <div
+                    className={`absolute top-28 mt-1 z-30 max-h-44 min-h-32 md:w-[450px] w-[200px]  overflow-auto flex flex-col rounded-lg
                   ${
                     fitleredPredictions.length > 0
                       ? "animate-slideDown rounded-md shadow-lg bg-slate-50"
                       : "animate-slideUp "
                   } `}
-                >
-                  {fitleredPredictions.map((prediction, index) => {
-                    return (
-                      <Button
-                        key={`${prediction.placeID}-${index}`}
-                        className='flex max-w-full justify-start text-slate-800 dark:bg-slate-100 font-roboto hover:bg-slate-400 hover:text-white sm:text-[15px] text-[10px] rounded-none text-wrap '
-                        variant={"outline"}
-                        onClick={() =>
-                          handlePredictionChange(prediction.description)
-                        }
-                      >
-                        <MapPin />
-                        {prediction.description}
-                      </Button>
-                    );
-                  })}
+                  >
+                    {fitleredPredictions.map((prediction, index) => {
+                      return (
+                        <Button
+                          key={`${prediction.placeID}-${index}`}
+                          className='flex max-w-full justify-start dark:bg-zinc-900 dark:text-zinc-50 text-slate-800  font-roboto hover:bg-orange-200 dark:hover:bg-zinc-600 sm:text-[15px] text-[10px] rounded-none text-wrap '
+                          variant={"outline"}
+                          onClick={() =>
+                            handlePredictionChange(prediction.description)
+                          }
+                        >
+                          <MapPin />
+                          {prediction.description}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className='bg-muted/30 px-6 py-3 text-center text-xs text-muted-foreground dark:text-zinc-200'>
+                  Enter location or click map pin button to use your current
+                  location
                 </div>
               </div>
-              <p className='font-roboto sm:text-sm text-xs text-slate-700 dark:text-slate-100 mt-2'>
-                {state.isLoadingAddress
-                  ? "Looking for address..."
-                  : "Enter location or click map pin button"}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section
+        className='bg-gradient-to-b from-orange-50 dark:from-background to-white'
+        id='how-it-works'
+      >
+        <div className='container py-24'>
+          <div className='mb-16 text-center'>
+            <div className='mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary'>
+              <Sparkles className='h-4 w-4' />
+              How it works
+            </div>
+            <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl'>
+              Three simple steps
+            </h2>
+            <p className='mx-auto max-w-[700px] text-muted-foreground md:text-lg'>
+              We take the stress out of deciding where to eat with our simple
+              process
+            </p>
+          </div>
+
+          <div className='grid gap-8 md:grid-cols-3'>
+            <div className='group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 p-8 shadow-md transition-all hover:shadow-lg'>
+              <div className='absolute -right-6 -top-6 h-24 w-24 rounded-full bg-orange-100 dark:bg-orange-400 transition-all group-hover:scale-110'></div>
+              <div className='relative mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-white'>
+                <Utensils className='h-7 w-7' />
+              </div>
+              <h3 className='mb-3 text-xl font-bold'>Hungry and indecisive?</h3>
+              <p className='text-muted-foreground'>
+                Planning date night but unsure where to go? Craving something
+                new but can't decide what? Don't worry.
+              </p>
+            </div>
+
+            <div className='group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 p-8 shadow-md transition-all hover:shadow-lg'>
+              <div className='absolute -right-6 -top-6 h-24 w-24 rounded-full bg-orange-100 dark:bg-orange-400 transition-all group-hover:scale-110'></div>
+              <div className='relative mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-white'>
+                <Compass className='h-7 w-7' />
+              </div>
+              <h3 className='mb-3 text-xl font-bold'>Choose or randomize</h3>
+              <p className='text-muted-foreground'>
+                Explore cuisine categories or leave it to chance with a
+                randomized pick. We'll show all nearby restaurants.
+              </p>
+            </div>
+
+            <div className='group relative overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 p-8 shadow-md transition-all hover:shadow-lg'>
+              <div className='absolute -right-6 -top-6 h-24 w-24 rounded-full bg-orange-100 dark:bg-orange-400 transition-all group-hover:scale-110'></div>
+              <div className='relative mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-white'>
+                <MapPinned className='h-7 w-7' />
+              </div>
+              <h3 className='mb-3 text-xl font-bold'>Let's start hunting!</h3>
+              <p className='text-muted-foreground'>
+                Just provide an address — Munch Hunt won't save it or use it for
+                any other purpose.
               </p>
             </div>
           </div>
-        </section>
-        <section className='w-full py-12 md:py-24 xl:py-28 2xl:py-32 bg-gray-100 dark:bg-gray-800 '>
-          <div className='container px-4 md:px-6'>
-            <div className='grid gap-10 sm:grid-cols-2 md:grid-cols-3'>
-              <div
-                ref={(el) => {
-                  if (el) sectionsRef.current[0] = el;
-                }}
-                className='flex flex-col'
-              >
-                <div className='mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[#FF7043]/10 dark:bg-slate-700'>
-                  <Utensils className='h-6 w-6 text-[#FF7043] dark:text-slate-300' />
-                </div>
-                <h3 className='mb-2 text-xl font-semibold tracking-tight'>
-                  Hungry and indecisive?
-                </h3>
-                <p className='sm:text-base text-sm text-slate-600 dark:text-slate-300'>
-                  Planning date night but unsure where to go? Craving something
-                  new but can't decide what? Don’t worry—Munch Hunt has you
-                  covered!
-                </p>
-              </div>
-              <div
-                ref={(el) => {
-                  if (el) sectionsRef.current[1] = el;
-                }}
-                className='flex flex-col'
-              >
-                <div className='mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[#FF7043]/10 dark:bg-slate-700'>
-                  <Navigation className='h-6 w-6 text-[#FF7043] dark:text-slate-300' />
-                </div>
-                <h3 className='mb-2 text-xl font-semibold tracking-tight'>
-                  How it works
-                </h3>
-                <p className='sm:text-base text-sm text-slate-600 dark:text-slate-300'>
-                  Explore cuisine categories or leave it to chance with a
-                  randomized pick. We'll show all nearby restaurants within 25
-                  miles that match your choice.
-                </p>
-              </div>
-              <div
-                ref={(el) => {
-                  if (el) sectionsRef.current[2] = el;
-                }}
-                className='flex flex-col'
-              >
-                <div className='mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-[#FF7043]/10 dark:bg-slate-700'>
-                  <MapPin className='h-6 w-6 text-[#FF7043] dark:text-slate-300' />
-                </div>
-                <h3 className='mb-2 text-xl font-semibold tracking-tight'>
-                  Let's start hunting!
-                </h3>
-                <p className='sm:text-base text-sm text-slate-600 dark:text-slate-300'>
-                  Just provide an address — Munch Hunt won't save it or use it
-                  for any other purpose
-                </p>
-              </div>
+        </div>
+      </section>
+
+      {/* Food Gallery Section */}
+      <section className='container py-24'>
+        <div className='mb-16 text-center'>
+          <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl'>
+            Discover delicious options
+          </h2>
+          <p className='mx-auto max-w-[700px] text-muted-foreground md:text-lg'>
+            From comfort food to exotic cuisine, find exactly what you're
+            craving
+          </p>
+        </div>
+
+        <div className='grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6'>
+          <div className='group relative aspect-square overflow-hidden rounded-2xl'>
+            <img
+              src='https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              alt='Food 1'
+              className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
+            <div className='absolute bottom-0 left-0 p-4'>
+              <span className='text-xl font-medium text-white'>Pizza</span>
             </div>
           </div>
-        </section>
-      </main>
-      <footer className='border-t border-slate-200 dark:border-slate-600 px-4 py-6'>
-        <div className='mx-auto max-w-6xl'>
-          <div className='flex flex-col items-center justify-between md:gap-4 gap-2 sm:text-left text-center  text-sm text-slate-600 dark:text-slate-200 sm:flex-row'>
-            <p>© 2024 Munch Hunt. All rights reserved.</p>
-            <p className='hover:text-customOrange hover:dark:text-slate-600'>
-              <a href='https://github.com/francisco-cmyk' target='_blank'>
-                Developer
-              </a>
+          <div className='group relative aspect-square overflow-hidden rounded-2xl'>
+            <img
+              src='https://images.unsplash.com/photo-1563612116625-3012372fccce?q=80&w=1941&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              alt='Food 2'
+              className='object-cover h-ful w-full transition-transform duration-300 group-hover:scale-105'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
+            <div className='absolute bottom-0 left-0 p-4'>
+              <span className='text-xl font-medium text-white'>Sushi</span>
+            </div>
+          </div>
+          <div className='group relative aspect-square overflow-hidden rounded-2xl'>
+            <img
+              src='https://plus.unsplash.com/premium_photo-1683619761468-b06992704398?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              alt='Food 3'
+              className='object-cover transition-transform duration-300 group-hover:scale-105'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
+            <div className='absolute bottom-0 left-0 p-4'>
+              <span className='text-xl font-medium text-white'>Burgers</span>
+            </div>
+          </div>
+          <div className='group relative aspect-square overflow-hidden rounded-2xl'>
+            <img
+              src='https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=2094&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              alt='Food 4'
+              className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
+            <div className='absolute bottom-0 left-0 p-4'>
+              <span className='text-xl font-medium text-white'>Tacos</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className='container pb-24'>
+        <div className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-100 dark:from-zinc-950 to-orange-50 p-8 md:p-12'>
+          <div className='absolute -right-12 -top-12 h-64 w-64 rounded-full bg-orange-200 blur-3xl'></div>
+          <div className='absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-blue-100 blur-3xl'></div>
+
+          <div className='relative z-10 flex flex-col items-center text-center'>
+            <div className='mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-orange-500 text-white'>
+              <Sparkles className='h-8 w-8' />
+            </div>
+            <h2 className='mb-4 text-3xl font-bold tracking-tight md:text-4xl'>
+              Ready to find your next meal?
+            </h2>
+            <p className='mb-8 max-w-2xl text-muted-foreground md:text-lg'>
+              Stop scrolling through endless options. Let Munch Hunt make the
+              decision for you.
             </p>
-            <p className='flex items-center md:gap-1 gap-2'>
-              <span className='sm:block hidden'>Powered by Yelp Fusion</span>
-              <span className='sm:hidden block'>Yelp Fusion</span>
-              <span>•</span>
-              <span className='sm:block hidden'>Illustrations by Storyset</span>
-              <span className='sm:hidden block'> Storyset</span>
+            <Button
+              size='lg'
+              className='h-14 gap-2 px-8 text-base bg-orange-500 dark:bg-black hover:bg-orange-600 dark:hover:bg-zinc-900 text-white'
+              onClick={() => scrollToSection("address-input")}
+            >
+              <Search className='h-5 w-5' />
+              <span>Find Food Now</span>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className='border-t border-orange-100 bg-customOrange bg-opacity-90 dark:bg-black dark:border-none'>
+        <div className='container py-12'>
+          <div className='flex flex-col items-center justify-between gap-6 md:flex-row'>
+            <div className='flex items-center gap-2'>
+              <div className='flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white'>
+                <Utensils className='h-4 w-4' />
+              </div>
+              <span className='text-lg font-bold font-archivo'>MunchHunt</span>
+            </div>
+            <div className='flex flex-wrap justify-center gap-x-8 gap-y-4 text-white'>
+              <Link
+                to='#'
+                className='text-sm  transition-colors hover:text-primary'
+              >
+                About
+              </Link>
+              <Link
+                to='https://github.com/francisco-cmyk'
+                target='_blank'
+                className='text-sm  transition-colors hover:text-primary'
+              >
+                Developer
+              </Link>
+              <p className='text-sm  transition-colors hover:text-primary'>
+                Yelp Fusion
+              </p>
+            </div>
+            <p className='text-sm text-white md:text-right text-center'>
+              © {new Date().getFullYear()} MunchHunt. All rights reserved.
             </p>
           </div>
         </div>

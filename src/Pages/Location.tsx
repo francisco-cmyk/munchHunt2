@@ -357,7 +357,7 @@ export default function Location(): JSX.Element {
         <div className='grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6'>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='public/pizza-landing.avif'
+              src='/pizza-landing.avif'
               alt='Food 1'
               className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
             />
@@ -368,7 +368,7 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='public/sushi-landing.avif'
+              src='/sushi-landing.avif'
               alt='Food 2'
               className='object-cover transition-transform duration-300 group-hover:scale-105'
             />
@@ -379,7 +379,7 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='public/burgers-landing.avif'
+              src='/burgers-landing.avif'
               alt='Food 3'
               className='object-cover transition-transform duration-300 group-hover:scale-105'
             />
@@ -390,7 +390,7 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='public/tacos-landing.avif'
+              src='/tacos-landing.avif'
               alt='Food 4'
               className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
             />

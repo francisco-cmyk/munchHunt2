@@ -32,15 +32,12 @@ const initialState: State = {
 export default function Location(): JSX.Element {
   const [state, setState] = useState(initialState);
   const mergeState = getMergeState(setState);
-  const { isDarkMode, setIsDarkMode } = useDarkMode();
 
   const munchContext = useMunchContext();
   const navigate = useNavigate();
 
-  const sectionsRef = useRef<HTMLDivElement[]>([]);
-  const inputbarRef = useRef<HTMLDivElement>(null);
-
-  const mutation = useGetCoordinatesFromAddress();
+  const { mutateAsync: mutation, isPending: isPendingSubmit } =
+    useGetCoordinatesFromAddress();
 
   const { data: address, isFetching: isLoadingFormatAddress } =
     useGetFormattedAddress(munchContext.currentCoordinates);
@@ -90,7 +87,7 @@ export default function Location(): JSX.Element {
       return;
     }
 
-    const response = await mutation.mutateAsync(state.addresssInput);
+    const response = await mutation(state.addresssInput);
     if (response) {
       const coordinates = {
         latitude: response.latitude,
@@ -215,11 +212,8 @@ export default function Location(): JSX.Element {
                 <div className='flex flex-col gap-4 p-6 md:flex-row md:items-center'>
                   <div className='relative flex-1'>
                     <Button
-                      className='absolute bg-transparent z-[10000] pointer-events-none top-1/2 -translate-y-1/2 text-muted-foreground'
-                      onClick={() => {
-                        console.log("HEY");
-                        handleGetLocationPermission();
-                      }}
+                      className='absolute bg-transparent z-10 top-1/2 -translate-y-1/2 text-muted-foreground'
+                      onClick={handleGetLocationPermission}
                     >
                       {state.isLoadingAddress || isLoadingFormatAddress ? (
                         <LoaderIcon className='animate-spin ' />
@@ -231,7 +225,7 @@ export default function Location(): JSX.Element {
                     <Input
                       id='address-input'
                       type='text'
-                      className='h-12 pl-10 text-base relative '
+                      className='h-12 pl-11 text-base relative '
                       placeholder='Enter your location'
                       value={state.addresssInput}
                       onChange={(e) => {
@@ -241,15 +235,20 @@ export default function Location(): JSX.Element {
                     />
                   </div>
                   <Button
-                    className='h-12 gap-2 px-6 md:w-auto dark:bg-orange-400 dark:text-white'
+                    className='h-12 gap-2 px-6 md:w-auto dark:bg-orange-400 dark:hover:bg-orange-600 dark:text-white'
                     size='lg'
                     onClick={handleSubmit}
                   >
-                    <Search className='h-4 w-4' />
+                    {isPendingSubmit ? (
+                      <LoaderIcon className='animate-spin ' />
+                    ) : (
+                      <Search className='h-4 w-4' />
+                    )}
+
                     <span>Find Food</span>
                   </Button>
                   <div
-                    className={`absolute top-28 mt-1 z-30 max-h-44 min-h-32 md:w-[450px] w-[200px]  overflow-auto flex flex-col rounded-lg
+                    className={`absolute top-28 mt-1 z-30 max-h-44 min-h-32 md:w-[450px] w-[300px]  overflow-auto flex flex-col rounded-lg
                   ${
                     fitleredPredictions.length > 0
                       ? "animate-slideDown rounded-md shadow-lg bg-slate-50"
@@ -358,7 +357,7 @@ export default function Location(): JSX.Element {
         <div className='grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6'>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              src='public/pizza-landing.avif'
               alt='Food 1'
               className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
             />
@@ -369,9 +368,9 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='https://images.unsplash.com/photo-1563612116625-3012372fccce?q=80&w=1941&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              src='public/sushi-landing.avif'
               alt='Food 2'
-              className='object-cover h-ful w-full transition-transform duration-300 group-hover:scale-105'
+              className='object-cover transition-transform duration-300 group-hover:scale-105'
             />
             <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
             <div className='absolute bottom-0 left-0 p-4'>
@@ -380,7 +379,7 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='https://plus.unsplash.com/premium_photo-1683619761468-b06992704398?q=80&w=1930&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              src='public/burgers-landing.avif'
               alt='Food 3'
               className='object-cover transition-transform duration-300 group-hover:scale-105'
             />
@@ -391,7 +390,7 @@ export default function Location(): JSX.Element {
           </div>
           <div className='group relative aspect-square overflow-hidden rounded-2xl'>
             <img
-              src='https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=2094&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              src='public/tacos-landing.avif'
               alt='Food 4'
               className='object-cover h-full transition-transform duration-300 group-hover:scale-105'
             />

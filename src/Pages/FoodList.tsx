@@ -240,7 +240,7 @@ export default function FoodList(): JSX.Element {
   }
 
   return (
-    <div className='relative max-h-screen bg-slate-100 dark:bg-slate-950'>
+    <div className='relative max-h-screen  dark:bg-slate-950'>
       {renderModal()}
       <header className='flex justify-between items-center pr-2 sticky top-0 z-[90]  border-b  bg-customOrange dark:bg-slate-600'>
         <div className='flex h-16 items-center px-4'>

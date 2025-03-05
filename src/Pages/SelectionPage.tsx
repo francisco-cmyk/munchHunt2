@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import getMergeState, {
   randomizeChoice,
   randomizeMultipleChoices,
@@ -7,15 +7,7 @@ import { Button } from "../Components/Button";
 import { XyzTransitionGroup, XyzTransition } from "@animxyz/react";
 import { useMunchContext } from "../Context/MunchContext";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowRight,
-  LoaderIcon,
-  Shuffle,
-  UtensilsCrossed,
-  X,
-} from "lucide-react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { LoaderIcon, Shuffle, UtensilsCrossed, X } from "lucide-react";
 import GenericModal from "../Components/GenericModal";
 import useGetCategories from "../Hooks/useGetCategories";
 import { Skeleton } from "../Components/Skeleton";
@@ -186,7 +178,7 @@ export default function SelectionPage(): JSX.Element {
   }
 
   return (
-    <div className='max-h-screen bg-gray-50 dark:bg-transparent px-4 sm:py-12 py-6'>
+    <div className='max-h-screendark:bg-transparent px-4 sm:py-12 py-6'>
       {state.showSelectionModal && SelectionModal(munchContext.munchHuntChoice)}
 
       <div className='mx-auto max-w-6xl'>

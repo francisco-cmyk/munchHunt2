@@ -212,7 +212,8 @@ export default function Location(): JSX.Element {
                 <div className='flex flex-col gap-4 p-6 md:flex-row md:items-center'>
                   <div className='relative flex-1'>
                     <Button
-                      className='absolute bg-transparent z-10 top-1/2 -translate-y-1/2 text-muted-foreground'
+                      variant='ghost'
+                      className='absolute bg-transparent z-10 w-8 top-1/2 -translate-y-1/2 text-muted-foreground'
                       onClick={handleGetLocationPermission}
                     >
                       {state.isLoadingAddress || isLoadingFormatAddress ? (

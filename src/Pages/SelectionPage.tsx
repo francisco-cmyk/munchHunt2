@@ -185,7 +185,7 @@ export default function SelectionPage(): JSX.Element {
         {state.isLoading ? (
           <div className='flex h-16 mb-6 flex-col justify-center items-center'>
             <LoaderIcon className='sm:h-[60px] sm:w-[60px] h-7 w-7 animate-spin text-customOrange dark:text-slate-400 duration-1000' />
-            <p className='mt-2 font-inter font-semibold text-slate-700 sm:text-base text-sm'>
+            <p className='mt-2 font-semibold text-slate-700 sm:text-base text-sm'>
               Munch Hunt is choosing for you...
             </p>
           </div>

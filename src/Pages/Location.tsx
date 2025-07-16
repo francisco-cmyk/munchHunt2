@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../Components/Button";
 import { Input } from "../Components/Input";
 import { useMunchContext } from "../Context/MunchContext";
-import getMergeState, { removeStateAndCountry } from "../utils";
+import getMergeState, { cn, removeStateAndCountry } from "../utils";
 import { Compass, LoaderIcon, MapPinned, Search, Sparkles } from "lucide-react";
 import useGetFormattedAddress from "../Hooks/useGetFormattedAddress";
 import useGetCoordinatesFromAddress from "../Hooks/useGetCoordinatesFromAddress";
@@ -249,12 +249,12 @@ export default function Location(): JSX.Element {
                     <span>Find Food</span>
                   </Button>
                   <div
-                    className={`absolute top-28 mt-1 z-30 max-h-44 min-h-32 md:w-[450px] w-[300px]  overflow-auto flex flex-col rounded-lg
-                  ${
-                    fitleredPredictions.length > 0
-                      ? "animate-slideDown rounded-md shadow-lg bg-slate-50"
-                      : "animate-slideUp "
-                  } `}
+                    className={cn(
+                      "absolute top-28 mt-1 z-30 max-h-44 min-h-32 md:w-[450px] w-[300px]  overflow-auto flex flex-col rounded-lg",
+                      fitleredPredictions.length > 0
+                        ? "animate-slideDown rounded-md shadow-lg bg-slate-50"
+                        : "animate-slideUp hidden "
+                    )}
                   >
                     {fitleredPredictions.map((prediction, index) => {
                       return (
